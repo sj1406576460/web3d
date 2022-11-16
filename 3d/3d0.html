@@ -188,7 +188,7 @@
 				//document.getElementById("fullview_canvas").style.cursor = "url(./img/rotation-cursor.png) 37 25,auto!important;";
 			}
 			
-            var timesPerSecond = 30 // how many times to fire the event per second
+            var timesPerSecond = 20 // how many times to fire the event per second
             var wait = false;
 			function doMouseMove(event) {
 			  if (!wait) {
@@ -197,52 +197,36 @@
 				var canvas = event.target;
 				var loc = getPointOnCanvas(canvas, x, y);
 				if (started && !topShow) {
-					/*var agent = navigator.userAgent.toLowerCase();
+					var agent = navigator.userAgent.toLowerCase();
 					var isMac = /macintosh|mac os x/i.test(navigator.userAgent);
 					var count = 0;
 					if (isMac) {
 					   //console.log("mac")
-					   count=Math.floor(Math.abs((startedX - loc.x) / 40));
+					   count=Math.floor(Math.abs((startedX - loc.x) / 50));
 					}else{
 					   //console.log("windows")
-					   count=Math.floor(Math.abs((startedX - loc.x) / 100))
+					   count=Math.floor(Math.abs((startedX - loc.x) / 80))
 					}
-					var frameIndex = Math.floor((startedX - loc.x) / 30);
-					if (count > 0 && count <= 1) {
+					var frameIndex = Math.floor((startedX - loc.x) / 50);
+					console.log(frameIndex);
+					if (count > 0 ) {
 						//console.log("frameIndex = " + frameIndex);
 						count--;
-						if (frameIndex > 0) {
+						if (frameIndex >= 0 ) {
 							frameIndex--;
 							frame--;
 						} else {
 							frameIndex++;
 							frame++;
-						} 
+						}
 
 						if (frame > 15) {
-							frame = 0;
-						}
-						if (frame < 0) {
 							frame = 15;
 						}
+						if (frame < 0) {
+							frame = 0;
+						}
 						
-					  }*/
-					  var index=Math.floor(images.length*event.offsetX/canvas.width);
-					  if(index===lastFrame){
-						  return;
-					  }
-					  if(index>lastFrame){
-						  if(frame<15){
-							frame++  
-						  }else{
-							frame=0
-						  }
-					  }else{
-						  if(frame>0){
-							frame--  
-						  }else{
-						    frame=15
-						  }
 					  }
 					  redraw();
 					}

@@ -184,14 +184,13 @@
 				//console.log("mouse down at point( x:" + loc.x + ", y:" + loc.y + ")");
 				startedX = loc.x;
 				started = true;
-				lastFrame=Math.floor(images.length*event.offsetX/canvas.width);
+				lastFrame=Math.floor(images.length*event.offsetX/(canvas.width*1.5));
 				//document.getElementById("fullview_canvas").style.cursor = "url(./img/rotation-cursor.png) 37 25,auto!important;";
 			}
 			
-            var timesPerSecond = 30 // how many times to fire the event per second
+            var timesPerSecond = 10 // how many times to fire the event per second
             var wait = false;
 			function doMouseMove(event) {
-			  if (!wait) {
 				var x = event.pageX;
 				var y = event.pageY;
 				var canvas = event.target;
@@ -227,7 +226,7 @@
 						}
 						
 					  }*/
-					  var index=Math.floor(images.length*event.offsetX/canvas.width);
+					  var index=Math.floor(images.length*event.offsetX/(canvas.width*1.5));
 					  if(index===lastFrame){
 						  return;
 					  }
@@ -246,13 +245,6 @@
 					  }
 					  redraw();
 					}
-					// stop any further events
-					wait = true;
-					// after a fraction of a second, allow events again
-					setTimeout(function () {
-					    wait = false;
-					}, 1000 / timesPerSecond);
-				}
 			}
 
 			function doMouseUp(event) {
