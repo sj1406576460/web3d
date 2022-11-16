@@ -120,6 +120,7 @@
 			var topShow = false
 			var bigShow = false
 			var sizeShow= false
+			var lastFrame
 			
 			var bigImgArray=['img/front/big.jpg','img/top/topBig.jpg','img/front/sizeBig.jpg','img/top/sizeBig.jpg','img/front/sizeSmall.jpg']//正面大图，顶部大图，正面大图(带尺寸),顶部大图(带尺寸 2000*2000规格)
 			var topImgArray=['img/top/topSmall.jpg','img/top/sizeSmall.jpg'] //顶部小图，顶部小图(带尺寸)
@@ -183,19 +184,20 @@
 				//console.log("mouse down at point( x:" + loc.x + ", y:" + loc.y + ")");
 				startedX = loc.x;
 				started = true;
+				lastFrame=Math.floor(images.length*event.offsetX/canvas.width);
 				//document.getElementById("fullview_canvas").style.cursor = "url(./img/rotation-cursor.png) 37 25,auto!important;";
 			}
 			
             var timesPerSecond = 10 // how many times to fire the event per second
             var wait = false;
 			function doMouseMove(event) {
-				if (!wait) {
+			  if (!wait) {
 				var x = event.pageX;
 				var y = event.pageY;
 				var canvas = event.target;
 				var loc = getPointOnCanvas(canvas, x, y);
 				if (started && !topShow) {
-					var agent = navigator.userAgent.toLowerCase();
+					/*var agent = navigator.userAgent.toLowerCase();
 					var isMac = /macintosh|mac os x/i.test(navigator.userAgent);
 					var count = 0;
 					if (isMac) {
@@ -223,16 +225,34 @@
 						if (frame < 0) {
 							frame = 15;
 						}
-						redraw();
+						
+					  }*/
+					  var index=Math.floor(images.length*event.offsetX/canvas.width);
+					  if(index===lastFrame){
+						  return;
 					  }
+					  if(index>lastFrame){
+						  if(frame<15){
+							frame++  
+						  }else{
+							frame=0
+						  }
+					  }else{
+						  if(frame>0){
+							frame--  
+						  }else{
+						    frame=15
+						  }
+					  }
+					  redraw();
 					}
-					    // stop any further events
-					    wait = true;
-					    // after a fraction of a second, allow events again
-					    setTimeout(function () {
-					        wait = false;
-					    }, 1000 / timesPerSecond);
-					} 
+					// stop any further events
+					wait = true;
+					// after a fraction of a second, allow events again
+					setTimeout(function () {
+					    wait = false;
+					}, 1000 / timesPerSecond);
+				}
 			}
 
 			function doMouseUp(event) {
@@ -266,15 +286,10 @@
 			    let imageObj = images[frame];
 				ctx.clearRect(0, 0, width, height)
 				ctx.beginPath()
+				//debugger
 				ctx.drawImage(imageObj, 0, 0, width, height);
 			}
 
-			function update() {
-				redraw();
-				frame++;
-				if (frame > 15) frame = 0;
-				setTimeout(update, 300);
-			}
 			
 
 			function drawTop() {
