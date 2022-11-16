@@ -1,0 +1,30 @@
+{
+  "id": "3764165",
+  "name": "3d",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "1370",
+      "name": "放大",
+      "font_class": "fangda",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "5196148",
+      "name": "iconfont_尺子",
+      "font_class": "iconfont_chizi",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "10329815",
+      "name": "view",
+      "font_class": "view",
+      "unicode": "e635",
+      "unicode_decimal": 58933
+    }
+  ]
+}

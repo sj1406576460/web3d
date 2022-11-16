@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Full 360</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0
+			}
+
+			#fullview_canvas {
+				cursor: pointer;
+			}
+
+			.tools {
+				width: 600px;
+				height: 60px;
+				display: flex;
+				justify-content: space-around;
+			}
+
+			.tools div {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				width: 90px;
+				height: 64px;
+				padding-top: 10px;
+				box-sizing: border-box;
+				cursor: pointer;
+			}
+
+			.tools div:hover {
+				border: 1px solid #ddd;
+				background-color: #EEEEEE;
+			}
+
+
+
+			.active {
+				background-color: #EEEEEE;
+				border: 1px solid #ddd;
+			}
+
+			.tools div span {
+				height: 20px;
+				border-radius: 4px;
+				text-align: center;
+				display: inline-block;
+				cursor: pointer;
+				font-size: 30px;
+			}
+
+			.tools div p {
+				margin-top: 10px;
+				font-weight: bold;
+				font-size: 13px;
+			}
+
+			.drag-box {
+				width: 500px;
+				height: 500px;
+				overflow: hidden;
+				border: 2px solid red;
+			}
+
+			.drag-box img {
+				max-width: 100%;
+				transform: scale(2);
+			}
+
+			#dragBox {
+				width: 600px;
+				height: 640px;
+				margin: 40px auto;
+				border: 1px dashed #ddd;
+				/*background-color: hsla(0,0%,22%,1.00);*/
+				position: relative;
+			}
+
+			i.hander {
+				display: block;
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				background: #ccc;
+				filter: alpha(opacity=0);
+				-moz-opacity: 0;
+				-khtml-opacity: 0;
+				opacity: 0;
+			}
+
+			.ui-widget-content {
+				border: 0 !important;
+			}
+
+			#dragImg {
+				width: 2000px;
+				height: 2000px;
+				border: 2px solid #ddd;
+				/*background-color: #007FFF;*/
+			}
+
+			#resizable {
+				border: 2px solid red;
+			}
+			
+			@-webkit-keyframes load {
+				0% {
+					opacity: 1;
+				}
+
+				100% {
+					opacity: 0.2;
+				}
+			}
+
+			
+		</style>
+		<link rel="stylesheet" href="css/iconfont.css">
+		<script>
+			var ctx = null; // global variable 2d context
+			var frame = 12; // 23
+			var width = 0;
+			var height = 0;
+			var started = false;
+			var images = new Array();
+			
+			var topShow = false
+			var bigShow = false
+			var sizeShow= false
+			
+			
+			var bigImgArray=['img/shopBig.jpg','img/TopDownS0014.jpg','img/vh.png','img/vw.png']//正面大图，顶部大图，正面大图(带尺寸),顶部大图(带尺寸 2000*2000规格)
+			var topImgArray=['img/shoptop.png','img/shoptopSize.png'] //顶部小图，顶部小图(带尺寸)
+			var imageArray=['img/180S0001.jpg','img/180S0002.jpg','img/180S0003.jpg','img/180S0004.jpg','img/180S0005.jpg',
+			'img/180S0006.jpg','img/180S0007.jpg','img/180S0008.jpg','img/180S0009.jpg','img/180S0010.jpg','img/180S0011.jpg',
+			'img/180S0012.jpg','img/180S0013.jpg','img/180S0014.jpg','img/180S0015.jpg']
+			
+			var startedX = -1;
+			window.onload = function() {
+				var canvas = document.getElementById("fullview_canvas");
+				canvas.width = 700; // window.innerWidth;
+				canvas.height = 690; //window.innerHeight;
+				width = canvas.width;
+				height = canvas.height;
+				var bar = document.getElementById('loadProgressBar');
+				for (var i = 0; i <imageArray.length; i++) {
+					bar.value = i;
+					images[i] = new Image();
+					images[i].src=imageArray[i]
+				}
+				ctx = canvas.getContext("2d");
+				// mouse event
+				canvas.addEventListener("mousedown", doMouseDown, false);
+				canvas.addEventListener('mousemove', doMouseMove, false);
+				canvas.addEventListener('mouseup', doMouseUp, false);
+				canvas.addEventListener('mouseleave', doMouseUp, false);
+				 
+				//loaded();
+
+				// frame = 1
+				frame = 12;
+				images[frame].onload = function() {
+					redraw();
+					bar.style.display = 'none';
+				}
+			}
+
+			function doMouseDown(event) {
+				var x = event.pageX;
+				var y = event.pageY;
+				var canvas = event.target;
+				var loc = getPointOnCanvas(canvas, x, y);
+				//console.log("mouse down at point( x:" + loc.x + ", y:" + loc.y + ")");
+				startedX = loc.x;
+				started = true;
+			}
+			
+			var timesPerSecond = 60; // how many times to fire the event per second
+			var wait = false;
+
+			function doMouseMove(event) {
+				
+				if (!wait) {
+				var x = event.pageX;
+				var y = event.pageY;
+				var canvas = event.target;
+				var loc = getPointOnCanvas(canvas, x, y);
+				if (started && !topShow) {
+					var count = Math.floor(Math.abs((startedX - loc.x) / 100));
+					var frameIndex = Math.floor((startedX - loc.x) / 30);
+					while (count > 0 && count <= 1) {
+						//console.log("frameIndex = " + frameIndex);
+						count--;
+						if (frameIndex > 0) {
+							frameIndex--;
+							frame--;
+						} else if (frameIndex < 0) {
+							frameIndex++;
+							frame++;
+						} else if (frameIndex == 0) {
+							break;
+						}
+
+						if (frame >= 14) {
+							frame = 14;
+						}
+						if (frame <= 0) {
+							frame = 0;
+						}
+						redraw();
+					}
+				}
+				// stop any further events
+				wait = true;
+				// after a fraction of a second, allow events again
+				setTimeout(function () {
+				    wait = false;
+				}, 1000 / timesPerSecond);
+				
+				}
+			}
+
+			function doMouseUp(event) {
+				if(event.stopPropagation) event.stopPropagation();
+				if(event.preventDefault) event.preventDefault();
+				started=false
+				if (started) {
+					//doMouseMove(event);
+					startedX = -1;
+					started = false;
+				}
+			}
+
+			function getPointOnCanvas(canvas, x, y) {
+				var bbox = canvas.getBoundingClientRect();
+				return {
+					x: x - bbox.left * (canvas.width / bbox.width),
+					y: y - bbox.top * (canvas.height / bbox.height)
+				};
+			}
+
+			function loaded() {
+			  setTimeout(update, 600);
+			}
+
+			function redraw() {
+				// var imageObj = document.createElement("img");
+				// var imageObj = new Image();
+				if(sizeShow){
+					sizeShow=false
+					$(".tools .tools-btn").eq(2).removeClass("active");
+				}
+			    let imageObj = images[frame];
+				ctx.clearRect(0, 0, width, height)
+				ctx.beginPath()
+				ctx.drawImage(imageObj, 0, 0, width, height);
+			}
+
+			function update() {
+				redraw();
+				frame++;
+				if (frame >= 14) frame = 14;
+				setTimeout(update, 300);
+			}
+			
+
+			function drawTop() {
+				if(topShow){
+					topShow=false
+				}else{
+					topShow=true
+				}
+				drawTool()
+			}
+			
+			function drawBig() {
+				if(bigShow){
+					bigShow=false
+					document.getElementById("fullview_canvas").style.display = "block";
+				}else{
+					bigShow=true
+				}
+				drawTool()
+			}
+			function drawSize() {
+				if(sizeShow){
+					sizeShow=false
+				}else{
+					sizeShow=true
+				}
+				drawTool()
+			}
+			
+			function commonDeal(){
+				let imgHalfWidth = $("#dragImg").width() / 2;
+				let boxHalfWidth = $("#dragBox").width() / 2;
+				let imgHalfHeight = $("#dragImg").height() / 2;
+				let boxHalfHeight = $("#dragBox").height() / 2;
+				$("#resizable").css("left", -(imgHalfWidth - boxHalfWidth) + 'px');
+				$("#resizable").css("top", -(imgHalfHeight - boxHalfHeight) + 'px');
+				document.getElementById("fullview_canvas").style.display = "none";
+			}
+			
+			function drawTool(){
+				
+				 //1.bigShow=true 放大展示
+				 if(bigShow && !topShow && !sizeShow){
+					 $("#resizable").show();
+					 $("#dragImg").attr("src",bigImgArray[0])
+					 commonDeal()
+				 }
+				 
+				 if(!bigShow && !topShow && !sizeShow){
+				 	$("#dragImg").attr("src","");
+					$("#resizable").hide();
+					redraw()
+				 }
+				 
+				//2.topShow=true 顶部展示
+				 if(!bigShow && topShow && !sizeShow){
+					$("#resizable").hide();
+					 let imageObj = new Image();
+					 //imageObj.src = "img/shoptop.png";
+					 imageObj.src = topImgArray[0];
+					 imageObj.onload = function() {
+						ctx.clearRect(0, 0, width, height)
+						ctx.save();
+						ctx.beginPath()
+						ctx.drawImage(imageObj, 0, 0, width, height);
+						ctx.restore();
+					 }
+				 }
+				 
+				//3.sizeShow=true 尺寸展示
+				if(!bigShow && !topShow && sizeShow){
+					$("#dragImg").attr("src","");
+					$("#resizable").hide();
+					 document.getElementById("fullview_canvas").style.display = "block";
+					 let imageObj = new Image();
+					 imageObj.src = "img/shopSize.png";
+					 imageObj.onload = function() {
+					 ctx.clearRect(0, 0, width, height)
+					 ctx.beginPath()
+					 ctx.drawImage(imageObj, 0, 0, width, height);
+				  }
+				}
+				
+				 if(bigShow && topShow && !sizeShow){
+					 $("#resizable").show();
+					 $("#dragImg").attr("src",bigImgArray[1])
+					 commonDeal()
+				 }
+				 
+				 
+				 if(bigShow && topShow && sizeShow){
+				 		$("#resizable").show();
+				 		$("#dragImg").attr("src",bigImgArray[3])
+				 		commonDeal()
+				 }
+				 
+				 
+				 if(bigShow && !topShow && sizeShow){
+				 		$("#resizable").show();
+				 		$("#dragImg").attr("src",bigImgArray[2])
+				 		commonDeal()
+				 }
+				 
+			
+				 
+				 
+				 if(!bigShow && topShow && sizeShow){
+					$("#dragImg").attr("src","");
+				    $("#resizable").hide();
+				 	document.getElementById("fullview_canvas").style.display = "block";
+				 	let imageObj = new Image();
+				 	//imageObj.src = "img/shoptopSize.png";
+				 	imageObj.src = topImgArray[1];
+				 	imageObj.onload = function() {
+						ctx.clearRect(0, 0, width, height)
+						ctx.beginPath()
+						ctx.drawImage(imageObj, 0, 0, width, height)	
+				    }
+				}		
+				
+			}
+		</script>
+		<link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
+		<script src="js/jquery.js"></script>
+		<script src="js/dragcanvas-ui.js"></script>
+		<script src="js/jquery-ui-1.11.0.js"></script>
+		<script>
+			$(function() {
+				$('#dragBox div').each(function() {
+					$(this).dragging({
+						move: 'both',
+						randomPosition: true,
+						hander: '.hander'
+					});
+				});
+
+				$(".tools .tools-btn").click(function() {
+					if ($(this).hasClass("active")) {
+						/*if($(this).index()==0 && topShow){
+							//$(this).addClass("active")
+						}else{
+							$(this).removeClass("active")
+						}*/
+						$(this).removeClass("active")
+					} else {
+						//$(".tools .tools-btn").eq($(this).index()).addClass("active").siblings().removeClass("active")
+						$(this).addClass("active")
+					}
+				});
+
+				$("#resizable").hide()
+			})
+		</script>
+	</head>
+	<body>
+
+		<div style="width:640px;margin:0 auto;">
+			<progress id="loadProgressBar" value="0" max="7" style="opacity: 0;"></progress>
+			<div id="dragBox">
+				<canvas id="fullview_canvas"></canvas>
+				<div id="resizable" class="ui-widget-content">
+					<i class='hander'></i>
+					<img src="img/shopBig.jpg" id="dragImg">
+				</div>
+			</div>
+
+			
+			<div class="tools">
+				<div class="tools-btn" onclick="drawBig()">
+					<span class="iconfont icon-fangda"></span>
+					<p>ZOOM</p>
+				</div>
+				<div class="tools-btn" onclick="drawTop()">
+					<span class="iconfont icon-view"></span>
+					<p>TOP VIEW</p>
+				</div>
+				<div class="tools-btn" onclick="drawSize()">
+					<span class="iconfont icon-iconfont_chizi" style="color:#000;font-size:40px;margin-top:-6px;margin-bottom:3px"></span>
+					<p>DEMISONS</p>
+				</div>
+			</div>
+		</div>
+	</body>
+
+</html>

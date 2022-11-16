@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Full 360</title>
+		<link rel="stylesheet" href="css/iconfont.css">
+        <link rel="stylesheet" href="css/3d.css">
+		<link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
+		<script src="js/jquery.js"></script>
+		<script src="js/dragcanvas-ui.js"></script>
+		<script src="js/jquery-ui-1.11.0.js"></script>
+		<script src="js/3d.js"></script>
+		<script type="text/javascript">
+			var canvasOptions = {
+				id: 'fullview_canvas',
+				canvas: {}, //全局canvas对象
+				ctx: null, // 全局canvas的2d对象
+				width: 0,
+				height: 0,
+				started: false,
+				images: new Array(), //循环渲染的数组
+				initWidth: 558, //初始图片宽度
+				initHeight: 558, //初始图片高度
+				//三个按钮的状态
+				topShow: false,
+				bigShow: false,
+				sizeShow: false,
+				bigImgArray: ['img/shopBig.jpg','img/TopDownS0014.jpg','img/vh.png','img/vw.png',
+					'img/shopSize.png'
+				],
+				//正面大图，顶部大图，正面大图(带尺寸),顶部大图(带尺寸 2000*2000规格)
+				topImgArray: ['img/shoptop.png','img/shoptopSize.png'], //顶部小图，顶部小图(带尺寸)
+				imageArray: ['img/180S0001.jpg','img/180S0002.jpg','img/180S0003.jpg','img/180S0004.jpg','img/180S0005.jpg',
+							'img/180S0006.jpg','img/180S0007.jpg','img/180S0008.jpg','img/180S0009.jpg','img/180S0010.jpg','img/180S0011.jpg',
+							'img/180S0012.jpg','img/180S0013.jpg','img/180S0014.jpg','img/180S0015.jpg','img/180S0015.jpg'
+				],
+				defaultImg: 'img/shopBig.jpg', //默认展示大图
+				frame: 12, //默认展示索引为frame哪一张正常大小图片 
+				devicePixelRatio: window.devicePixelRatio,//获取设备像素比
+			}
+
+			window.onload = function() {
+				$("#canvas-container").canvasDrag(canvasOptions);
+			}
+		</script>
+	</head>
+	<body>
+        <!--初始化容器-->
+		<div style="width:600px;" id="canvas-container">
+			<!--<div id="dragBox">
+				<canvas id="fullview_canvas" style="width:558px;height:558px;"></canvas>
+				<div id="resizable" class="ui-widget-content">
+					<i class='hander'></i>
+					<img src="" id="dragImg">
+				</div>
+			</div>
+			<div class="tools">
+				<div class="tools-btn ml-80" id="draw-big">
+					<span class="iconfont icon-fangda"></span>
+					<p>ZOOM</p>
+				</div>
+				<div class="tools-btn" id="draw-top">
+					<span class="iconfont icon-view"></span>
+					<p>TOP VIEW</p>
+				</div>
+				<div class="tools-btn" id="draw-size">
+					<span class="iconfont icon-iconfont_chizi"
+						style="color:#000;font-size:40px;margin-top:-6px;margin-bottom:3px"></span>
+					<p>DEMISONS</p>
+				</div>
+			</div>-->
+		</div>
+	</body>
+
+</html>
