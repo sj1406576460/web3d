@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="css//index.css">
+  <!-- 引入Babylonjs -->
+  <script src="https://cdn.babylonjs.com/babylon.js"></script>
+  <!-- 允许将模型导入场景 -->
+  <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script> 
+  <!-- 允许使用触摸屏 -->
+  <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
+  <title>Demo</title>
+</head>
+<style>
+  html, body {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  #show {
+    width: 100%;
+    height: 100%;
+  }
+</style>
+
+<body>
+  <!--必须是canvas元素-->
+  <canvas id="show" touch-action="none"></canvas>
+</body>
+<script>
+  var canvas = document.getElementById("show");  // 创建画布
+  var engine = new BABYLON.Engine(canvas, true);  // 创建渲染引擎
+
+  var create_scene = function () {
+    // 创建一个场景并返回
+    var scene = new BABYLON.Scene(engine);     // 创建场景
+    /* 创建一个弧形旋转摄像机. 参数说明如下:
+     * "Camera":  摄像机名称
+     * 第一个 Math.PI / 2 : alpha, 可以理解为水平角度.具体请看文档 
+     * 第二个 Math.PI / 2 : beta, 可以理解为垂直角度.具体请看文档 
+     * 2: radius, 这个是半径的意思.
+     * new BABYLON.Vector3(0, 0, 5) : target position.目标点的三维位置,可以理解为中心.这是一个向量类的实例
+     * scene: scene,场景变量.
+     * 详细文档请看这里: 看着图比较好理解的.https://doc.babylonjs.com/babylon101/cameras#arc-rotate-camera
+    */
+    var camera = new BABYLON.ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 2, 2, new BABYLON.Vector3(0, 0, 5), scene);
+    /* 让摄像机控制画布.
+     * canvas: element 是一个dom对象.
+     * true: noPreventDefault 是否阻止元素的默认事件.
+     * api: https://doc.babylonjs.com/api/classes/babylon.targetcamera
+    */
+    camera.attachControl(canvas, true);
+    /* 创建2个光源. HemisphericLight是半球形光源.PointLight是点光源.
+     * 第一个参数: name. 名字.
+     * 第二个参数: direction, 方向,是一个向量的实例.
+     * 第三个参数: scene, 场景.
+     * api: https://doc.babylonjs.com/api/classes/babylon.hemisphericlight#constructor
+    */
+    var light1 = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 0), scene);
+    var light2 = new BABYLON.PointLight("light2", new BABYLON.Vector3(0, 1, -1), scene);
+    /* 创建一个球形的控制网格. options参数,请看api
+     * 第一个参数 name: 字符串, 名字
+     * 第二个参数 options: object, 参数对象.
+     * 第三个参数 scene: 场景
+     * api: https://doc.babylonjs.com/api/classes/babylon.meshbuilder#createsphere
+    */
+    var sphere = BABYLON.MeshBuilder.CreateSphere("sphere", { diameter: 2 }, scene);
+    return scene;
+  };
+
+  var scene = create_scene();
+  /* 不停的渲染场景.
+   * runRenderLoop 是一个渲染循环.
+   * api: https://doc.babylonjs.com/api/classes/babylon.engine#runrenderloop
+  */
+  engine.runRenderLoop(function () {
+    scene.render();  // 渲染场景
+  });
+
+  window.addEventListener("resize", function () {
+    engine.resize();
+  });
+
+</script>
+
+</html>

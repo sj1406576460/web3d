@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<link rel="stylesheet" href="css//index.css">
+		<!-- 引入Babylonjs -->
+		<script src="https://cdn.babylonjs.com/babylon.js"></script>
+		<!-- 允许将模型导入场景 -->
+		<script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+		<!-- 允许使用触摸屏 -->
+		<script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
+		<title>Demo</title>
+	</head>
+	<style>
+		html,
+		body {
+			overflow: hidden;
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
+
+		#show {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+
+	<body>
+		<!--必须是canvas元素-->
+		<canvas id="show" touch-action="none"></canvas>
+	</body>
+	<script>
+		var canvas = document.getElementById("show"); // 创建画布
+		var engine = new BABYLON.Engine(canvas, true); // 创建渲染引擎
+		// 创建一个场景并返回
+		//var scene = new BABYLON.Scene(engine); // 创建场景
+		var create_scene = function () {
+		    /* 创建一个场景 */
+		    var scene = new BABYLON.Scene(engine);
+		    /* 创建一个弧形旋转摄像机 */
+		    //var camera = new BABYLON.ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 2, 2, new BABYLON.Vector3(0, 0, 5), scene);
+			/*var camera = new BABYLON.FollowCamera("FollowCam", new BABYLON.Vector3( 0, 0, -6), scene);
+			// 在全局坐标系下相机距离场景的距离
+			camera.radius = 30;
+			
+			//在局部坐标下相机的高度高于目标的高度的值
+			camera.heightOffset = 10;
+			
+			// 相机在x y平面内围绕目标的局部原点旋转值
+			camera.rotationOffset = 20;
+			
+			// 摄像机从当前位置移动到目标位置的加速度
+			camera.cameraAcceleration = 0.005
+			
+			// 最大加速值
+			camera.maxCameraSpeed = 10
+
+		    /*让摄像机控制画布 */
+			var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 20, new BABYLON.Vector3(0, 0, 1), scene);
+			// 这是相机的位置，覆盖相机的alpha、beta、半径值
+			camera.setPosition(new BABYLON.Vector3(0, 0, -20));
+		    camera.attachControl(canvas, true);
+		    return scene;
+		};
+		
+		var scene = create_scene();
+		//使用AssetsManager创建一个加载器
+		var loader = new BABYLON.AssetsManager(scene);
+		//加载模型文件
+		var bunny = loader.addMeshTask("bunny", "", "img/", "2.STL");
+		bunny.onSuccess = (e) => {
+			console.log('mesh加载完毕')
+		}
+
+		loader.onFinish = function() {
+			engine.runRenderLoop(function() {
+				scene.render();
+			});
+		};
+		loader.load();
+
+
+		window.addEventListener("resize", function() {
+			engine.resize();
+		});
+	</script>
+
+</html>
