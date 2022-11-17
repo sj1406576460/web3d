@@ -50,13 +50,27 @@ const init = () => {
 		/*var material = new THREE.MeshPhongMaterial({color:0x48D1CC});
 		var mesh = new THREE.Mesh(geometry,material);*/
 		// 创建材质
+		console.log(1)
 		const material = new THREE.MeshLambertMaterial({ color: 0x7777ff })
 	    var mesh = new THREE.Mesh(geometry, material)
 		mesh.rotation.x = -0.5 * Math.PI
 		mesh.scale.set(0.6, 0.6, 0.6)
 	    scene.add(mesh);
-	    animate();
 	});
+	
+	loader.load("model/2.STL", geometry => {
+		/*var material = new THREE.MeshPhongMaterial({color:0x48D1CC});
+		var mesh = new THREE.Mesh(geometry,material);*/
+		// 创建材质
+		console.log(2)
+		const materia = new THREE.MeshLambertMaterial({ color: 0x7777ff })
+	    var mesh2 = new THREE.Mesh(geometry, materia)
+		mesh2.rotation.x = -0.5 * Math.PI
+		mesh2.scale.set(0.6, 0.6, 0.6)
+		mesh2.position.set(120,200,120);
+	    scene.add(mesh2);
+	});
+	animate();
 };
  
 const animate = () => {
