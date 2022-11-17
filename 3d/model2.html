@@ -61,9 +61,9 @@
 			camera.maxCameraSpeed = 10
 
 		    /*让摄像机控制画布 */
-			var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 20, new BABYLON.Vector3(0, 0, 1), scene);
+			var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 10, new BABYLON.Vector3(0, 0, 2), scene);
 			// 这是相机的位置，覆盖相机的alpha、beta、半径值
-			camera.setPosition(new BABYLON.Vector3(0, 0, -20));
+			camera.setPosition(new BABYLON.Vector3(0, 0, -10));
 		    camera.attachControl(canvas, true);
 		    return scene;
 		};
