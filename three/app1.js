@@ -81,23 +81,67 @@ const init = () => {
 		mesh2.rotation.x = -0.5 * Math.PI
 		mesh2.scale.set(0.6, 0.6, 0.6)
 		//mesh2.position.set(420,200,120);
-		mesh2.translateX(1); //网格模型mesh平移
+		mesh2.translateX(0.5); //网格模型mesh平移
 		//mesh2.rotateX(Math.PI/4)
 		//scene.add(mesh2);
 		group.add(mesh2)
+	});
+	
+	loader.load("model/1180815.stl", geometry => {
+		/*var material = new THREE.MeshPhongMaterial({color:0x48D1CC});
+		var mesh = new THREE.Mesh(geometry,material);*/
+		// 创建材质
+		console.log(3)
+		const materia = new THREE.MeshLambertMaterial({
+			color: 0x7777ff
+		})
+		geometry.name = "stl003"
+		let mesh3 = new THREE.Mesh(geometry, materia)
+		mesh3.rotation.x = -0.5* Math.PI
+		mesh3.rotation.y = 0* Math.PI
+		mesh3.rotation.z = 0* Math.PI
+		mesh3.scale.set(0.005,0.005, 0.005)
+		mesh3.translateX(-0.75); //网格模型mesh平移
+		group.add(mesh3)
 	});
 
 	const geometry = new THREE.TorusGeometry(0.2, 0.1, 2, 10);
 	const material = new THREE.MeshBasicMaterial({
 		color: 0x7777ff
 	});
-	geometry.name = "stl003"
+	geometry.name = "stl004"
 	const torus = new THREE.Mesh(geometry, material);
-	torus.position.set(-1, 0, 0)
+	torus.position.set(-2, 0, 0)
 	torus.rotation.x = 1 * Math.PI
-	group.add(torus)
+	//group.add(torus)
 	scene.add(group);
 	console.log(scene)
+	
+	//RenderPass这个通道会渲染场景，但不会将渲染结果输出到屏幕上
+	 const renderScene = new THREE.RenderPass(scene, camera)
+	 // THREE.OutlinePass(resolution, scene, camera, selectedObjects)
+	 // resolution 分辨率
+	 // scene 场景
+	 // camera 相机
+	 // selectedObjects 需要选中的物体对象, 传入需要边界线进行高亮处理的对象
+	 const outlinePass = new THREE.OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera, torus);
+	 console.log(outlinePass);
+	 outlinePass.renderToScreen = true;
+	 outlinePass.edgeStrength = 3 //粗
+	 outlinePass.edgeGlow = 2 //发光
+	 outlinePass.edgeThickness = 2 //光晕粗
+	 outlinePass.pulsePeriod = 1 //闪烁
+	 outlinePass.usePatternTexture = false //是否使用贴图
+	 outlinePass.visibleEdgeColor.set('yellow'); // 设置显示的颜色
+	 outlinePass.hiddenEdgeColor.set('white'); // 设置隐藏的颜色
+		
+	 //创建效果组合器对象，可以在该对象上添加后期处理通道，通过配置该对象，使它可以渲染我们的场景，并应用额外的后期处理步骤，在render循环中，使用EffectComposer渲染场景、应用通道，并输出结果。
+	 const bloomComposer = new THREE.EffectComposer(renderer)
+	 bloomComposer.setSize(window.innerWidth, window.innerHeight);
+	 bloomComposer.addPass(renderScene);
+	 // 眩光通道bloomPass插入到composer
+	 bloomComposer.addPass(outlinePass)
+	  
 	animate();
 	
 	//获取与射线相交的对象数组
@@ -142,7 +186,7 @@ const init = () => {
 				if (intersects[i].object.geometry.name === 'stl001') {
 					intersects[i].object.material.color.set(0xff0000); //变为红色
 				}
-				render();
+				//render();
 			}
 		} else {
 			console.log('未选中 Mesh!');
