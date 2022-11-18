@@ -1,4 +1,4 @@
-let scene, camera, renderer;
+let scene, camera, renderer, composer, outlinePass;
 
 const init = () => {
 	// Scene
@@ -16,6 +16,8 @@ const init = () => {
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	document.body.appendChild(renderer.domElement);
+
+
 
 	// Camera
 	const aspect = window.innerWidth / window.innerHeight;
@@ -40,6 +42,8 @@ const init = () => {
 	spotLight1.position.set(-150, -150, -150)
 	spotLight1.castShadow = true
 	scene.add(spotLight1)
+
+
 
 	var group = new THREE.Group();
 
@@ -86,21 +90,23 @@ const init = () => {
 		//scene.add(mesh2);
 		group.add(mesh2)
 	});
-	
+
 	loader.load("model/1180815.stl", geometry => {
 		/*var material = new THREE.MeshPhongMaterial({color:0x48D1CC});
 		var mesh = new THREE.Mesh(geometry,material);*/
 		// 创建材质
+		//获取模型的大小
+		console.log(JSON.stringify(geometry.computeBoundingBox()));
 		console.log(3)
 		const materia = new THREE.MeshLambertMaterial({
 			color: 0x7777ff
 		})
 		geometry.name = "stl003"
 		let mesh3 = new THREE.Mesh(geometry, materia)
-		mesh3.rotation.x = -0.5* Math.PI
-		mesh3.rotation.y = 0* Math.PI
-		mesh3.rotation.z = 0* Math.PI
-		mesh3.scale.set(0.005,0.005, 0.005)
+		mesh3.rotation.x = -0.5 * Math.PI
+		mesh3.rotation.y = 0 * Math.PI
+		mesh3.rotation.z = 0 * Math.PI
+		mesh3.scale.set(0.005, 0.005, 0.005)
 		mesh3.translateX(-0.75); //网格模型mesh平移
 		group.add(mesh3)
 	});
@@ -116,83 +122,84 @@ const init = () => {
 	//group.add(torus)
 	scene.add(group);
 	console.log(scene)
-	
-	//RenderPass这个通道会渲染场景，但不会将渲染结果输出到屏幕上
-	 const renderScene = new THREE.RenderPass(scene, camera)
-	 // THREE.OutlinePass(resolution, scene, camera, selectedObjects)
-	 // resolution 分辨率
-	 // scene 场景
-	 // camera 相机
-	 // selectedObjects 需要选中的物体对象, 传入需要边界线进行高亮处理的对象
-	 const outlinePass = new THREE.OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera, torus);
-	 console.log(outlinePass);
-	 outlinePass.renderToScreen = true;
-	 outlinePass.edgeStrength = 3 //粗
-	 outlinePass.edgeGlow = 2 //发光
-	 outlinePass.edgeThickness = 2 //光晕粗
-	 outlinePass.pulsePeriod = 1 //闪烁
-	 outlinePass.usePatternTexture = false //是否使用贴图
-	 outlinePass.visibleEdgeColor.set('yellow'); // 设置显示的颜色
-	 outlinePass.hiddenEdgeColor.set('white'); // 设置隐藏的颜色
-		
-	 //创建效果组合器对象，可以在该对象上添加后期处理通道，通过配置该对象，使它可以渲染我们的场景，并应用额外的后期处理步骤，在render循环中，使用EffectComposer渲染场景、应用通道，并输出结果。
-	 const bloomComposer = new THREE.EffectComposer(renderer)
-	 bloomComposer.setSize(window.innerWidth, window.innerHeight);
-	 bloomComposer.addPass(renderScene);
-	 // 眩光通道bloomPass插入到composer
-	 bloomComposer.addPass(outlinePass)
-	  
+
+
+	function outlineOperate(selectedObjects) {
+		composer = new THREE.EffectComposer(renderer);
+		const renderPass = new THREE.RenderPass(scene, camera);
+		composer.addPass(renderPass);
+		outlinePass = new THREE.OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene,
+		camera);
+		composer.addPass(outlinePass);
+		outlinePass.edgeStrength = 10; //边缘强度
+		outlinePass.edgeGlow = 1; //缓缓接近
+		outlinePass.edgeThickness = 4; //边缘厚度
+		outlinePass.pulsePeriod = 1; //脉冲周期
+		// 自定义的着色器通道 作为参数
+		var effectFXAA = new THREE.ShaderPass(FXAAShader)
+		effectFXAA.uniforms.resolution.value.set(1 / window.innerWidth, 1 / window.innerHeight)
+		effectFXAA.renderToScreen = true
+		composer.addPass(effectFXAA)
+	}
+
+
 	animate();
-	
+
 	//获取与射线相交的对象数组
 	function getIntersects(event) {
-		event.preventDefault(); // 阻止默认的点击事件执行, https://developer.mozilla.org/zh-CN/docs/Web/API/Event/preventDefault
+		event
+			.preventDefault(); // 阻止默认的点击事件执行, https://developer.mozilla.org/zh-CN/docs/Web/API/Event/preventDefault
 		//console.log("event.clientX:" + event.clientX);
 		//console.log("event.clientY:" + event.clientY);
-	
+
 		//声明 rayCaster 和 mouse 变量
 		let rayCaster = new THREE.Raycaster();
 		let mouse = new THREE.Vector2();
-	
+
 		//通过鼠标点击位置，计算出raycaster所需点的位置，以屏幕为中心点，范围-1到1
-		mouse.x = ((event.clientX - document.body.getBoundingClientRect().left) / document.body.offsetWidth) * 2 - 1;
-		mouse.y = -((event.clientY - document.body.getBoundingClientRect().top) / document.body.offsetHeight) * 2 + 1; //这里为什么是-号，没有就无法点中
-	
+		mouse.x = ((event.clientX - document.body.getBoundingClientRect().left) / document.body.offsetWidth) * 2 -
+			1;
+		mouse.y = -((event.clientY - document.body.getBoundingClientRect().top) / document.body.offsetHeight) * 2 +
+			1; //这里为什么是-号，没有就无法点中
+
 		//通过鼠标点击的位置(二维坐标)和当前相机的矩阵计算出射线位置
 		rayCaster.setFromCamera(mouse, camera);
-	
+
 		//获取与射线相交的对象数组， 其中的元素按照距离排序，越近的越靠前。
 		//+true，是对其后代进行查找，这个在这里必须加，因为模型是由很多部分组成的，后代非常多。
 		console.log(group)
 		let intersects = rayCaster.intersectObjects(group.children, true);
-	
+
 		//返回选中的对象
 		// console.log(intersects)
 		return intersects;
 	}
-	
+
 	//鼠标双击触发的方法
 	function onMouseDblclick(event) {
 		//获取raycaster和所有模型相交的数组，其中的元素按照距离排序，越近的越靠前
 		let intersects = getIntersects(event);
-		//console.log(intersects);
+		console.log(intersects);
 		console.log(intersects[0].object.geometry.name);
-	
+        outlineOperate([intersects[0].object])
 		//获取选中最近的Mesh对象
 		//instance坐标是对象，右边是类，判断对象是不是属于这个类的
-		if (intersects.length !== 0 && intersects[0].object.geometry.name === 'stl001') {
-	
+		if (intersects.length !== 0 && intersects[0].object.geometry.name === 'stl003') {
+
 			for (var i = 0; i < intersects.length; i++) {
-				if (intersects[i].object.geometry.name === 'stl001') {
+				if (intersects[i].object.geometry.name === 'stl003') {
 					intersects[i].object.material.color.set(0xff0000); //变为红色
+				} else {
+
 				}
 				//render();
 			}
+			outlinePass.selectedObjects = intersects;
 		} else {
 			console.log('未选中 Mesh!');
 		}
 	}
-	
+
 	document.addEventListener('click', onMouseDblclick);
 };
 
@@ -204,6 +211,9 @@ const init = () => {
 const animate = () => {
 	renderer.render(scene, camera);
 	requestAnimationFrame(animate);
+	if (composer) {
+	   composer.render()
+	}
 }
 
 init();
