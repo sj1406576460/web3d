@@ -21,7 +21,7 @@ const init = () => {
    // camera.rotation.y = (90 / 180 ) * Math.PI;
     camera.position.set(0,0,2);
  
-    // Camera Controls
+    // Camera Controls 监听鼠标事件
     let controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.addEventListener("change", renderer);
  
@@ -67,7 +67,7 @@ const init = () => {
 	    var mesh2 = new THREE.Mesh(geometry, materia)
 		mesh2.rotation.x = -0.5 * Math.PI
 		mesh2.scale.set(0.6, 0.6, 0.6)
-		mesh2.position.set(120,200,120);
+		mesh2.position.set(-0.5,0,0);
 	    scene.add(mesh2);
 	});
 	animate();

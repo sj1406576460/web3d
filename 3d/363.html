@@ -10,7 +10,7 @@
 			}
 
 			#fullview_canvas {
-			  cursor: url(./images/rotation-cursor.png) 37 25,auto!important;
+				cursor: pointer;
 			}
 
 			.tools {
@@ -78,14 +78,6 @@
 				/*background-color: hsla(0,0%,22%,1.00);*/
 				position: relative;
 			}
-			
-			.img-rotation{
-				position:absolute;
-				top:10px;
-				left:10px;
-				width:80px;
-				height:42px;
-			}
 
 			i.hander {
 				display: block;
@@ -128,17 +120,14 @@
 			var topShow = false
 			var bigShow = false
 			var sizeShow= false
-			var lastFrame
 			
-			var bigImgArray=['images/front/big.png','images/top/big.png','images/front/sizeBig.png','images/top/sizeBig.png','images/front/sizeSmall.png']//正面大图，顶部大图，正面大图(带尺寸),顶部大图(带尺寸 2000*2000规格)
-			var topImgArray=['images/top/small.png','images/top/sizeSmall.png'] //顶部小图，顶部小图(带尺寸)
-			var imageArray=['images/normal/1.png','images/normal/2.png','images/normal/3.png','images/normal/4.png','images/normal/5.png',
-			'images/normal/6.png','images/normal/7.png','images/normal/8.png','images/normal/9.png','images/normal/10.png',
-			'images/normal/11.png','images/normal/12.png','images/normal/13.png','images/normal/14.png','images/normal/15.png','images/normal/16.png','images/normal/17.png','images/normal/18.png','images/normal/19.png','images/normal/20.png',
-			'images/normal/21.png','images/normal/22.png','images/normal/23.png','images/normal/24.png','images/normal/25.png','images/normal/26.png','images/normal/27.png','images/normal/28.png','images/normal/29.png','images/normal/30.png',
-			'images/normal/31.png','images/normal/32.png']
-			var defaultImg='images/front/big.png'
-			var frame = 12; //默认展示哪一张图片
+			var bigImgArray=['img/front/big.jpg','img/top/topBig.jpg','img/front/sizeBig.jpg','img/top/sizeBig.jpg','img/front/sizeSmall.jpg']//正面大图，顶部大图，正面大图(带尺寸),顶部大图(带尺寸 2000*2000规格)
+			var topImgArray=['img/top/topSmall.jpg','img/top/sizeSmall.jpg'] //顶部小图，顶部小图(带尺寸)
+			var imageArray=['img/normal/01.jpg','img/normal/02.jpg','img/normal/03.jpg','img/normal/04.jpg','img/normal/05.jpg',
+			'img/normal/06.jpg','img/normal/07.jpg','img/normal/08.jpg','img/normal/09.jpg','img/normal/10.jpg',
+			'img/normal/11.jpg','img/normal/12.jpg','img/normal/13.jpg','img/normal/14.jpg','img/normal/15.jpg','img/normal/16.jpg']
+			var defaultImg='img/front/big.jpg'
+			var frame = 3; //默认展示哪一张图片
 			
 			var startedX = -1;
 			window.onload = function() {
@@ -194,14 +183,13 @@
 				//console.log("mouse down at point( x:" + loc.x + ", y:" + loc.y + ")");
 				startedX = loc.x;
 				started = true;
-				lastFrame=Math.floor(images.length*event.offsetX/canvas.width);
-				//document.getElementById("fullview_canvas").style.cursor = "url(./img/rotation-cursor.png) 37 25,auto!important;";
 			}
 			
-            var timesPerSecond = 20 // how many times to fire the event per second
+            var timesPerSecond = 30; // how many times to fire the event per second
             var wait = false;
 			function doMouseMove(event) {
-			  if (!wait) {
+				
+				if (!wait) {
 				var x = event.pageX;
 				var y = event.pageY;
 				var canvas = event.target;
@@ -212,47 +200,46 @@
 					var count = 0;
 					if (isMac) {
 					   //console.log("mac")
-					   count=Math.floor(Math.abs((startedX - loc.x) / 50));
+					   count=Math.floor(Math.abs((startedX - loc.x) / 40));
 					}else{
 					   //console.log("windows")
-					   count=Math.floor(Math.abs((startedX - loc.x) / 80))
+					   count=Math.floor(Math.abs((startedX - loc.x) / 100))
 					}
-					var frameIndex = Math.floor((startedX - loc.x) / 50);
-					//console.log(frameIndex);
-					if (count > 0 ) {
+					var frameIndex = Math.floor((startedX - loc.x) / 30);
+					while (count > 0 && count <= 1) {
 						//console.log("frameIndex = " + frameIndex);
 						count--;
-						if (frameIndex >= 0 ) {
+						if (frameIndex > 0) {
 							frameIndex--;
 							frame--;
-						} else {
+						} else if (frameIndex < 0) {
 							frameIndex++;
 							frame++;
+						} else if (frameIndex == 0) {
+							break;
 						}
-						console.log(frame)
 
-						if (frame > 31) {
+						if (frame > 15) {
 							frame = 0;
 						}
 						if (frame < 0) {
-							frame = 31;
+							frame = 15;
 						}
+						redraw();
 					  }
-					  redraw();
 					}
-					// stop any further events
-					wait = true;
-					// after a fraction of a second, allow events again
-					setTimeout(function () {
-					    wait = false;
-					}, 1000 / timesPerSecond);
-				}
+					    // stop any further events
+					    wait = true;
+					    // after a fraction of a second, allow events again
+					    setTimeout(function () {
+					        wait = false;
+					    }, 1000 / timesPerSecond);
+					} 
 			}
 
 			function doMouseUp(event) {
 				if(event.stopPropagation) event.stopPropagation();
 				if(event.preventDefault) event.preventDefault();
-				//document.getElementById("fullview_canvas").style.cursor = "auto";
 				started=false
 				if (started) {
 					//doMouseMove(event);
@@ -280,10 +267,15 @@
 			    let imageObj = images[frame];
 				ctx.clearRect(0, 0, width, height)
 				ctx.beginPath()
-				//debugger
 				ctx.drawImage(imageObj, 0, 0, width, height);
 			}
 
+			function update() {
+				redraw();
+				frame++;
+				if (frame > 15) frame = 0;
+				setTimeout(update, 300);
+			}
 			
 
 			function drawTop() {
@@ -439,7 +431,6 @@
 		<div style="width:640px;margin:0 auto;">
 			<progress id="loadProgressBar" value="0" max="7" style="opacity: 0;"></progress>
 			<div id="dragBox">
-				<img src="images/360.png" class="img-rotation"/>
 				<canvas id="fullview_canvas" style="width:558px;height:558px;"></canvas>
 				<div id="resizable" class="ui-widget-content">
 					<i class='hander'></i>
