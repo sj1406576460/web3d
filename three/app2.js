@@ -83,9 +83,9 @@ const init = () => {
 		group.add(mesh13)
 	});
 
-	loader.load("model/2.STL", geometry => {
+	/*loader.load("model/2.STL", geometry => {
 		/*var material = new THREE.MeshPhongMaterial({color:0x48D1CC});
-		var mesh = new THREE.Mesh(geometry,material);*/
+		var mesh = new THREE.Mesh(geometry,material);
 		// 创建材质
 		console.log(2)
 		const materia = new THREE.MeshLambertMaterial({
@@ -108,7 +108,27 @@ const init = () => {
 		console.log("mesh2模型大小" + JSON.stringify(size));
 		mesh2['x'] = size.x
 		group.add(mesh2)
-	});
+	});*/
+	
+	/*loader.load("model/1180818.stl", geometry => {
+		// 创建材质
+		console.log(2)
+		const materia = new THREE.MeshLambertMaterial({
+			color: 0x7777ff
+		})
+		geometry.name = "stl002"
+		let mesh6 = new THREE.Mesh(geometry, materia)
+		mesh6['addLeft'] = false
+		mesh6['addRight'] = true
+		mesh6.rotation.x = -0.5 * Math.PI
+		mesh6.scale.set(0.005, 0.005, 0.005)
+		
+		let box6 = new THREE.Box3().setFromObject(mesh6);
+		let size = box6.getSize();
+		console.log("mesh6模型大小" + JSON.stringify(size));
+		mesh6['x'] = size.x
+		group.add(mesh6)
+	});*/
 
 	loader.load("model/1180815.stl", geometry => {
 		/*var material = new THREE.MeshPhongMaterial({color:0x48D1CC});
@@ -133,7 +153,7 @@ const init = () => {
 		let box3 = new THREE.Box3().setFromObject(mesh3);
 		let size = box3.getSize();
 		mesh3['x'] = size.x
-		console.log("mesh2模型大小" + JSON.stringify(size));
+		console.log("mesh3模型大小" + JSON.stringify(size));
 		group.add(mesh3)
 
 	});
@@ -163,9 +183,7 @@ const init = () => {
 		mesh5['x'] = size.x
 		group.add(mesh5)
 	});
-
-
-
+	
 
 
 	const geometry = new THREE.TorusGeometry(0.2, 0.1, 2, 10);
@@ -177,8 +195,6 @@ const init = () => {
 	torus.position.set(-2, 0, 0)
 	torus.rotation.x = 1 * Math.PI
 	//group.add(torus)
-	scene.add(group);
-	console.log(scene)
 
 
 	// 创建一个矩形平面几何体，宽度100，长度200
@@ -197,37 +213,7 @@ const init = () => {
 	//scene.add(mesh6)
 
 
-	/**
-	 * 包围盒全自动计算：模型整体居中
-	 */
-	var box3 = new THREE.Box3()
-	// 计算层级模型group的包围盒
-	// 模型group是加载一个三维模型返回的对象，包含多个网格模型
-	box3.expandByObject(group)
-	// 计算一个层级模型对应包围盒的几何体中心在世界坐标中的位置
-	var center = new THREE.Vector3()
-	box3.getCenter(center)
-	console.log('查看几何体中心坐标', center);
-	console.log('查看组合体', group);
-	/* 重新设置模型的位置，使之居中。*/
-	group.position.x = group.position.x - center.x
-	group.position.y = group.position.y - center.y
-	group.position.z = group.position.z - center.z
-	let totalWidth = 0
-	group.children.forEach(item => {
-		totalWidth += item.x
-	})
-	console.log(totalWidth)
-	let initX = -totalWidth / 2 + center
-	group.children.map((item, index) => {
-		item.position.x = initX
-		initX = initX + item.x
-		return {
-			item
-		}
-	})
-
-	console.log(group);
+	
 
 
 	function outlineOperate(selectedObjects) {
@@ -322,11 +308,49 @@ const init = () => {
 
 
 const animate = () => {
-	renderer.render(scene, camera);
-	requestAnimationFrame(animate);
-	if (composer) {
-		composer.render()
-	}
+	/**
+	 * 包围盒全自动计算：模型整体居中
+	 */
+	/*var box3 = new THREE.Box3()
+	// 计算层级模型group的包围盒
+	// 模型group是加载一个三维模型返回的对象，包含多个网格模型
+	box3.expandByObject(group)
+	// 计算一个层级模型对应包围盒的几何体中心在世界坐标中的位置
+	var center = new THREE.Vector3()
+	box3.getCenter(center)
+	console.log('查看几何体中心坐标', center);
+	console.log('查看组合体', group);
+	/* 重新设置模型的位置，使之居中。
+	group.position.x = group.position.x - center.x
+	group.position.y = group.position.y - center.y
+	group.position.z = group.position.z - center.z*/
+	console.log(group)
+		let totalWidth = 0
+		if(group.children.length!==0){
+			group.children.forEach(item => {
+				totalWidth += item.x
+			})
+			console.log(totalWidth)
+			let initX = -totalWidth / 2
+			let list=group.children;
+			list.forEach((item, index) => {
+				if(index==0){
+					item.position.x = initX+0.28
+				}else{
+					item.position.x = initX+0.4
+				}
+				initX = initX + item.x
+				group.children[index]=item
+			})
+		}
+		scene.add(group);
+		renderer.render(scene, camera);
+		//scene.updateMatrixWorld(true);
+		//camera.updateMatrixWorld(true);
+		requestAnimationFrame(animate);
+		if (composer) {
+			composer.render()
+		}
 }
 
 init();
