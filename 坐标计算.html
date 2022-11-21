@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+	</body>
+	<script type="text/javascript">
+		let boxList=[
+			{name:"st01",w:200,h:100,left:true,right:false,x:0},
+            {name:"st02",w:100,h:100,left:false,right:true,x:0},
+			{name:"st03",w:200,h:100,left:true,right:false,x:0},
+			{name:"st04",w:500,h:100,left:false,right:true,x:0},
+        ]
+		/*
+		 选中的产品能否加到已有的产品里，要加个逻辑判断
+		 比如模型1，左边可以添加，模型2，右边可以添加
+		 那么，先添加模型1，模型2可以加到模型1的左边
+		 先添加模型2，模型1可以加到模型2的右边
+		 模型1，模型2组合到一起后，这个组合变成left:false,right:false,
+		 那么其它模型就不能再往里添加了。
+		 */
+		
+		let totalWidth=0
+		boxList.forEach(item=>{
+			totalWidth+=item.w
+		})
+		console.log(totalWidth)
+		let initX=-totalWidth/2
+		const newBoxList = boxList.map((item,index) => {
+			item.x=initX
+			initX=initX+item.w
+		    return {
+		        item
+		    }
+		})
+		console.log(newBoxList)
+	</script>
+</html>
