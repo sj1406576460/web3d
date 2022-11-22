@@ -1,9 +1,12 @@
 let scene, camera, group, renderer, composer, outlinePass;
+var initWidth = 1200
+var initHeight = 600
+var selectedObject=null
 
 const init = () => {
 	// Scene
 	scene = new THREE.Scene();
-	scene.background = new THREE.Color(0x000000, 0.01);
+	scene.background = new THREE.Color(0x000000, 0.01);//
 
 	// Renderer
 	renderer = new THREE.WebGLRenderer({
@@ -14,20 +17,25 @@ const init = () => {
 	renderer.shadowMap.type = THREE.PCFSoftShadowMap
 	renderer.setClearColor(0x000000, 1) // 设置背景颜色
 	renderer.setPixelRatio(window.devicePixelRatio);
-	renderer.setSize(window.innerWidth, window.innerHeight);
-	document.body.appendChild(renderer.domElement);
+	renderer.setSize(initWidth, initHeight);
+	// 把渲染器的渲染结果canvas对象插入到body
+	//document.body.appendChild(renderer.domElement);
+	// 把渲染器的渲染结果canvas对象插入到'pos'对应的div元素中
+	document.getElementById("canvasBox").appendChild(renderer.domElement);
+
 
 
 
 	// Camera
-	const aspect = window.innerWidth / window.innerHeight;
+	const aspect = initHeight / initHeight;
 	camera = new THREE.PerspectiveCamera(100, aspect, 0.01, 100);
 	// camera.rotation.y = (90 / 180 ) * Math.PI;
-	camera.position.set(0, 0, 2);
+	camera.position.set(0, 0, 3);
 
 	// Camera Controls
 	let controls = new THREE.OrbitControls(camera, renderer.domElement);
-	controls.addEventListener("change", renderer);
+	//controls.addEventListener("change", renderer);
+	controls.update()
 
 	// Light
 	const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
@@ -44,21 +52,16 @@ const init = () => {
 	scene.add(spotLight1)
 
 	var axes = new THREE.AxisHelper(100, 20, 20); //红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴
-	scene.add(axes);
+	//scene.add(axes);
 
 
 	group = new THREE.Group();
 
 	// Loader new THREE STLLoader
 	const loader = new THREE.STLLoader();
-	/*loader.load("img/2.STL", (result) => {
-		debugger
-        scene.add(result);
-        animate();
-    });*/
-	loader.load("model/1180813.stl", geometry => {
+	/*loader.load("model/1180813.stl", geometry => {
 		/*var material = new THREE.MeshPhongMaterial({color:0x48D1CC});
-		var mesh = new THREE.Mesh(geometry,material);*/
+		var mesh = new THREE.Mesh(geometry,material);
 		// 创建材质
 		//获取模型的大小
 		console.log(JSON.stringify(geometry.computeBoundingBox()));
@@ -71,7 +74,7 @@ const init = () => {
 		mesh13.rotation.x = -0.5 * Math.PI
 		mesh13.rotation.y = 0 * Math.PI
 		mesh13.rotation.z = 0 * Math.PI
-		mesh13.scale.set(0.005, 0.005, 0.005)
+		mesh13.scale.set(0.006, 0.006, 0.006)
 
 
 		var box13 = new THREE.Box3().setFromObject(mesh13);
@@ -79,109 +82,144 @@ const init = () => {
 		console.log("mesh13模型大小" + JSON.stringify(size));
 		mesh13['x'] = size.x
 		group.add(mesh13)
-	});
-
-	/*loader.load("model/2.STL", geometry => {
-		var material = new THREE.MeshPhongMaterial({color:0x48D1CC});
-		var mesh = new THREE.Mesh(geometry,material);
-		// 创建材质
-		console.log(2)
-		const materia = new THREE.MeshLambertMaterial({
-			color: 0x7777ff
-		})
-		geometry.name = "stl002"
-		var mesh2 = new THREE.Mesh(geometry, materia)
-		mesh2['addLeft'] = false
-		mesh2['addRight'] = true
-		mesh2.rotation.x = -0.5 * Math.PI
-		mesh2.scale.set(0.6, 0.6, 0.6)
-		//mesh2.position.set(420,200,120);
-		//mesh2.translateX(0.5); //网格模型mesh平移
-		//mesh2.rotateX(Math.PI/4)
-		//scene.add(mesh2);
-
-
-		var box2 = new THREE.Box3().setFromObject(mesh2);
-		let size = box2.getSize();
-		console.log("mesh2模型大小" + JSON.stringify(size));
-		mesh2['x'] = size.x
-		group.add(mesh2)
 	});*/
+
+    
+	function addModel(item,type) {
+		/**
+		 * type 1:在右边添加push  
+		 *      2.在左边添加unshift
+		 */
+		loader.load(item.stlPath, geometry => {
+			/*var material = new THREE.MeshPhongMaterial({color:0x48D1CC});
+			var mesh = new THREE.Mesh(geometry,material);*/
+			// 创建材质
+			//获取模型的大小
+			console.log(JSON.stringify(geometry.computeBoundingBox()));
+			console.log(3)
+			const materia = new THREE.MeshLambertMaterial({
+			   color: 0x7777ff
+			})
+			geometry.name = item.stlId
+			let mesh = new THREE.Mesh(geometry, materia)
+			mesh['addLeft'] = item.left
+			mesh['addRight'] = item.right
+			mesh.rotation.x = -0.5 * Math.PI
+			mesh.rotation.y = 0 * Math.PI
+			mesh.rotation.z = 0 * Math.PI
+			mesh.scale.set(0.006, 0.006, 0.006)
+			//mesh5.translateX(1.25); //网格模型mesh平移
+			let box3 = new THREE.Box3().setFromObject(mesh);
+			let size = box3.getSize();
+			console.log("mesh5模型大小" + JSON.stringify(size));
+			mesh['x'] = size.x
+			if(type==1){
+			  group.add(mesh)	
+			}else{
+			  group.unshift(mesh)
+			}
+			calcPostion()
+		});
+	}
 	
-	/*loader.load("model/1180818.stl", geometry => {
-		// 创建材质
-		console.log(2)
-		const materia = new THREE.MeshLambertMaterial({
-			color: 0x7777ff
-		})
-		geometry.name = "stl002"
-		let mesh6 = new THREE.Mesh(geometry, materia)
-		mesh6['addLeft'] = false
-		mesh6['addRight'] = true
-		mesh6.rotation.x = -0.5 * Math.PI
-		mesh6.scale.set(0.005, 0.005, 0.005)
+	
+	function calcPostion(){
+		console.log(group)
+		let totalWidth = 0
+		if (group.children.length !== 0) {
+			group.children.forEach(item => {
+				totalWidth += item.x
+			})
+			console.log(totalWidth)
+			let initX = -totalWidth / 2
+			let diffX=0.4
+			let list = group.children;
+			list.forEach((item, index) => {
+				if (index == 0) {
+					item.position.x = initX+diffX
+				} else {
+					item.position.x = initX+diffX
+				}
+				initX = initX + item.x
+				group.children[index] = item
+			})
+		}
+	}
+
+	var modelList = [{
+			name: "1180813.stl",
+			stlPath: "model/1180813.stl",
+			stlId: 1180813,
+			w: 100,
+			h: 100,
+			left: false,
+			right: true,
+			isAvailable:true,
+			selectable:false
+		},
+		{
+			name: "1180818.stl",
+			stlPath: "model/1180818.stl",
+			stlId: 1180818,
+			w: 100,
+			h: 100,
+			left: true,
+			right: true,
+			isAvailable:true,
+			selectable:false
+		},
+		{
+			name: "1180815.stl",
+			stlPath: "model/1180815.stl",
+			stlId: 1180815,
+			w: 100,
+			h: 100,
+			left: true,
+			right: false,
+			isAvailable:true,
+			selectable:false
+		}
+	]
+
+    var addFlag=true
+	var model=null
+	$(function() {
 		
-		let box6 = new THREE.Box3().setFromObject(mesh6);
-		let size = box6.getSize();
-		console.log("mesh6模型大小" + JSON.stringify(size));
-		mesh6['x'] = size.x
-		group.add(mesh6)
-	});*/
-
-	loader.load("model/1180815.stl", geometry => {
-		/*var material = new THREE.MeshPhongMaterial({color:0x48D1CC});
-		var mesh = new THREE.Mesh(geometry,material);*/
-		// 创建材质
-		//获取模型的大小
-		console.log(JSON.stringify(geometry.computeBoundingBox()));
-		console.log(3)
-		const materia = new THREE.MeshLambertMaterial({
-			//color: 0x7777ff
+		$(".box-left .item").click(function() {
+			let index = $(this).index()
+			$(this).addClass("active").siblings().removeClass("active")
+			let item = modelList[index]
+			if(group.children.length==0){
+				addModel(item,1)
+			}else{
+				model=item
+			}
 		})
-		geometry.name = "stl003"
-		let mesh3 = new THREE.Mesh(geometry, materia)
-		mesh3['addLeft'] = true
-		mesh3['addRight'] = false
-		mesh3.rotation.x = -0.5 * Math.PI
-		mesh3.rotation.y = 0 * Math.PI
-		mesh3.rotation.z = 0 * Math.PI
-		mesh3.scale.set(0.005, 0.005, 0.005)
-		//mesh3.translateX(-0.72); //网格模型mesh平移
-
-		let box3 = new THREE.Box3().setFromObject(mesh3);
-		let size = box3.getSize();
-		mesh3['x'] = size.x
-		console.log("mesh3模型大小" + JSON.stringify(size));
-		group.add(mesh3)
-
-	});
-
-
-	loader.load("model/1180818.stl", geometry => {
-		/*var material = new THREE.MeshPhongMaterial({color:0x48D1CC});
-		var mesh = new THREE.Mesh(geometry,material);*/
-		// 创建材质
-		//获取模型的大小
-		console.log(JSON.stringify(geometry.computeBoundingBox()));
-		console.log(3)
-		const materia = new THREE.MeshLambertMaterial({
-			color: 0x7777ff
+		
+		$("#addMesh").click(function(){
+			if(model){
+				//加在右边
+				addModel(model,1)
+			}else{
+				//加载左边
+				addModel(model,2)
+			}
 		})
-		geometry.name = "stl005"
-		let mesh5 = new THREE.Mesh(geometry, materia)
-		mesh5.rotation.x = -0.5 * Math.PI
-		mesh5.rotation.y = 0 * Math.PI
-		mesh5.rotation.z = 0 * Math.PI
-		mesh5.scale.set(0.005, 0.005, 0.005)
-		//mesh5.translateX(1.25); //网格模型mesh平移
+		
+		$("#removeMesh").click(function(){
+			if(selectedObject!=null){
+			   group.remove(selectedObject);
+			   calcPostion()
+			}
+		})
+		
+		$("#removeAllMesh").click(function(){
+			selectedObject=null
+			model=null
+			group.children=[]
+		})
+	})
 
-		let box5 = new THREE.Box3().setFromObject(mesh5);
-		let size = box5.getSize();
-		console.log("mesh5模型大小" + JSON.stringify(size));
-		mesh5['x'] = size.x
-		group.add(mesh5)
-	});
-	
 
 
 	const geometry = new THREE.TorusGeometry(0.2, 0.1, 2, 10);
@@ -227,13 +265,11 @@ const init = () => {
 	group.position.y = group.position.y - center.y
 	group.position.z = group.position.z - center.z*/
 
-
-
 	function outlineOperate(selectedObjects) {
 		composer = new THREE.EffectComposer(renderer);
 		const renderPass = new THREE.RenderPass(scene, camera);
 		composer.addPass(renderPass);
-		outlinePass = new THREE.OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera,
+		outlinePass = new THREE.OutlinePass(new THREE.Vector2(initWidth, initHeight), scene, camera,
 			selectedObjects);
 		outlinePass.edgeStrength = 2; //边缘强度
 		outlinePass.edgeGlow = 0.5; //缓缓接近
@@ -247,7 +283,7 @@ const init = () => {
 		outlinePass.downSampleRatio = 2; // 边框弯曲度
 
 		effectFXAA = new THREE.ShaderPass(THREE.FXAAShader);
-		effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
+		effectFXAA.uniforms['resolution'].value.set(1 / initWidth, 1 / initHeight);
 		composer.addPass(effectFXAA);
 
 		//outlinePass.clear = true;
@@ -259,8 +295,7 @@ const init = () => {
 
 	//获取与射线相交的对象数组
 	function getIntersects(event) {
-		event
-			.preventDefault(); // 阻止默认的点击事件执行, https://developer.mozilla.org/zh-CN/docs/Web/API/Event/preventDefault
+		event.preventDefault(); // 阻止默认的点击事件执行
 		//console.log("event.clientX:" + event.clientX);
 		//console.log("event.clientY:" + event.clientY);
 
@@ -268,11 +303,13 @@ const init = () => {
 		let rayCaster = new THREE.Raycaster();
 		let mouse = new THREE.Vector2();
 
+		let box = document.getElementById("canvasBox")
+
+		//mouse.x = (event.offsetX / window.innerWidth) * 2 - 1;
+		//mouse.y = -(event.offsetY / window.innerHeight) * 2 + 1;
 		//通过鼠标点击位置，计算出raycaster所需点的位置，以屏幕为中心点，范围-1到1
-		mouse.x = ((event.clientX - document.body.getBoundingClientRect().left) / document.body.offsetWidth) * 2 -
-			1;
-		mouse.y = -((event.clientY - document.body.getBoundingClientRect().top) / document.body.offsetHeight) * 2 +
-			1; //这里为什么是-号，没有就无法点中
+		mouse.x = (event.offsetX / box.offsetWidth) * 2 - 1;
+		mouse.y = -(event.offsetY / box.offsetHeight) * 2 + 1; //这里为什么是-号，没有就无法点中
 
 		//通过鼠标点击的位置(二维坐标)和当前相机的矩阵计算出射线位置
 		rayCaster.setFromCamera(mouse, camera);
@@ -296,6 +333,7 @@ const init = () => {
 		//instance坐标是对象，右边是类，判断对象是不是属于这个类的
 		if (intersects.length !== 0) {
 			console.log(intersects[0].object.geometry.name);
+			selectedObject=intersects[0].object
 			outlineOperate([intersects[0].object])
 			//group.remove(mesh5) 可以实现模型删除 remove(intersects[0].object)
 			for (var i = 0; i < intersects.length; i++) {
@@ -308,6 +346,7 @@ const init = () => {
 			}
 
 		} else {
+			selectedObject=null
 			outlineOperate([])
 		}
 	}
@@ -337,33 +376,16 @@ const animate = () => {
 	group.position.x = group.position.x - center.x
 	group.position.y = group.position.y - center.y
 	group.position.z = group.position.z - center.z*/
-	console.log(group)
-		let totalWidth = 0
-		if(group.children.length!==0){
-			group.children.forEach(item => {
-				totalWidth += item.x
-			})
-			console.log(totalWidth)
-			let initX = -totalWidth / 2
-			let list=group.children;
-			list.forEach((item, index) => {
-				if(index==0){
-					item.position.x = initX+0.28
-				}else{
-					item.position.x = initX+0.4
-				}
-				initX = initX + item.x
-				group.children[index]=item
-			})
-		}
-		scene.add(group);
-		renderer.render(scene, camera);
-		//scene.updateMatrixWorld(true);
-		//camera.updateMatrixWorld(true);
-		requestAnimationFrame(animate);
-		if (composer) {
-			composer.render()
-		}
+	
+	scene.add(group);
+
+	renderer.render(scene, camera);
+	//scene.updateMatrixWorld(true);
+	//camera.updateMatrixWorld(true);
+	requestAnimationFrame(animate);
+	if (composer) {
+		composer.render()
+	}
 }
 
 init();

@@ -128,18 +128,16 @@ const init = () => {
 		composer = new THREE.EffectComposer(renderer);
 		const renderPass = new THREE.RenderPass(scene, camera);
 		composer.addPass(renderPass);
-		outlinePass = new THREE.OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene,
-		camera);
-		composer.addPass(outlinePass);
+		outlinePass = new THREE.OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera,selectedObjects);
 		outlinePass.edgeStrength = 10; //边缘强度
 		outlinePass.edgeGlow = 1; //缓缓接近
 		outlinePass.edgeThickness = 4; //边缘厚度
-		outlinePass.pulsePeriod = 1; //脉冲周期
-		// 自定义的着色器通道 作为参数
-		var effectFXAA = new THREE.ShaderPass(FXAAShader)
-		effectFXAA.uniforms.resolution.value.set(1 / window.innerWidth, 1 / window.innerHeight)
-		effectFXAA.renderToScreen = true
-		composer.addPass(effectFXAA)
+		outlinePass.renderToScreen = true;
+		//outlinePass.pulsePeriod = 1 //闪烁
+		outlinePass.usePatternTexture = false //是否使用贴图
+		outlinePass.visibleEdgeColor.set( 0xf00000 ); // 高光颜色
+	    outlinePass.hiddenEdgeColor.set( 0x000000 );// 阴影颜色
+		composer.addPass(outlinePass);
 	}
 
 
@@ -147,8 +145,7 @@ const init = () => {
 
 	//获取与射线相交的对象数组
 	function getIntersects(event) {
-		event
-			.preventDefault(); // 阻止默认的点击事件执行, https://developer.mozilla.org/zh-CN/docs/Web/API/Event/preventDefault
+		event.preventDefault(); // 阻止默认的点击事件执行, https://developer.mozilla.org/zh-CN/docs/Web/API/Event/preventDefault
 		//console.log("event.clientX:" + event.clientX);
 		//console.log("event.clientY:" + event.clientY);
 
@@ -157,9 +154,9 @@ const init = () => {
 		let mouse = new THREE.Vector2();
 
 		//通过鼠标点击位置，计算出raycaster所需点的位置，以屏幕为中心点，范围-1到1
-		mouse.x = ((event.clientX - document.body.getBoundingClientRect().left) / document.body.offsetWidth) * 2 -
+		mouse.x = (event.clientX / document.body.offsetWidth) * 2 -
 			1;
-		mouse.y = -((event.clientY - document.body.getBoundingClientRect().top) / document.body.offsetHeight) * 2 +
+		mouse.y = -(event.clientY  / document.body.offsetHeight) * 2 +
 			1; //这里为什么是-号，没有就无法点中
 
 		//通过鼠标点击的位置(二维坐标)和当前相机的矩阵计算出射线位置
@@ -181,7 +178,9 @@ const init = () => {
 		let intersects = getIntersects(event);
 		console.log(intersects);
 		console.log(intersects[0].object.geometry.name);
-        outlineOperate([intersects[0].object])
+
+		outlineOperate([intersects[0].object])
+
 		//获取选中最近的Mesh对象
 		//instance坐标是对象，右边是类，判断对象是不是属于这个类的
 		if (intersects.length !== 0 && intersects[0].object.geometry.name === 'stl003') {
@@ -194,7 +193,7 @@ const init = () => {
 				}
 				//render();
 			}
-			outlinePass.selectedObjects = intersects;
+
 		} else {
 			console.log('未选中 Mesh!');
 		}
@@ -212,7 +211,7 @@ const animate = () => {
 	renderer.render(scene, camera);
 	requestAnimationFrame(animate);
 	if (composer) {
-	   composer.render()
+		composer.render()
 	}
 }
 
