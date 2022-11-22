@@ -6,7 +6,7 @@ var selectedObject=null
 const init = () => {
 	// Scene
 	scene = new THREE.Scene();
-	scene.background = new THREE.Color('#ffffff');//
+	scene.background = new THREE.Color('#000000');//
 
 	// Renderer
 	renderer = new THREE.WebGLRenderer({
@@ -98,8 +98,8 @@ const init = () => {
 			console.log(JSON.stringify(geometry.computeBoundingBox()));
 			console.log(3)
 			const materia = new THREE.MeshLambertMaterial({
-			   color: '#605A54'
-			   //color:0x5854285
+			   //color: '#605A54'
+			   color: 0x7777ff
 			})
 			geometry.name = item.stlId
 			let mesh = new THREE.Mesh(geometry, materia)
@@ -274,12 +274,12 @@ const init = () => {
 			selectedObjects);
 		outlinePass.edgeStrength = 2; //边缘强度
 		outlinePass.edgeGlow = 0.5; //缓缓接近
-		outlinePass.edgeThickness = 0.2; //边缘厚度
+		outlinePass.edgeThickness = 0.3; //边缘厚度
 		outlinePass.renderToScreen = true;
 		//outlinePass.pulsePeriod = 1 //闪烁
 		outlinePass.usePatternTexture = false //是否使用贴图
-		outlinePass.visibleEdgeColor.set('#59544D'); // 高光颜色0xff0000
-		outlinePass.hiddenEdgeColor.set('#59544D'); // 阴影颜色
+		outlinePass.visibleEdgeColor.set('#ffffff'); // 高光颜色0xff0000
+		outlinePass.hiddenEdgeColor.set('#ffffff'); // 阴影颜色
 		outlinePass.usePatternTexture = false; //是否使用父级的材质
 		outlinePass.downSampleRatio = 2; // 边框弯曲度
 
