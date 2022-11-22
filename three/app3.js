@@ -114,10 +114,13 @@ const init = () => {
 			let size = box3.getSize();
 			console.log("mesh5模型大小" + JSON.stringify(size));
 			mesh['x'] = size.x
+			debugger
 			if(type==1){
-			  group.add(mesh)	
+			  group.children.push(mesh)
+			  models.push(item)
 			}else{
-			  group.unshift(mesh)
+			  group.children.unshift(mesh)
+			  models.unshift(item)
 			}
 			calcPostion()
 		});
@@ -184,6 +187,7 @@ const init = () => {
 
     var addFlag=true
 	var model=null
+	var models=[]
 	$(function() {
 		
 		$(".box-left .item").click(function() {
@@ -198,12 +202,16 @@ const init = () => {
 		})
 		
 		$("#addMesh").click(function(){
-			if(model){
-				//加在右边
-				addModel(model,1)
-			}else{
-				//加载左边
-				addModel(model,2)
+			let items=models;
+			debugger
+			if((items[0].left==model.right && model.right) || (items[0].right==model.left && model.left)){
+				if(model.left==true){
+					//加在右边
+					addModel(model,1)
+				}else{
+					//加载左边
+					addModel(model,2)
+				}
 			}
 		})
 		
