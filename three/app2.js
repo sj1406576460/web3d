@@ -209,16 +209,16 @@ const init = () => {
 	box3.getCenter(center)
 	console.log('查看几何体中心坐标', center);
 	console.log('查看组合体', group);
-	/* 重新设置模型的位置，使之居中。*/
+	/* 重新设置模型的位置，使之居中。
 	group.position.x = group.position.x - center.x
 	group.position.y = group.position.y - center.y
-	group.position.z = group.position.z - center.z
+	group.position.z = group.position.z - center.z*/
 	let totalWidth = 0
 	group.children.forEach(item => {
 		totalWidth += item.x
 	})
 	console.log(totalWidth)
-	let initX = -totalWidth / 2 + center
+	let initX = -totalWidth / 2
 	group.children.map((item, index) => {
 		item.position.x = initX
 		initX = initX + item.x
