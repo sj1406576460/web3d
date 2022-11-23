@@ -42,6 +42,7 @@
 		}
 		
 		
+		
 		.item-left{
 			padding:4px;
 			width:100px;
@@ -96,21 +97,29 @@
 			left: 50%;
 			transform: translateX(-50%);
 			z-index: 1;
-			width:100px;
+			width:200px;
 		}
 		
 		.control-button {
 		    transition: none;
-		    border: 2px solid transparent;
-		    border-radius: 10px;
+		    border: 2px solid #bc5801;
 			width:44px;
 			height:44px;
+			border-radius:44px;
 			cursor: pointer;
+			margin-right:4px;
 		}
 		
 		.control-button:hover{
 			border:1px solid #ddd;
 		}
+		
+		.control-button-disabled{
+			opacity: 0.5;
+			z-index:9;
+			border:2px solid #eee;
+		}
+		
 		
 		.control-button img{
 			max-width: 100%;
@@ -149,13 +158,21 @@
 					<div class="product-size">52"W x 42"D x 44"H</div>
 				</div>
 			</div>
+			<!--<div class="item" data-id="1180816">
+				<div class="item-left"><img src="model/1180815.png"></div>
+				<div class="item-right">
+					<div class="product-name">Family Den Right-Arm Facing 1180815</div>
+					<div class="product-size">52"W x 42"D x 44"H</div>
+				</div>
+			</div>-->
 		</div>
 		<div class="box-right">
 		   <div id="canvasBox"></div>
 		   <div class="config-button-center">
-			   <div class="control-button"  id="removeMesh"><img src="model/original.svg"></div>
-			   <div class="control-button"  id="removeAllMesh"><img src="model/original-all.svg"></div>
-			   <div class="control-button"  id="addMeshRight"><img src="model/icon-plus.svg"></div>
+			   <div class="control-button control-button-disabled"  id="addMeshLeft"><img src="model/icon-plus.svg"></div>
+			   <div class="control-button control-button-disabled"  id="removeMesh"><img src="model/original.svg"></div>
+			   <div class="control-button control-button-disabled"  id="removeAllMesh"><img src="model/original-all.svg"></div>
+			   <div class="control-button control-button-disabled"  id="addMeshRight"><img src="model/icon-plus.svg"></div>
 		   </div>
 		</div>
 	</div>

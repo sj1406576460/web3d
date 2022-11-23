@@ -154,14 +154,14 @@ const init = () => {
 		let len=models.length
 		if(models.length>1){
 			if((item.right && item.right==models[0].left) || (item.left && item.left==models[len-1].right) && models[0].right && models[len-1].left){
-				$(".box-left .item").eq(index).removeClass("disabled")
+			  $(".box-left .item").eq(index).removeClass("disabled");
 			}else{
 				modelList.map((it)=>{
 					if(it.stlId==item.stlId){
 						it.isAvailable=false
 					}
 				})
-				$(".box-left .item").eq(index).addClass("disabled")
+				$(".box-left .item").eq(index).addClass("disabled");
 			}
 		}
 		model=null
@@ -173,7 +173,8 @@ const init = () => {
 		   it.isAvailable=true
 		})
 		models=[]
-		$(".box-left .item").removeClass("disabled")
+		$(".box-left .item").removeClass("disabled").removeClass('active')
+		$("#removeAllMesh").addClass("control-button-disabled")
 		model=null
 	}
 	
@@ -191,17 +192,19 @@ const init = () => {
 			})
 			console.log(totalWidth)
 			let initX = -totalWidth / 2
-			let diffX=0.4
+			let diffX=0.1
 			let list = group.children;
 			list.forEach((item, index) => {
 				if (index == 0) {
-					item.position.x = initX+diffX
+					item.position.x = initX
 				} else {
-					item.position.x = initX+diffX
+					item.position.x = initX
 				}
 				initX = initX + item.x
 				group.children[index] = item
 			})
+		}else{
+			$("#removeAllMesh").addClass("control-button-disabled")
 		}
 	}
 
@@ -236,11 +239,23 @@ const init = () => {
 			w: 100,
 			h: 100,
 			left: true,
-			right: true,
+			right: false,
 			isAvailable:true,
 			selectable:false,
 			index:2
-		}
+		},
+		{
+			name: "1180816.stl",
+			stlPath: "model/1180818.stl",
+			stlId: 1180816,
+			w: 100,
+			h: 100,
+			left: true,
+			right: true,
+			isAvailable:true,
+			selectable:false,
+			index:1
+		},
 	]
 
     var addFlag=true
@@ -255,11 +270,40 @@ const init = () => {
 				$(this).addClass("active").siblings().removeClass("active")
 				if(group.children.length==0){
 					addModel(item,1)
+					$("#removeAllMesh").removeClass("control-button-disabled")
 				}else{
 					model=item
+					let items=models;
+					let len=items.length
+					if(model!=null){
+						//加载左边    
+						if(model.right && model.right==items[0].left){
+							$("#addMeshLeft").removeClass("control-button-disabled")
+							$("#addMeshRight").addClass("control-button-disabled")
+						}
+						
+						//加在右边
+						if(model.left && model.left==items[len-1].right){
+							$("#addMeshRight").removeClass("control-button-disabled")
+							$("#addMeshLeft").addClass("control-button-disabled")
+						}
+						
+					}
 				}
 			}
 			
+		})
+		
+		$("#addMeshLeft").click(function(){
+			let items=models;
+			let len=items.length
+			if(model!=null){
+				//加载左边
+				if(model.right && model.right==items[0].left){
+					addModel(model,2);
+					$("#addMeshLeft").addClass("control-button-disabled");
+				}
+			}
 		})
 		
 		$("#addMeshRight").click(function(){
@@ -274,17 +318,15 @@ const init = () => {
 						//加载左边
 						addModel(model,2)
 					}
-				}*/
-				debugger
-				
+				}
 				//加载左边
 				if(model.right && model.right==items[0].left){
 					addModel(model,2)
-				}
-				
+				}*/
 				//加在右边
 				if(model.left && model.left==items[len-1].right){
-					addModel(model,1)
+					addModel(model,1);
+					$("#addMeshRight").addClass("control-button-disabled");
 				}
 			}
 		})
@@ -434,10 +476,11 @@ const init = () => {
 				}
 				//render();
 			}
-
+			$("#removeMesh").removeClass("control-button-disabled")
 		} else {
 			selectedObject=null
 			outlineOperate([])
+			$("#removeMesh").addClass("control-button-disabled")
 		}
 	}
 
