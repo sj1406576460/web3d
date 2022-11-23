@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Load STL</title>
+    <style>
+        body{ margin: 0; padding: 0; overflow: hidden;}
+		.container{
+			width:100%;
+			height:600px;
+			display: flex;
+		}
+		.box-left{
+			width:20%;
+			height:600px;
+			border:0px solid #ddd;
+			display: flex;
+			flex-direction: column;
+			box-sizing: border-box;
+		}
+		
+		.item{
+			width:100%;
+			height:100px;
+			border:1px solid #ddd;
+			border-top:none;
+			display: flex;
+			cursor: pointer;
+			box-sizing: border-box;
+			position: relative;
+			background-color: #fff;
+		}
+		.item.active{
+		   box-shadow: inset 0px 0px 0px 2px #bc5801;
+		}
+		
+		.item.disabled{
+			opacity: 0.7;
+			z-index:9;
+		}
+		
+		
+		
+		.item-left{
+			padding:4px;
+			width:100px;
+			box-sizing: border-box;
+		}
+		
+		.item-left>img{
+			max-width: 100%;
+			height:90%;
+		}
+		.item-right{
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+		}
+		
+		.item-right .product-name{
+			font-size: 14px;
+			color: #000;
+			margin-bottom:10px;
+		}
+		
+		.item-right .product-size{
+			font-size: 12px;
+			color: #666666;
+		}
+		
+		.box-right{
+			width: 1200px;
+			height: 600px;
+			flex:1
+			border:1px solid red;
+			position: relative;
+			background-color:#eee ;
+		}
+		
+		#canvasBox{
+			width: 1200px;
+			height: 600px;
+			border:1px dashed #ddd;
+			position: absolute;
+			left:0;
+			top:0;
+			right:0;
+		}
+        canvas { width: 100%; height: 100% }
+		
+		.config-button-center {
+			position: absolute;
+			display: flex;
+			bottom: 20px;
+			left: 50%;
+			transform: translateX(-50%);
+			z-index: 1;
+			width:200px;
+		}
+		
+		.control-button {
+		    transition: none;
+		    border: 2px solid #bc5801;
+			width:44px;
+			height:44px;
+			border-radius:44px;
+			cursor: pointer;
+			margin-right:4px;
+		}
+		
+		.control-button:hover{
+			border:1px solid #ddd;
+		}
+		
+		.control-button-disabled{
+			opacity: 0.5;
+			z-index:9;
+			border:2px solid #eee;
+		}
+		
+		
+		.control-button img{
+			max-width: 100%;
+		}
+    </style>
+	<script src="../3d/js/jquery.min.js"></script>
+</head>
+<body>
+	<div class="container">
+		<div class="box-left">
+			<div class="item" data-id="1180813">
+				<div class="item-left"><img src="model/1180813.png"></div>
+				<div class="item-right">
+					<div class="product-name">Family Den Right-Arm Facing Power 1180813</div>
+					<div class="product-size">52"W x 42"D x 44"H</div>
+				</div>
+			</div>
+			<div class="item" data-id="1180818">
+				<div class="item-left"><img src="model/1180818.png"></div>
+				<div class="item-right">
+					<div class="product-name">Family Den Right-Arm Facing Power 1180818</div>
+					<div class="product-size">52"W x 42"D x 44"H</div>
+				</div>
+			</div>
+			<div class="item" data-id="1180816">
+				<div class="item-left"><img src="model/1180818.png"></div>
+				<div class="item-right">
+					<div class="product-name">Family Den Right-Arm Facing Power 1180816</div>
+					<div class="product-size">52"W x 42"D x 44"H</div>
+				</div>
+			</div>
+			<div class="item" data-id="1180817">
+				<div class="item-left"><img src="model/1180818.png"></div>
+				<div class="item-right">
+					<div class="product-name">Family Den Right-Arm Facing Power 1180817</div>
+					<div class="product-size">52"W x 42"D x 44"H</div>
+				</div>
+			</div>
+			<div class="item" data-id="1180815">
+				<div class="item-left"><img src="model/1180815.png"></div>
+				<div class="item-right">
+					<div class="product-name">Family Den Right-Arm Facing Power 1180815</div>
+					<div class="product-size">52"W x 42"D x 44"H</div>
+				</div>
+			</div>
+			
+			<!--<div class="item" data-id="1180816">
+				<div class="item-left"><img src="model/1180815.png"></div>
+				<div class="item-right">
+					<div class="product-name">Family Den Right-Arm Facing 1180815</div>
+					<div class="product-size">52"W x 42"D x 44"H</div>
+				</div>
+			</div>-->
+		</div>
+		<div class="box-right">
+		   <div id="canvasBox"></div>
+		   <div class="config-button-center">
+			   <div class="control-button control-button-disabled"  id="addMeshLeft"><img src="model/icon-plus.svg"></div>
+			   <div class="control-button control-button-disabled"  id="removeMesh"><img src="model/original.svg"></div>
+			   <div class="control-button control-button-disabled"  id="removeAllMesh"><img src="model/original-all.svg"></div>
+			   <div class="control-button control-button-disabled"  id="addMeshRight"><img src="model/icon-plus.svg"></div>
+		   </div>
+		</div>
+	</div>
+    <script src="js/three.min.js"></script>
+    <script src="js/loaders/STLLoader.js"></script>
+    <script src="js/controls/OrbitControls.js"></script>
+	<!-- 后期处理js -->
+	<!-- EffectComposer（效果组合器）对象 -->
+	<script src="js/postprocessing/EffectComposer.js"></script>
+	<!-- RenderPass/该通道在指定的场景和相机的基础上渲染出一个新场景 -->
+	<script src="js/postprocessing/RenderPass.js"></script>
+	<!-- ShaderPass/使用该通道你可以传入一个自定义的着色器，用来生成高级的、自定义的后期处理通道 -->
+	<script src="js/postprocessing/ShaderPass.js"></script>
+	<script src="js/postprocessing/OutlinePass.js"></script>
+	<script src="js/shaders/FXAAShader.js"></script>
+	<script src="js/shaders/CopyShader.js"></script>
+	<script src="js/lines/LineSegmentsGeometry.js"></script>
+	<script src="js/lines/LineSegments2.js"></script>
+	<script src="js/lines/LineMaterial.js"></script>
+	<script src="js/lines/LineGeometry.js"></script>
+    <script src="app4.js"></script>
+</body>
+</html>
