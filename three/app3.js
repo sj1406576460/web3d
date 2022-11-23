@@ -151,8 +151,20 @@ const init = () => {
 		models=models.filter((it)=>{
 			return it.stlId!=item.stlId
 		})
+		let len=models.length
+		if(models.length>1){
+			if((item.right && item.right==models[0].left) || (item.left && item.left==models[len-1].right) && models[0].right && models[len-1].left){
+				$(".box-left .item").eq(index).removeClass("disabled")
+			}else{
+				modelList.map((it)=>{
+					if(it.stlId==item.stlId){
+						it.isAvailable=false
+					}
+				})
+				$(".box-left .item").eq(index).addClass("disabled")
+			}
+		}
 		model=null
-		$(".box-left .item").eq(index).removeClass("disabled")
 		
 	}
 	
