@@ -114,16 +114,59 @@ const init = () => {
 			let size = box3.getSize();
 			console.log("mesh5模型大小" + JSON.stringify(size));
 			mesh['x'] = size.x
-			debugger
 			if(type==1){
 			  group.children.push(mesh)
 			  models.push(item)
+			  dealModelList(item)
 			}else{
 			  group.children.unshift(mesh)
 			  models.unshift(item)
+			  dealModelList(item)
 			}
 			calcPostion()
 		});
+	}
+	
+	
+	function dealModelList(item){
+		modelList.map((it)=>{
+			if(it.stlId==item.stlId){
+				it.isAvailable=false
+			}
+		})
+		$(".box-left .item").eq(item.index).addClass("disabled");
+		$(".box-left .item").removeClass("active")
+		model=null
+	}
+	
+	function restoreModelList(item){
+	    let index=item.index
+		modelList.map((it)=>{
+			if(it.stlId==item.stlId){
+				it.isAvailable=true
+			}
+		})
+		
+		//去除已添加数据
+		models=models.filter((it)=>{
+			return it.stlId!=item.stlId
+		})
+		model=null
+		$(".box-left .item").eq(index).removeClass("disabled")
+		
+	}
+	
+	function restoreAllModelList(){
+		modelList.map((it)=>{
+		   it.isAvailable=true
+		})
+		models=[]
+		$(".box-left .item").removeClass("disabled")
+		model=null
+	}
+	
+	function deleteClass(item){
+		restoreModelList(item)
 	}
 	
 	
@@ -159,7 +202,8 @@ const init = () => {
 			left: false,
 			right: true,
 			isAvailable:true,
-			selectable:false
+			selectable:false,
+			index:0
 		},
 		{
 			name: "1180818.stl",
@@ -170,7 +214,8 @@ const init = () => {
 			left: true,
 			right: true,
 			isAvailable:true,
-			selectable:false
+			selectable:false,
+			index:1
 		},
 		{
 			name: "1180815.stl",
@@ -181,7 +226,8 @@ const init = () => {
 			left: true,
 			right: false,
 			isAvailable:true,
-			selectable:false
+			selectable:false,
+			index:2
 		}
 	]
 
@@ -192,40 +238,63 @@ const init = () => {
 		
 		$(".box-left .item").click(function() {
 			let index = $(this).index()
-			$(this).addClass("active").siblings().removeClass("active")
 			let item = modelList[index]
-			if(group.children.length==0){
-				addModel(item,1)
-			}else{
-				model=item
+			if(item.isAvailable){
+				$(this).addClass("active").siblings().removeClass("active")
+				if(group.children.length==0){
+					addModel(item,1)
+				}else{
+					model=item
+				}
 			}
+			
 		})
 		
-		$("#addMesh").click(function(){
+		$("#addMeshRight").click(function(){
 			let items=models;
-			debugger
-			if((items[0].left==model.right && model.right) || (items[0].right==model.left && model.left)){
-				if(model.left==true){
-					//加在右边
-					addModel(model,1)
-				}else{
-					//加载左边
+			let len=items.length
+			if(model!=null){
+				/*if((items[0].left==model.right && model.right) || (items[0].right==model.left && model.left)){
+					if(model.left==true){
+						//加在右边
+						addModel(model,1)
+					}else{
+						//加载左边
+						addModel(model,2)
+					}
+				}*/
+				debugger
+				
+				//加载左边
+				if(model.right && model.right==items[0].left){
 					addModel(model,2)
+				}
+				
+				//加在右边
+				if(model.left && model.left==items[len-1].right){
+					addModel(model,1)
 				}
 			}
 		})
 		
+		
 		$("#removeMesh").click(function(){
 			if(selectedObject!=null){
-			   group.remove(selectedObject);
-			   calcPostion()
-			}
+				let stlId=selectedObject.geometry.name;
+				let items=modelList.filter((item)=>{
+					return item.stlId==stlId
+				})
+			    group.remove(selectedObject);
+				deleteClass(items[0])
+			    calcPostion()
+			 }
 		})
 		
 		$("#removeAllMesh").click(function(){
 			selectedObject=null
 			model=null
 			group.children=[]
+			restoreAllModelList()
 		})
 	})
 
