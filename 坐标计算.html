@@ -88,5 +88,27 @@
 		if(modelList[0].left && modelList[len-1].right){
 			//那就用户选择加
 		}
+		
+		当前组合：[模型1]
+		当前组合：[模型1,模型2]
+		当前组合：[模型1,模型2,模型3]
+		新加入的模型4
+		for(i=0;i<当前组合.length;i++){
+			if(i == 0){. //最左边
+				if(模型4.right == true && 当前组合[i].left == true){
+					//最左边可以加		
+		               }
+		       }
+		      if(i == 当前组合.length-1){ //最右边
+				if(模型4.left == true && 当前组合[i].right == true){
+		                      //最右边可以加
+		               }
+		      }
+		      if(i<当前组合.length-1) { //有中间的情况
+			    if(模型4.left === true && 当前组合[i].right == true && 模型4.right == true && 当前组合[i+1].left == true){
+		                    // i和i~当前组合.length-1之间的位置可以加
+		           }
+		     }
+		}
 	</script>
 </html>
