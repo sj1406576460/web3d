@@ -236,7 +236,7 @@ const init = () => {
 			w: 100,
 			h: 100,
 			left: true,
-			right: false,
+			right: true,
 			isAvailable:true,
 			selectable:false,
 			index:2
