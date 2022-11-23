@@ -26,15 +26,67 @@
 		boxList.forEach(item=>{
 			totalWidth+=item.w
 		})
-		console.log(totalWidth)
+		//console.log(totalWidth)
 		let initX=-totalWidth/2
 		const newBoxList = boxList.map((item,index) => {
 			item.x=initX
 			initX=initX+item.w
-		    return {
-		        item
-		    }
+		    return { item }
 		})
-		console.log(newBoxList)
+		//console.log(newBoxList)
+		
+		var modelList = [
+			{name: "1180813.stl",stlPath: "model/1180813.stl",stlId: 1180813,left: false,right: true,isAvailable:true,selectable:false,index:0},
+			{name: "1180818.stl",stlPath: "model/1180818.stl",stlId: 1180818,left: true,right: true,isAvailable:true,selectable:false,index:0},
+			{name: "1180818.stl",stlPath: "model/1180818.stl",stlId: 1180816,left: true,right: true,isAvailable:true,selectable:false,index:0},
+			{name: "1180818.stl",stlPath: "model/1180818.stl",stlId: 1180817,left: true,right: true,isAvailable:true,selectable:false,index:0},
+			{name: "1180815.stl",stlPath: "model/1180815.stl",stlId: 1180813,left: true,right: false,isAvailable:true,selectable:false,index:0},
+		]
+		
+		var addList=[]
+		addList.push(modelList[0])
+		var model={name: "1180815.stl",stlPath: "model/1180815.stl",stlId: 1180813,left: true,right: false,isAvailable:true,selectable:false,index:0}
+		//计算出可添加左右个数
+		//1.左边第一个只能加右边
+		if(modelList.length==1){
+			if(modelList[0].right){
+				addList.push(model.stlId)
+			}
+			
+			if(modelList[0].left){
+				addList.unshift(model.stlId)
+			}
+		}
+		
+		if(modelList.length>1){
+			if(modelList[0].left){
+				addList.push(model.stlId)
+			}
+			
+			if(modelList[len-1].left){
+				addList.push(model.stlId)
+			}
+		}
+		
+		模型个数            对应+个数可以为
+		1个                 1,2
+		
+		2个                 1,2,3
+		3个                 2,3,4
+		4个                 3,4,5
+		5个                 4,5,6
+		
+		//新model左右都可以加的情况
+		if(modelList[0].left){
+		  //加在第一位
+		}
+		var len=5
+		if(modelList[len-1].right){
+		  //加在最后一位
+		}
+		
+		if(modelList[0].left && modelList[len-1].right){
+			//那就用户选择加
+		}
 	</script>
 </html>

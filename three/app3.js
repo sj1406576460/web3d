@@ -6,7 +6,7 @@ var selectedObject=null
 const init = () => {
 	// Scene
 	scene = new THREE.Scene();
-	scene.background = new THREE.Color('#000000');//
+	scene.background = new THREE.Color('#000');//
 
 	// Renderer
 	renderer = new THREE.WebGLRenderer({
@@ -22,8 +22,6 @@ const init = () => {
 	//document.body.appendChild(renderer.domElement);
 	// 把渲染器的渲染结果canvas对象插入到'pos'对应的div元素中
 	document.getElementById("canvasBox").appendChild(renderer.domElement);
-
-
 
 
 	// Camera
@@ -83,6 +81,14 @@ const init = () => {
 		mesh13['x'] = size.x
 		group.add(mesh13)
 	});*/
+	
+	const map = new THREE.TextureLoader().load( 'model/icon-plus.svg' );
+	const spriteMaterial = new THREE.SpriteMaterial( { map: map, color: 0xffffff } );
+	const sprite = new THREE.Sprite( spriteMaterial );
+	//sprite.scale.set(200, 200, 1)
+	sprite.scale.set(0.4,0.4, 0.4)
+	sprite.position.set(0,1.2, 0)
+	scene.add( sprite );
 
     
 	function addModel(item,type) {
@@ -98,7 +104,7 @@ const init = () => {
 			console.log(JSON.stringify(geometry.computeBoundingBox()));
 			console.log(3)
 			const materia = new THREE.MeshLambertMaterial({
-			   //color: '#605A54'
+			   //color: '#605A54' 0x7777ff #79746D
 			   color: 0x7777ff
 			})
 			geometry.name = item.stlId
@@ -124,6 +130,7 @@ const init = () => {
 			  dealModelList(item)
 			}
 			calcPostion()
+			console.log(models)
 		});
 	}
 	
@@ -152,8 +159,8 @@ const init = () => {
 			return it.stlId!=item.stlId
 		})
 		let len=models.length
-		if(models.length>1){
-			if((item.right && item.right==models[0].left) || (item.left && item.left==models[len-1].right) && models[0].right && models[len-1].left){
+		if(models.length>=1){
+			if((item.right && item.right==models[0].left) || (item.left && item.left==models[len-1].right) || (models[0].right && models[len-1].left)){
 			  $(".box-left .item").eq(index).removeClass("disabled");
 			}else{
 				modelList.map((it)=>{
@@ -192,13 +199,13 @@ const init = () => {
 			})
 			console.log(totalWidth)
 			let initX = -totalWidth / 2
-			let diffX=0.1
+			let diffX=0.4
 			let list = group.children;
 			list.forEach((item, index) => {
 				if (index == 0) {
-					item.position.x = initX
+					item.position.x = initX+diffX
 				} else {
-					item.position.x = initX
+					item.position.x = initX+diffX
 				}
 				initX = initX + item.x
 				group.children[index] = item
@@ -233,18 +240,6 @@ const init = () => {
 			index:1
 		},
 		{
-			name: "1180815.stl",
-			stlPath: "model/1180815.stl",
-			stlId: 1180815,
-			w: 100,
-			h: 100,
-			left: true,
-			right: false,
-			isAvailable:true,
-			selectable:false,
-			index:2
-		},
-		{
 			name: "1180816.stl",
 			stlPath: "model/1180818.stl",
 			stlId: 1180816,
@@ -254,8 +249,20 @@ const init = () => {
 			right: true,
 			isAvailable:true,
 			selectable:false,
-			index:1
+			index:2
 		},
+		{
+			name: "1180815.stl",
+			stlPath: "model/1180815.stl",
+			stlId: 1180815,
+			w: 100,
+			h: 100,
+			left: true,
+			right: false,
+			isAvailable:true,
+			selectable:false,
+			index:3
+		}
 	]
 
     var addFlag=true
