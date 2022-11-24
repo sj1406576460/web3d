@@ -140,6 +140,10 @@ const init = () => {
 	function preloadModel(){
 		if(loader){
 			modelList.forEach((item)=>{
+				if(item.left==false && item.right==false){
+					$(".box-left .item").eq(item.index).addClass("disabled");
+					modelList[item.index].isAvailable=false
+				}
 				loader.load(item.stlPath, geometry => {
 					
 				})
@@ -266,6 +270,9 @@ const init = () => {
 			if (it.stlId == item.stlId) {
 				it.isAvailable = true
 			}
+			if (it.left==false && it.right==false) {
+				it.isAvailable = true
+			}
 		})
 		let itemIndex = modelList.findIndex((i) => {
 			return item.stlId == i.stlId
@@ -346,13 +353,17 @@ const init = () => {
 	}
 
 	function restoreAllModelList() {
-		modelList.map((it) => {
-			it.isAvailable = true
-		})
 		models = []
 		$(".box-left .item").removeClass("disabled").removeClass('active')
 		$("#removeAllMesh").addClass("control-button-disabled")
 		model = null
+		modelList.map((it) => {
+			it.isAvailable = true
+			if(it.left==false && it.right==false){
+				$(".box-left .item").eq(it.index).addClass("disabled");
+				it.isAvailable=false
+			}
+		})
 	}
 
 	function deleteClass(item) {
@@ -422,18 +433,6 @@ const init = () => {
 			index: 2
 		},
 		{
-			name: "1180817.stl",
-			stlPath: "model/1180818.stl",
-			stlId: 1180817,
-			w: 100,
-			h: 100,
-			left: true,
-			right: true,
-			isAvailable: true,
-			selectable: false,
-			index: 3
-		},
-		{
 			name: "1180815.stl",
 			stlPath: "model/1180815.stl",
 			stlId: 1180815,
@@ -443,7 +442,7 @@ const init = () => {
 			right: false,
 			isAvailable: true,
 			selectable: false,
-			index: 4
+			index: 3
 		},
 		{
 			name: "1180819.stl",
@@ -455,7 +454,7 @@ const init = () => {
 			right: true,
 			isAvailable: true,
 			selectable: false,
-			index: 5
+			index: 4
 		},
 		{
 			name: "1180820.stl",
@@ -464,6 +463,18 @@ const init = () => {
 			w: 100,
 			h: 100,
 			left: true,
+			right: false,
+			isAvailable: true,
+			selectable: false,
+			index: 5
+		},
+		{
+			name: "1180821.stl",
+			stlPath: "model/1180815.stl",
+			stlId: 1180820,
+			w: 100,
+			h: 100,
+			left: false,
 			right: false,
 			isAvailable: true,
 			selectable: false,
