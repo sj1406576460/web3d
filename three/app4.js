@@ -86,14 +86,15 @@ const init = () => {
 	function addPlusItems(plusItems) {
 		plusGroup.children = []
 		plusItems.forEach((plus) => {
-			let map = new THREE.TextureLoader().load('model/icon-plus.svg');
+			let map = new THREE.TextureLoader().load('model/add.png');
 			let spriteMaterial = new THREE.SpriteMaterial({
 				map: map,
-				color: 0xffffff
+				//color: 0xffffff
 			});
+			//为精灵贴图，其特点在于图片会始终面向用户
 			let sprite = new THREE.Sprite(spriteMaterial);
 			//sprite.scale.set(200, 200, 1)
-			sprite.scale.set(0.4, 0.4, 0.4)
+			sprite.scale.set(0.2, 0.2, 0.2)
 			let item = group.children.find((it) => {
 				return plus.stlId == it.stlId
 			})
@@ -117,6 +118,7 @@ const init = () => {
 			}
 			sprite.geometry.name = plus.stlId
 			sprite.stId = plus.stlId
+			sprite.name = 'plus-icon'
 			plusGroup.add(sprite);
 		})
 
@@ -132,6 +134,17 @@ const init = () => {
 		if (model != null) {
 			//加在右边
 			loadModel(model, stlId, isRight)
+		}
+	}
+	
+	
+	function preloadModel(){
+		if(loader){
+			modelList.forEach((item)=>{
+				loader.load(item.stlPath, geometry => {
+					
+				})
+			})
 		}
 	}
 
@@ -306,7 +319,14 @@ const init = () => {
 					item.isAvailable = false
 					$(".box-left .item").eq(item.index).addClass("disabled");
 				}
-		 })
+		    })
+		}else{
+			modelList.map((item) => {
+				if (item.left == false && item.right == true) {
+					item.isAvailable = true
+					$(".box-left .item").eq(item.index).removeClass("disabled");
+				}
+			})
 		}
 
 		if (isAddRight) {
@@ -314,6 +334,13 @@ const init = () => {
 				if (item.left == true && item.right == false) {
 					item.isAvailable = false
 					$(".box-left .item").eq(item.index).addClass("disabled");
+				}
+			})
+		}else{
+			modelList.map((item) => {
+				if (item.left == true && item.right == false) {
+					item.isAvailable = true
+					$(".box-left .item").eq(item.index).removeClass("disabled");
 				}
 			})
 		}
@@ -450,6 +477,31 @@ const init = () => {
 	var models = []
 	var addPlusList = []
 	$(function() {
+		
+		    $("#load-container").click(function(){
+				return false
+			})
+		
+		      var loadingBox = document.getElementById('loading-box')
+		      var range = document.getElementById('range')
+		      var percent = document.getElementById('percent')
+			  
+		      // 创建一个定时器，让里面的函数每隔20毫秒自动执行一次
+		      let timer = setInterval(function () {
+		        // 使range部分的宽度每次增加2px
+		        range.style.width = range.clientWidth + 2 + 'px'
+		 
+		        // 当宽度达到和外部盒子宽度一致时，清除定时器
+		        if (range.clientWidth >= 300) {
+		          clearInterval(timer)
+				  $("#load-container").hide();
+		        }
+		 
+		        // 通过range的宽度和外部盒子宽度的数值比，得到进度的百分比
+		        var num = parseInt((range.clientWidth / loadingBox.clientWidth) * 100) + '%'
+		        percent.innerHTML = num
+		    }, 20)
+			preloadModel()
 
 		$(".box-left .item").click(function() {
 			let index = $(this).index()
@@ -767,6 +819,34 @@ const init = () => {
 	}
 
 	document.addEventListener('click', onMouseDblclick);
+	
+	document.addEventListener('mousemove', onDocumentMouseMove, false);
+	 
+	function onDocumentMouseMove(event) {
+		// 点击屏幕创建一个向量
+		let intersects = getIntersects(event);
+		let plusIntersects = getPlusIntersects(event);
+		console.log(intersects);
+		//获取选中最近的Mesh对象
+		//instance坐标是对象，右边是类，判断对象是不是属于这个类的
+		if (intersects.length !== 0) {
+			console.log(intersects[0].object.geometry.name);
+			//group.remove(mesh5) 可以实现模型删除 remove(intersects[0].object)
+			for (var i = 0; i < intersects.length; i++) {
+				document.body.style.cursor = "pointer";
+			}
+		}else if(plusIntersects.length !== 0){
+		            plusIntersects.forEach((e) =>{
+		   			var obj = e.object;
+		               // 判断相交的是否是精灵对象并且是对应标签的名称，如果是鼠标变小手
+		   			if (obj instanceof THREE.Sprite && obj.name.indexOf("plus-icon") > -1) {
+		   				document.body.style.cursor = "pointer";
+		   			}
+		   		})
+		}else{
+			document.body.style.cursor = "default";
+		}
+	}
 };
 
 
