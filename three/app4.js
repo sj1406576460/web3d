@@ -93,8 +93,7 @@ const init = () => {
 			});
 			//为精灵贴图，其特点在于图片会始终面向用户
 			let sprite = new THREE.Sprite(spriteMaterial);
-			//sprite.scale.set(200, 200, 1)
-			sprite.scale.set(0.2, 0.2, 0.2)
+			sprite.scale.set(0.2,0.2, 0.2)
 			let item = group.children.find((it) => {
 				return plus.stlId == it.stlId
 			})
