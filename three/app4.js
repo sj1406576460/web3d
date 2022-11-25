@@ -48,8 +48,9 @@ const init = () => {
 	spotLight1.position.set(-150, -150, -150)
 	spotLight1.castShadow = true
 	scene.add(spotLight1)
-
-	var axes = new THREE.AxisHelper(100, 20, 20); //红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴
+    
+	//加辅助坐标
+	//var axes = new THREE.AxisHelper(100, 20, 20); //红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴
 	//scene.add(axes);
 
 
@@ -94,21 +95,22 @@ const init = () => {
 			//为精灵贴图，其特点在于图片会始终面向用户
 			let sprite = new THREE.Sprite(spriteMaterial);
 			sprite.scale.set(0.2,0.2, 0.2)
+			sprite.rotation.x = 0.1 * Math.PI
 			let item = group.children.find((it) => {
 				return plus.stlId == it.stlId
 			})
 			if (item != undefined) {
 				if (plus['index'] == 2) {
-					sprite.position.set(item.position.x + item.x - 0.5, 1.2, 0)
+					sprite.position.set(item.position.x + item.x - 0.5, 1.4, 0.2)
 					sprite.x = item.x
 					sprite.isRight = true
 				} else {
 					if (plus['isEnd'] == 2) {
-						sprite.position.set(item.position.x + item.x - 0.5, 1.2, 0)
+						sprite.position.set(item.position.x + item.x - 0.5, 1.4, 0.2)
 						sprite.x = item.x
 						sprite.isRight = true
 					} else {
-						sprite.position.set(item.position.x - 0.5, 1.2, 0)
+						sprite.position.set(item.position.x - 0.5, 1.4, 0.2)
 						sprite.x = item.x
 						sprite.isRight = false
 					}
@@ -170,10 +172,10 @@ const init = () => {
 			mesh['addLeft'] = item.left
 			mesh['addRight'] = item.right
 			mesh['stlId'] = item.stlId
-			mesh.rotation.x = -0.5 * Math.PI
-			mesh.rotation.y = 0 * Math.PI
+			mesh.rotation.x = -0.4 * Math.PI
+			mesh.rotation.y = 0* Math.PI
 			mesh.rotation.z = 0 * Math.PI
-			mesh.scale.set(0.006, 0.006, 0.006)
+			mesh.scale.set(0.007, 0.007, 0.007)
 			//mesh5.translateX(1.25); //网格模型mesh平移
 			let box3 = new THREE.Box3().setFromObject(mesh);
 			let size = box3.getSize();
@@ -229,10 +231,10 @@ const init = () => {
 			mesh['addLeft'] = item.left
 			mesh['addRight'] = item.right
 			mesh['stlId'] = item.stlId
-			mesh.rotation.x = -0.5 * Math.PI
+			mesh.rotation.x = -0.4* Math.PI
 			mesh.rotation.y = 0 * Math.PI
-			mesh.rotation.z = 0 * Math.PI
-			mesh.scale.set(0.006, 0.006, 0.006)
+			mesh.rotation.z = 0* Math.PI
+			mesh.scale.set(0.007, 0.007, 0.007)
 			//mesh5.translateX(1.25); //网格模型mesh平移
 			let box3 = new THREE.Box3().setFromObject(mesh);
 			let size = box3.getSize();
@@ -510,7 +512,7 @@ const init = () => {
 		        // 通过range的宽度和外部盒子宽度的数值比，得到进度的百分比
 		        var num = parseInt((range.clientWidth / loadingBox.clientWidth) * 100) + '%'
 		        percent.innerHTML = num
-		    }, 20)
+		    }, 25)
 			preloadModel()
 
 		$(".box-left .item").click(function() {
