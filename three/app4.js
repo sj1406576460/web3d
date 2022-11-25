@@ -273,7 +273,7 @@ const init = () => {
 				it.isAvailable = true
 			}
 			if (it.left==false && it.right==false) {
-				it.isAvailable = true
+				it.isAvailable = false
 			}
 		})
 		let itemIndex = modelList.findIndex((i) => {
@@ -297,10 +297,15 @@ const init = () => {
 				})
 				$(".box-left .item").eq(itemIndex).addClass("disabled");
 			}
-
-
 		} else {
-			$(".box-left .item").removeClass("disabled");
+			modelList.map((it) => {
+				if (it.left==false && it.right==false) {
+					it.isAvailable = false
+					$(".box-left .item").eq(it.index).addClass("disabled");
+				}else{
+					$(".box-left .item").eq(it.index).removeClass("disabled");
+				}
+			})
 		}
 		dealModelLeftRight()
 		model = null
@@ -512,7 +517,7 @@ const init = () => {
 		        // 通过range的宽度和外部盒子宽度的数值比，得到进度的百分比
 		        var num = parseInt((range.clientWidth / loadingBox.clientWidth) * 100) + '%'
 		        percent.innerHTML = num
-		    }, 25)
+		    }, 20)
 			preloadModel()
 
 		$(".box-left .item").click(function() {
