@@ -48,6 +48,15 @@ const init = () => {
 	spotLight1.position.set(-150, -150, -150)
 	spotLight1.castShadow = true
 	scene.add(spotLight1)
+	
+	 var boxline = new THREE.BoxGeometry(100,100,100);//创建一个立方体几何对象
+	 var materialline=new THREE.MeshLambertMaterial({
+		 color:'#1AA034',
+		 opacity:0.7,
+		 //transparent:true
+	  });//材质对象
+     var meshLine = new THREE.Mesh(boxline,materialline);//网格模型对象
+	 scene.add(meshLine);//网格模型添加到场景中
     
 	//加辅助坐标
 	//var axes = new THREE.AxisHelper(100, 20, 20); //红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴
@@ -74,7 +83,6 @@ const init = () => {
 		mesh13.rotation.y = 0 * Math.PI
 		mesh13.rotation.z = 0 * Math.PI
 		mesh13.scale.set(0.006, 0.006, 0.006)
-
 
 		var box13 = new THREE.Box3().setFromObject(mesh13);
 		let size = box13.getSize();
