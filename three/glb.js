@@ -6,7 +6,7 @@ var selectedObject = null
 const init = () => {
 	//Scene
 	scene = new THREE.Scene();
-	scene.background = new THREE.Color('#fff'); //
+	scene.background = new THREE.Color('#000'); //
 
 	//Renderer
 	renderer = new THREE.WebGLRenderer({
@@ -134,7 +134,8 @@ const init = () => {
 				if (child.isMesh) {
 					child.material.emissive = child.material.color;
 					child.material.emissiveMap = child.material.map;
-					child.material.color = new THREE.Color('#544E48');//0x7777ff 
+					//child.material.color = new THREE.Color('#544E48');//0x7777ff 
+					child.material.color = new THREE.Color(0x7777ff);
 				}
 			});
 			let mesh = gltf.scene
@@ -178,7 +179,8 @@ const init = () => {
 				if (child.isMesh) {
 					child.material.emissive = child.material.color;
 					child.material.emissiveMap = child.material.map;
-					child.material.color = new THREE.Color('#544E48');//0x7777ff 
+					//child.material.color = new THREE.Color('#544E48');//0x7777ff 
+					child.material.color = new THREE.Color(0x7777ff);
 				}
 			});
 			let mesh = gltf.scene
@@ -602,10 +604,11 @@ const init = () => {
 			if (selectedObject != null) {
 				addPlusList = []
 				plusGroup.children = []
-				let stlId = selectedObject.geometry.name;
+				let stlId = selectedObject.stlId;//
 				let items = modelList.filter((item) => {
 					return item.stlId == stlId
 				})
+				group.remove(selectedObject);
 				scene.remove(selectedObject);
 				deleteClass(items[0])
 				calcPostion()
@@ -615,8 +618,6 @@ const init = () => {
 		$("#removeAllMesh").click(function() {
 			selectedObject = null
 			model = null
-			debugger
-			
 			 models.forEach((it)=>{
 			     scene.children.forEach((item)=>{
 					if(it.stlId==item.stlId){
@@ -700,25 +701,23 @@ const init = () => {
 
 		//声明 rayCaster 和 mouse 变量
 		let rayCaster = new THREE.Raycaster();
-		let mouse = new THREE.Vector2(20,20,20);
-
 		let box = document.getElementById("canvasBox")
 
 		//mouse.x = (event.offsetX / window.innerWidth) * 2 - 1;
 		//mouse.y = -(event.offsetY / window.innerHeight) * 2 + 1;
 		//通过鼠标点击位置，计算出raycaster所需点的位置，以屏幕为中心点，范围-1到1
-		mouse.x = (event.offsetX / box.offsetWidth) * 2 - 1;
-		mouse.y = -(event.offsetY / box.offsetHeight) * 2 + 1; //这里为什么是-号，没有就无法点中
-
+		let x = (event.offsetX / box.offsetWidth) * 2 - 1;
+		let y = -(event.offsetY / box.offsetHeight) * 2 + 1; //这里为什么是-号，没有就无法点中
+        let mouse = new THREE.Vector3(x,y,1);
 		//通过鼠标点击的位置(二维坐标)和当前相机的矩阵计算出射线位置
 		rayCaster.setFromCamera(mouse, camera);
 
 		//获取与射线相交的对象数组， 其中的元素按照距离排序，越近的越靠前。
 		//+true，是对其后代进行查找，这个在这里必须加，因为模型是由很多部分组成的，后代非常多。
-		console.log(group)
-		let intersects = rayCaster.intersectObjects(scene.children, true);
+		//console.log(group)
+		let intersects = rayCaster.intersectObjects(group.children, true);
 		//返回选中的对象
-		// console.log(intersects)
+		console.log(intersects)
 		return intersects;
 	}
 
@@ -757,8 +756,8 @@ const init = () => {
 		//instance坐标是对象，右边是类，判断对象是不是属于这个类的
 		if (intersects.length !== 0) {
 			console.log(intersects[0].object.geometry.name);
-			selectedObject = intersects[0].object
-			outlineOperate([intersects[0].object])
+			selectedObject = intersects[0].object.parent.parent
+			outlineOperate([intersects[0].object.parent.parent])
 			//group.remove(mesh5) 可以实现模型删除 remove(intersects[0].object)
 			for (var i = 0; i < intersects.length; i++) {
 				if (intersects[i].object.geometry.name === 'stl003') {
