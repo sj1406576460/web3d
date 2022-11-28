@@ -726,7 +726,7 @@ const init = () => {
 		event.preventDefault(); // 阻止默认的点击事件执行
 		//声明 rayCaster 和 mouse 变量
 		let rayCaster = new THREE.Raycaster();
-		let mouse = new THREE.Vector2();
+		let mouse = new THREE.Vector3(10,10,1);
 
 		let box = document.getElementById("canvasBox")
 		//mouse.x = (event.offsetX / window.innerWidth) * 2 - 1;
@@ -810,7 +810,7 @@ const init = () => {
 	}
 
 	document.addEventListener('click', onMouseDblclick);
-	//document.addEventListener('mousemove', onDocumentMouseMove, false);
+	document.addEventListener('mousemove', onDocumentMouseMove, false);
 }
 
 
