@@ -49,18 +49,23 @@ const init = () => {
 	spotLight1.castShadow = true
 	scene.add(spotLight1)
 	
-	 var boxline = new THREE.BoxGeometry(100,100,100);//创建一个立方体几何对象
+	 var boxline = new THREE.BoxGeometry(20,20,0.5);//创建一个立方体几何对象
 	 var materialline=new THREE.MeshLambertMaterial({
 		 color:'#1AA034',
-		 opacity:0.7,
+		 opacity:0.2,
 		 //transparent:true
 	  });//材质对象
      var meshLine = new THREE.Mesh(boxline,materialline);//网格模型对象
-	 scene.add(meshLine);//网格模型添加到场景中
+	 meshLine.scale.set(0.05,0.05,0.05);
+	 meshLine.position.set(0.5,0.2,0.02);
+	 meshLine.rotation.x = -0.4 * Math.PI
+	 meshLine.rotation.y = -0.51* Math.PI
+	 meshLine.rotation.z = 0 * Math.PI
+	 //scene.add(meshLine);//网格模型添加到场景中
     
 	//加辅助坐标
-	//var axes = new THREE.AxisHelper(100, 20, 20); //红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴
-	//scene.add(axes);
+	var axes = new THREE.AxisHelper(100, 20, 20); //红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴
+	scene.add(axes);
 
 
 	group = new THREE.Group();
@@ -98,27 +103,29 @@ const init = () => {
 			let map = new THREE.TextureLoader().load('model/add.png');
 			let spriteMaterial = new THREE.SpriteMaterial({
 				map: map,
+				sizeAttenuation: false
 				//color: 0xffffff
 			});
 			//为精灵贴图，其特点在于图片会始终面向用户
 			let sprite = new THREE.Sprite(spriteMaterial);
-			sprite.scale.set(0.2,0.2, 0.2)
+			sprite.scale.set(0.08,0.08, 0.08)
 			sprite.rotation.x = 0.1 * Math.PI
 			let item = group.children.find((it) => {
 				return plus.stlId == it.stlId
 			})
+		    let diffx= 0.5
 			if (item != undefined) {
 				if (plus['index'] == 2) {
-					sprite.position.set(item.position.x + item.x - 0.5, 1.4, 0.2)
+					sprite.position.set(item.position.x + item.x -diffx , 1.4, 0.2)
 					sprite.x = item.x
 					sprite.isRight = true
 				} else {
 					if (plus['isEnd'] == 2) {
-						sprite.position.set(item.position.x + item.x - 0.5, 1.4, 0.2)
+						sprite.position.set(item.position.x + item.x - diffx, 1.4, 0.2)
 						sprite.x = item.x
 						sprite.isRight = true
 					} else {
-						sprite.position.set(item.position.x - 0.5, 1.4, 0.2)
+						sprite.position.set(item.position.x - diffx, 1.4, 0.2)
 						sprite.x = item.x
 						sprite.isRight = false
 					}

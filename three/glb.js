@@ -4,11 +4,11 @@ var initHeight = 700
 var selectedObject = null
 
 const init = () => {
-	// Scene
+	//Scene
 	scene = new THREE.Scene();
-	scene.background = new THREE.Color('#000'); //
+	scene.background = new THREE.Color('#fff'); //
 
-	// Renderer
+	//Renderer
 	renderer = new THREE.WebGLRenderer({
 		antialias: true,
 		alpha: true
@@ -48,24 +48,16 @@ const init = () => {
 	spotLight1.position.set(-150, -150, -150)
 	spotLight1.castShadow = true
 	scene.add(spotLight1)
-	
-	 /*var boxline = new THREE.BoxGeometry(100,100,100);//创建一个立方体几何对象
-	 var materialline=new THREE.MeshLambertMaterial({
-		 color:'#1AA034',
-		 opacity:0.7,
-		 //transparent:true
-	  });//材质对象
-     var meshLine = new THREE.Mesh(boxline,materialline);//网格模型对象
-	 scene.add(meshLine);//网格模型添加到场景中*/
-    
+
 	//加辅助坐标
-	//var axes = new THREE.AxisHelper(100, 20, 20); //红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴
-	//scene.add(axes);
-	group = new THREE.Group();
+	var axes = new THREE.AxisHelper(100, 20, 20); //红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴
+	scene.add(axes);
 
 	// Loader new THREE STLLoader
-	const loader = new THREE.STLLoader();
+	const loader = new THREE.GLTFLoader();
 	plusGroup = new THREE.Group();
+	group = new THREE.Group();
+	group.children=[]
 
 	function addPlusItems(plusItems) {
 		plusGroup.children = []
@@ -78,7 +70,7 @@ const init = () => {
 			});
 			//为精灵贴图，其特点在于图片会始终面向用户
 			let sprite = new THREE.Sprite(spriteMaterial)
-			sprite.scale.set(0.08,0.08, 0.08)
+			sprite.scale.set(0.08, 0.08, 0.08)
 			sprite.rotation.x = 0.1 * Math.PI
 			let item = group.children.find((it) => {
 				return plus.stlId == it.stlId
@@ -106,7 +98,6 @@ const init = () => {
 			sprite.name = 'plus-icon'
 			plusGroup.add(sprite);
 		})
-
 		console.log(plusGroup)
 	}
 
@@ -121,15 +112,15 @@ const init = () => {
 			loadModel(model, stlId, isRight)
 		}
 	}
-	
-	
-	function preloadModel(){
-			modelList.forEach((item)=>{
-				if(item.left==false && item.right==false){
-					$(".box-left .item").eq(item.index).addClass("disabled");
-					modelList[item.index].isAvailable=false
-				}
-			})
+
+
+	function preloadModel() {
+		modelList.forEach((item) => {
+			if (item.left == false && item.right == false) {
+				$(".box-left .item").eq(item.index).addClass("disabled");
+				modelList[item.index].isAvailable = false
+			}
+		})
 	}
 
 	function loadModel(item, stlId, isRight) {
@@ -137,37 +128,36 @@ const init = () => {
 		 * type 1:在右边添加push  
 		 *      2.在左边添加unshift
 		 */
-		loader.load(item.stlPath, geometry => {
-			/*var material = new THREE.MeshPhongMaterial({color:0x48D1CC});
-			var mesh = new THREE.Mesh(geometry,material);*/
-			// 创建材质
-			//获取模型的大小
-			const materia = new THREE.MeshLambertMaterial({
-				//color: '#605A54' 0x7777ff #79746D
-				color: 0x7777ff
-			})
-			geometry.name = item.stlId
-			let mesh = new THREE.Mesh(geometry, materia)
+		loader.load(item.stlPath, gltf => {
+			gltf.scene.name = item.stlId
+			gltf.scene.traverse(function(child) {
+				if (child.isMesh) {
+					child.material.emissive = child.material.color;
+					child.material.emissiveMap = child.material.map;
+					child.material.color = new THREE.Color('#544E48');//0x7777ff 
+				}
+			});
+			let mesh = gltf.scene
+			mesh.name = item.stlId
 			mesh['addLeft'] = item.left
 			mesh['addRight'] = item.right
 			mesh['stlId'] = item.stlId
-			mesh.rotation.x = -0.4 * Math.PI
-			mesh.rotation.y = 0* Math.PI
+			mesh.rotation.x = 0.12 * Math.PI
+			mesh.rotation.y = 0 * Math.PI
 			mesh.rotation.z = 0 * Math.PI
-			mesh.scale.set(0.007, 0.007, 0.007)
+			mesh.scale.set(0.7, 0.7, 0.7)
 			//mesh5.translateX(1.25); //网格模型mesh平移
 			let box3 = new THREE.Box3().setFromObject(mesh);
 			let size = box3.getSize();
 			console.log("mesh5模型大小" + JSON.stringify(size) + isRight);
 			mesh['x'] = size.x
-
+            scene.add(mesh)
 			let index = group.children.findIndex((it) => {
 				return it.stlId == stlId
 			})
 			if (isRight) {
 				index = index + 1
 			}
-
 
 			group.children.splice(index, 0, mesh)
 			models.splice(index, 0, item)
@@ -178,45 +168,39 @@ const init = () => {
 
 
 	function addModel(item, type) {
-
 		/**
 		 * type 1:在右边添加push  
 		 *      2.在左边添加unshift
 		 */
-		loader.load(item.stlPath, geometry => {
-			/*var material = new THREE.MeshPhongMaterial({color:0x48D1CC});
-			var mesh = new THREE.Mesh(geometry,material);*/
-			// 创建材质
-			//获取模型的大小
-			debugger
-			console.log(JSON.stringify(geometry.computeBoundingBox()));
-			console.log(3)
-			const materia = new THREE.MeshLambertMaterial({
-				//color: '#605A54' 0x7777ff #79746D
-				color: 0x7777ff
-			})
-			geometry.name = item.stlId
-			let mesh = new THREE.Mesh(geometry, materia)
+		loader.load(item.stlPath, gltf => {
+			gltf.scene.name = item.stlId
+			gltf.scene.traverse(function(child) {
+				if (child.isMesh) {
+					child.material.emissive = child.material.color;
+					child.material.emissiveMap = child.material.map;
+					child.material.color = new THREE.Color('#544E48');//0x7777ff 
+				}
+			});
+			let mesh = gltf.scene
+			mesh.name = item.stlId
 			mesh['addLeft'] = item.left
 			mesh['addRight'] = item.right
 			mesh['stlId'] = item.stlId
-			mesh.rotation.x = -0.4* Math.PI
+			mesh.rotation.x = 0.12 * Math.PI
 			mesh.rotation.y = 0 * Math.PI
-			mesh.rotation.z = 0* Math.PI
-			mesh.scale.set(0.007, 0.007, 0.007)
-			//mesh5.translateX(1.25); //网格模型mesh平移
-			let box3 = new THREE.Box3().setFromObject(mesh);
-			let size = box3.getSize();
+			mesh.rotation.z = 0 * Math.PI
+			mesh.scale.set(0.7, 0.7, 0.7)
+			let box = new THREE.Box3().setFromObject(mesh);
+			let size = box.getSize();
 			console.log("mesh5模型大小" + JSON.stringify(size));
 			mesh['x'] = size.x
+			scene.add(mesh)
 			if (type == 1) {
 				group.children.push(mesh)
 				models.push(item)
-				dealModelList(item)
 			} else {
 				group.children.unshift(mesh)
 				models.unshift(item)
-				dealModelList(item)
 			}
 			calcPostion()
 			console.log(models)
@@ -241,7 +225,7 @@ const init = () => {
 			if (it.stlId == item.stlId) {
 				it.isAvailable = true
 			}
-			if (it.left==false && it.right==false) {
+			if (it.left == false && it.right == false) {
 				it.isAvailable = false
 			}
 		})
@@ -268,10 +252,10 @@ const init = () => {
 			}
 		} else {
 			modelList.map((it) => {
-				if (it.left==false && it.right==false) {
+				if (it.left == false && it.right == false) {
 					it.isAvailable = false
 					$(".box-left .item").eq(it.index).addClass("disabled");
-				}else{
+				} else {
 					$(".box-left .item").eq(it.index).removeClass("disabled");
 				}
 			})
@@ -301,8 +285,8 @@ const init = () => {
 					item.isAvailable = false
 					$(".box-left .item").eq(item.index).addClass("disabled");
 				}
-		    })
-		}else{
+			})
+		} else {
 			modelList.map((item) => {
 				if (item.left == false && item.right == true) {
 					item.isAvailable = true
@@ -318,7 +302,7 @@ const init = () => {
 					$(".box-left .item").eq(item.index).addClass("disabled");
 				}
 			})
-		}else{
+		} else {
 			modelList.map((item) => {
 				if (item.left == true && item.right == false) {
 					item.isAvailable = true
@@ -335,9 +319,9 @@ const init = () => {
 		model = null
 		modelList.map((it) => {
 			it.isAvailable = true
-			if(it.left==false && it.right==false){
+			if (it.left == false && it.right == false) {
 				$(".box-left .item").eq(it.index).addClass("disabled");
-				it.isAvailable=false
+				it.isAvailable = false
 			}
 		})
 	}
@@ -374,7 +358,7 @@ const init = () => {
 
 	var modelList = [{
 			name: "1180813.stl",
-			stlPath: "model/1180813.stl",
+			stlPath: "model/1180813.glb",
 			stlId: 1180813,
 			w: 100,
 			h: 100,
@@ -386,7 +370,7 @@ const init = () => {
 		},
 		{
 			name: "1180818.stl",
-			stlPath: "model/80818.stl",
+			stlPath: "model/1180818.glb",
 			stlId: 1180818,
 			w: 100,
 			h: 100,
@@ -398,7 +382,7 @@ const init = () => {
 		},
 		{
 			name: "1180816.stl",
-			stlPath: "model/80818.stl",
+			stlPath: "model/1180818.glb",
 			stlId: 1180816,
 			w: 100,
 			h: 100,
@@ -410,7 +394,7 @@ const init = () => {
 		},
 		{
 			name: "1180815.stl",
-			stlPath: "model/80815.stl",
+			stlPath: "model/1180815.glb",
 			stlId: 1180815,
 			w: 100,
 			h: 100,
@@ -422,7 +406,7 @@ const init = () => {
 		},
 		{
 			name: "1180819.stl",
-			stlPath: "model/80813.stl",
+			stlPath: "model/1180813.glb",
 			stlId: 1180819,
 			w: 100,
 			h: 100,
@@ -434,7 +418,7 @@ const init = () => {
 		},
 		{
 			name: "1180820.stl",
-			stlPath: "model/80815.stl",
+			stlPath: "model/1180815.glb",
 			stlId: 1180820,
 			w: 100,
 			h: 100,
@@ -446,7 +430,7 @@ const init = () => {
 		},
 		{
 			name: "1180821.stl",
-			stlPath: "model/80815.stl",
+			stlPath: "model/1180815.glb",
 			stlId: 1180820,
 			w: 100,
 			h: 100,
@@ -463,39 +447,40 @@ const init = () => {
 	var models = []
 	var addPlusList = []
 	$(function() {
-		
-		    $("#load-container").click(function(){
-				return false
-			})
-		
-		      var loadingBox = document.getElementById('loading-box')
-		      var range = document.getElementById('range')
-		      var percent = document.getElementById('percent')
-			  
-		      // 创建一个定时器，让里面的函数每隔20毫秒自动执行一次
-		      let timer = setInterval(function () {
-		        // 使range部分的宽度每次增加2px
-		        range.style.width = range.clientWidth + 2 + 'px'
-		 
-		        // 当宽度达到和外部盒子宽度一致时，清除定时器
-		        if (range.clientWidth >= 300) {
-		          clearInterval(timer)
-				  $("#load-container").hide();
-		        }
-		 
-		        // 通过range的宽度和外部盒子宽度的数值比，得到进度的百分比
-		        var num = parseInt((range.clientWidth / loadingBox.clientWidth) * 100) + '%'
-		        percent.innerHTML = num
-		    }, 20)
-			preloadModel()
+
+		$("#load-container").click(function() {
+			return false
+		})
+
+		var loadingBox = document.getElementById('loading-box')
+		var range = document.getElementById('range')
+		var percent = document.getElementById('percent')
+
+		// 创建一个定时器，让里面的函数每隔20毫秒自动执行一次
+		let timer = setInterval(function() {
+			// 使range部分的宽度每次增加2px
+			range.style.width = range.clientWidth + 2 + 'px'
+
+			// 当宽度达到和外部盒子宽度一致时，清除定时器
+			if (range.clientWidth >= 300) {
+				clearInterval(timer)
+				$("#load-container").hide();
+			}
+
+			// 通过range的宽度和外部盒子宽度的数值比，得到进度的百分比
+			var num = parseInt((range.clientWidth / loadingBox.clientWidth) * 100) + '%'
+			percent.innerHTML = num
+		}, 20)
+		preloadModel()
 
 		$(".box-left .item").click(function() {
 			let index = $(this).index()
 			let item = modelList[index]
+			
 			if (item.isAvailable) {
 				$(this).addClass("active").siblings().removeClass("active")
 				if (group.children.length == 0) {
-					addModel(item, 1)
+                    addModel(item, 1)
 					$("#removeAllMesh").removeClass("control-button-disabled")
 				} else {
 					model = item
@@ -621,7 +606,7 @@ const init = () => {
 				let items = modelList.filter((item) => {
 					return item.stlId == stlId
 				})
-				group.remove(selectedObject);
+				scene.remove(selectedObject);
 				deleteClass(items[0])
 				calcPostion()
 			}
@@ -630,23 +615,21 @@ const init = () => {
 		$("#removeAllMesh").click(function() {
 			selectedObject = null
 			model = null
+			debugger
+			
+			 models.forEach((it)=>{
+			     scene.children.forEach((item)=>{
+					if(it.stlId==item.stlId){
+						scene.remove(item)
+					}
+				})
+			})
 			group.children = []
 			plusGroup.children = []
 			restoreAllModelList()
 		})
 	})
 
-
-
-	const geometry = new THREE.TorusGeometry(0.2, 0.1, 2, 10);
-	const material = new THREE.MeshBasicMaterial({
-		color: 0x7777ff
-	});
-	geometry.name = "stl004"
-	const torus = new THREE.Mesh(geometry, material);
-	torus.position.set(-2, 0, 0)
-	torus.rotation.x = 1 * Math.PI
-	//group.add(torus)
 
 
 	// 创建一个矩形平面几何体，宽度100，长度200
@@ -717,7 +700,7 @@ const init = () => {
 
 		//声明 rayCaster 和 mouse 变量
 		let rayCaster = new THREE.Raycaster();
-		let mouse = new THREE.Vector2();
+		let mouse = new THREE.Vector2(20,20,20);
 
 		let box = document.getElementById("canvasBox")
 
@@ -733,8 +716,7 @@ const init = () => {
 		//获取与射线相交的对象数组， 其中的元素按照距离排序，越近的越靠前。
 		//+true，是对其后代进行查找，这个在这里必须加，因为模型是由很多部分组成的，后代非常多。
 		console.log(group)
-		let intersects = rayCaster.intersectObjects(group.children, true);
-
+		let intersects = rayCaster.intersectObjects(scene.children, true);
 		//返回选中的对象
 		// console.log(intersects)
 		return intersects;
@@ -743,14 +725,11 @@ const init = () => {
 
 	function getPlusIntersects(event) {
 		event.preventDefault(); // 阻止默认的点击事件执行
-		//console.log("event.clientX:" + event.clientX);
-		//console.log("event.clientY:" + event.clientY);
 		//声明 rayCaster 和 mouse 变量
 		let rayCaster = new THREE.Raycaster();
 		let mouse = new THREE.Vector2();
 
 		let box = document.getElementById("canvasBox")
-
 		//mouse.x = (event.offsetX / window.innerWidth) * 2 - 1;
 		//mouse.y = -(event.offsetY / window.innerHeight) * 2 + 1;
 		//通过鼠标点击位置，计算出raycaster所需点的位置，以屏幕为中心点，范围-1到1
@@ -763,7 +742,6 @@ const init = () => {
 		//获取与射线相交的对象数组， 其中的元素按照距离排序，越近的越靠前。
 		//+true，是对其后代进行查找，这个在这里必须加，因为模型是由很多部分组成的，后代非常多。
 		let intersects = rayCaster.intersectObjects(plusGroup.children, true);
-
 		//返回选中的对象
 		// console.log(intersects)
 		return intersects;
@@ -804,9 +782,8 @@ const init = () => {
 		}
 	}
 
-	document.addEventListener('click', onMouseDblclick);
-	document.addEventListener('mousemove', onDocumentMouseMove, false);
-	 
+
+
 	function onDocumentMouseMove(event) {
 		// 点击屏幕创建一个向量
 		let intersects = getIntersects(event);
@@ -820,46 +797,29 @@ const init = () => {
 			for (var i = 0; i < intersects.length; i++) {
 				document.body.style.cursor = "pointer";
 			}
-		}else if(plusIntersects.length !== 0){
-		            plusIntersects.forEach((e) =>{
-		   			var obj = e.object;
-		               // 判断相交的是否是精灵对象并且是对应标签的名称，如果是鼠标变小手
-		   			if (obj instanceof THREE.Sprite && obj.name.indexOf("plus-icon") > -1) {
-		   				document.body.style.cursor = "pointer";
-		   			}
-		   		})
-		}else{
+		} else if (plusIntersects.length !== 0) {
+			plusIntersects.forEach((e) => {
+				var obj = e.object;
+				// 判断相交的是否是精灵对象并且是对应标签的名称，如果是鼠标变小手
+				if (obj instanceof THREE.Sprite && obj.name.indexOf("plus-icon") > -1) {
+					document.body.style.cursor = "pointer";
+				}
+			})
+		} else {
 			document.body.style.cursor = "default";
 		}
 	}
-};
 
-
-
+	document.addEventListener('click', onMouseDblclick);
+	//document.addEventListener('mousemove', onDocumentMouseMove, false);
+}
 
 
 
 const animate = () => {
-	/**
-	 * 包围盒全自动计算：模型整体居中
-	 */
-	/*var box3 = new THREE.Box3()
-	// 计算层级模型group的包围盒
-	// 模型group是加载一个三维模型返回的对象，包含多个网格模型
-	box3.expandByObject(group)
-	// 计算一个层级模型对应包围盒的几何体中心在世界坐标中的位置
-	var center = new THREE.Vector3()
-	box3.getCenter(center)
-	console.log('查看几何体中心坐标', center);
-	console.log('查看组合体', group);
-	/* 重新设置模型的位置，使之居中。
-	group.position.x = group.position.x - center.x
-	group.position.y = group.position.y - center.y
-	group.position.z = group.position.z - center.z*/
-
-	scene.add(group);
+	//scene.add(group);
 	scene.add(plusGroup);
-
+	//debugger
 	renderer.render(scene, camera);
 	//scene.updateMatrixWorld(true);
 	//camera.updateMatrixWorld(true);
