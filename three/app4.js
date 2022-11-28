@@ -462,6 +462,7 @@ const init = () => {
 			stlId: 1180820,
 			w: 100,
 			h: 100,
+			l:20,
 			left: true,
 			right: false,
 			isAvailable: true,
