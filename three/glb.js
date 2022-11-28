@@ -6,7 +6,7 @@ var selectedObject = null
 const init = () => {
 	//Scene
 	scene = new THREE.Scene();
-	scene.background = new THREE.Color('#000'); //
+	scene.background = new THREE.Color('#A88E77'); //A88E77
 
 	//Renderer
 	renderer = new THREE.WebGLRenderer({
@@ -673,14 +673,14 @@ const init = () => {
 			selectedObjects);
 		outlinePass.edgeStrength = 2; //边缘强度
 		outlinePass.edgeGlow = 0.5; //缓缓接近
-		outlinePass.edgeThickness = 0.3; //边缘厚度
+		outlinePass.edgeThickness = 1; //边缘厚度
 		outlinePass.renderToScreen = true;
 		//outlinePass.pulsePeriod = 1 //闪烁
 		outlinePass.usePatternTexture = false //是否使用贴图
 		outlinePass.visibleEdgeColor.set('#ffffff'); // 高光颜色0xff0000
 		outlinePass.hiddenEdgeColor.set('#ffffff'); // 阴影颜色
 		outlinePass.usePatternTexture = false; //是否使用父级的材质
-		outlinePass.downSampleRatio = 2; // 边框弯曲度
+		outlinePass.downSampleRatio = 1; // 边框弯曲度
 
 		effectFXAA = new THREE.ShaderPass(THREE.FXAAShader);
 		effectFXAA.uniforms['resolution'].value.set(1 / initWidth, 1 / initHeight);
