@@ -1,6 +1,6 @@
 let scene, camera, group, renderer, composer, outlinePass, plusGroup;
 var initWidth = 1200
-var initHeight = 700
+var initHeight = 598
 var selectedObject = null
 
 const init = () => {

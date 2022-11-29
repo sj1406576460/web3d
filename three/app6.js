@@ -1,6 +1,6 @@
 let scene, camera, group, renderer, composer, outlinePass, plusGroup;
 var initWidth = 1200
-var initHeight = 700
+var initHeight = 598
 var selectedObject = null
 
 const init = () => {
@@ -348,13 +348,11 @@ const init = () => {
 
 
 	function calcPostion() {
-		console.log(group)
 		let totalWidth = 0
 		if (group.children.length !== 0) {
 			group.children.forEach(item => {
 				totalWidth += item.x
 			})
-			console.log(totalWidth)
 			let initX = -totalWidth / 2
 			let diffX = 0.4
 			let list = group.children;

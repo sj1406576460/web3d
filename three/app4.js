@@ -706,8 +706,6 @@ const init = () => {
 	// 计算一个层级模型对应包围盒的几何体中心在世界坐标中的位置
 	var center = new THREE.Vector3()
 	box3.getCenter(center)
-	console.log('查看几何体中心坐标', center);
-	console.log('查看组合体', group);
 	/* 重新设置模型的位置，使之居中。
 	group.position.x = group.position.x - center.x
 	group.position.y = group.position.y - center.y
