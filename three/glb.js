@@ -6,7 +6,7 @@ var selectedObject = null
 const init = () => {
 	//Scene
 	scene = new THREE.Scene();
-	scene.background = new THREE.Color('#A88E77'); //A88E77
+	scene.background = new THREE.Color('#000'); //A88E77
 
 	//Renderer
 	renderer = new THREE.WebGLRenderer({
@@ -50,8 +50,8 @@ const init = () => {
 	scene.add(spotLight1)
 
 	//加辅助坐标
-	var axes = new THREE.AxisHelper(100, 20, 20); //红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴
-	scene.add(axes);
+	//var axes = new THREE.AxisHelper(100, 20, 20); //红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴
+	//scene.add(axes);
 
 	// Loader new THREE STLLoader
 	const loader = new THREE.GLTFLoader();
@@ -671,7 +671,7 @@ const init = () => {
 		composer.addPass(renderPass);
 		outlinePass = new THREE.OutlinePass(new THREE.Vector2(initWidth, initHeight), scene, camera,
 			selectedObjects);
-		outlinePass.edgeStrength = 2; //边缘强度
+		outlinePass.edgeStrength = 3; //边缘强度
 		outlinePass.edgeGlow = 0.5; //缓缓接近
 		outlinePass.edgeThickness = 1; //边缘厚度
 		outlinePass.renderToScreen = true;
