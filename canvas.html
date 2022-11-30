@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>canvas</title>
+		<style>
+			html, body{
+				width:100%;
+				height:100%;
+			}
+			.main-area{
+				position:absolute;
+				height:80%;
+				right:10%;
+				left:10%;
+			}
+			.main-area .button-area{
+				height:30px;
+				width:100%;
+				background-color:111111;
+			}
+			.main-area .button-area .button-bar ul li:hover{
+				background-color:#d8cdcf;
+				cursor:pointer;
+			}
+			.main-area .button-area .button-bar ul li{
+				display:inline-block;
+				width:30px;
+				height:20px;
+				list-style:none;
+				float:right;
+				text-align:center;
+				line-height:20px;
+				margin-right:5px;
+				border-radius:10px;
+				margin-top:5px;
+				background-color:pink;
+			}
+			.main-area .image-area{
+				position:absolute;
+				top:30px;
+				bottom:0;
+				width:100%;
+				background-color:gray;
+				overflow:auto;
+			}
+			.main-area .image-area .myCanvas{
+				position:absolute;
+				margin:0;
+				padding:0;
+				background-color:white;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="main-area">
+			<div class="button-area">
+				<div class="input-button" style="display:inline-block; width:40%;float:left;">
+					<input  id="fileOne" type="file" style="padding:4px 5px"/>
+				</div>
+				<div class="button-bar" style="display:inline-block; width:50%;height:30px;float:right;">
+					<ul id="id-resize-button" style="margin:0;">
+						<li>+</li>
+						<li>-</li>
+						<li>画</li>
+					</ul>
+				</div>
+			</div>
+			<div class="image-area">
+				<canvas id="canvasOne" class="myCanvas"></canvas>
+			</div>
+		<div>
+		<script >
+		    window.onload = function(){
+				EventUtils = {
+					addEventListener : function(element, eventType, func){
+						if(element.addEventListener) {                    //所有主流浏览器，除了 IE 8 及更早 IE版本
+							element.addEventListener(eventType, func);
+						}else if(element.attachEvent) {                  // IE 8 及更早 IE 版本
+							element.attachEvent("on"+eventType, func);
+						}else{
+							element["on"+eventType] = func;
+						}
+					},
+					moveEventListener : function(element, eventType, func){
+						if(element.removeEventListener) {                   // // 所有浏览器，除了 IE 8 及更早IE版本
+							element.removeEventListener(eventType, func);
+						}else if(element.detachEvent) {                   // IE 8 及更早IE版本
+							element.detachEvent("on"+eventType, func);
+						}else{
+							element["on"+eventType] = undefined;
+						}
+					},
+					tirggerEvent : function(element, eventType){
+						// IE浏览器
+						if(document.all) {
+							element[eventType]();
+						}
+						// 其它浏览器
+						else {
+							var e = document.createEvent("MouseEvents");
+							e.initEvent(eventType, true, true);
+							element.dispatchEvent(e);
+						}
+					},
+					addEventForButtons : function(parentNode, eventType, func)
+					{
+						lis = parentNode.children;
+						for(var i=0; i<lis.length; i++)
+						{
+							var node = lis[i];
+							node.index = i;
+							if(typeof(func) != "object")
+							{
+								EventUtils.addEventListener(node, eventType, func);
+								continue;
+							}
+							for(var j=0; j<func.length; j++){
+								fun = func[j];
+								EventUtils.addEventListener(node, eventType, fun);
+							}
+						}
+					}
+				}
+				//读取文件内容
+				var canvasObj = {
+					canvas : document.getElementById('canvasOne'),
+					drawInfo : {
+						lines : [],
+						rects : [],
+						pointLists : [],
+						clear : function(){
+							this.lines = [];
+							this.rects = [];
+							this.pointLists = [];
+						},
+						drawRect : function(rect){
+							var ctx = canvasObj.canvas.getContext('2d');
+							var x = rect.x * canvasObj.canvas.width;
+							var y = rect.y * canvasObj.canvas.height;
+							var w = rect.w * canvasObj.canvas.width;
+							var h = rect.h * canvasObj.canvas.height;
+							ctx.strokeRect(x, y, w, h);
+						},
+						draw : function(){
+							console.log("canvasObj drawInfo draw");
+							for(var i=0; i< this.rects.length; i++){
+								this.drawRect(this.rects[i]);
+							}
+						}
+					},
+					init : function(event){
+						canvas = this.canvas;
+						// 窗口加载后，调整canvs大小，以便目标图片拖入
+						this.reLocateCanvas(0, 0);
+						/*拖拽的目标对象------ document 监听drop 并防止浏览器打开客户端的图片*/
+						document.ondragover = function (event) {
+							event.preventDefault();  //只有在ondragover中阻止默认行为才能触发 ondrop 而不是 ondragleave
+						};
+						document.ondrop = function (event) {
+							event.preventDefault();  //阻止 document.ondrop的默认行为  *** 在新窗口中打开拖进的图片
+						};
+						/*拖拽的源对象----- 客户端的一张图片 */
+						/*拖拽目标对象----- 若图片释放在此元素上方，则需要在其中显示*/
+						canvas.ondragover = function (event) {
+							event.preventDefault();
+						};
+						canvas.ondrop = function (event) {
+							var list = event.dataTransfer.files;
+							var file = list[0];
+							canvasObj.readImageToCanvas(file);
+						};
+					},
+					///< 重定位画布大小
+					reLocateCanvas : function(width, height) {
+						var canvas = this.canvas;
+						var parentNode = canvas.parentNode;
+						var clientW = parentNode.clientWidth;
+						var clientH = parentNode.clientHeight;
+						var w = (width == 0? clientW-50:width);
+						var h = (height == 0? clientH-30:height);
+						var left = (clientW > w)?Math.floor((clientW - w)/2):0;
+						var top = (clientH > h)?Math.floor((clientH - h)/2):0;
+						console.log("reLocateCanvas client[%d,%d] wh[%d, %d] left[%d] height[%d]", clientW, clientH, w, h, left, top);
+						canvas.style.left = left+"px";
+						canvas.style.top = top+"px";
+						var ctx = canvas.getContext('2d');
+						ctx.canvas.setAttribute("width", w);
+						ctx.canvas.setAttribute("height", h);
+						parentNode.style.overflowW = (clientW > w)?"hidden":"scroll";
+						parentNode.style.overflowY = (clientH > h)?"hidden":"scroll";
+					},
+					resizeCanvas : function(op){	
+						var ctx = this.canvas.getContext('2d');
+						console.log("resizeCanvas canvas.client[%d, %d] op[%d]", this.canvas.clientWidth, this.canvas.clientHeight, op);
+						var width = this.canvas.clientWidth + op*(this.canvas.clientWidth*0.1);
+						var height = this.canvas.clientHeight + op*(this.canvas.clientHeight*0.1);
+						//var base64 = this.canvas.toDataURL();//使用该方法获取的图片数据多次resize后，图片质量会变差
+						//this.showCanvas(base64, width, height);
+						///< 所以缩放第一次加载时保存的图片数据
+						this.showCanvas(this.srcDataUrl, width, height);
+						
+					},
+					///< 指定图片内容显示
+					showCanvas : function(dataUrl, width, height) {
+						var ctx = this.canvas.getContext('2d');
+						//加载图片
+						var img = new Image();
+						img.onload =  function() {
+							///< 第一次加载时会执行这个分支，用于缩放图片至当前窗口大小
+							if(width == 0 || height == 0){
+								var ratioW = canvasObj.canvas.parentNode.clientWidth/img.width;
+								var ratioH = canvasObj.canvas.parentNode.clientHeight/img.height;
+								if(ratioW < ratioH){
+									width = img.width * ratioW;
+									height = img.height * ratioW;
+								}else{
+									width = img.width * ratioH;
+									height = img.height * ratioH;
+								}
+								/*console.log("showCanvas client[%d, %d] img[%d, %d] ratio[%d, %d] width[%d] height[%d]", 
+										canvasObj.canvas.parentNode.clientWidth,canvasObj.canvas.parentNode.clientHeight,
+										img.width, img.height, ratioW, ratioH, width, height);
+								*/
+							}
+							canvasObj.reLocateCanvas(width, height);
+							ctx.drawImage(img, 0, 0, width, height);
+							///< 画出画布上要画的所有图形
+							canvasObj.drawInfo.draw();
+						}
+						img.src = dataUrl;
+					},
+					readImageToCanvas : function (file){
+						var reader = new FileReader();
+						reader.readAsDataURL(file);
+						reader.onload = function (e) {
+							///<存储一份原始的DataUrl,以便后面缩放（解决图片质量变差问题）
+							canvasObj.srcDataUrl = reader.result;
+							///< 清空画布中形状记录
+							canvasObj.drawInfo.clear();
+							///< 将结果显示到canvas
+							canvasObj.showCanvas(reader.result, 0, 0);
+						}
+					},
+					drawRect : function(fX, fY, fW, fH){
+						this.drawInfo.rects.push({x:fX,y:fY,w:fW,h:fH});
+						this.drawInfo.draw();
+					}
+				}
+				
+				inputChangefun = function (event) {
+					//1.获取选中的文件列表
+					var fileList = event.target.files;
+					var file = fileList[0];
+					canvasObj.readImageToCanvas(file);
+				}
+				
+				resizeCanvasByButton = function(event){
+					if(event.target.index > 1){
+						canvasObj.drawRect(0.2, 0.3, 0.5, 0.5);
+						return;
+					}
+					var op = (event.target.index==0)?1:-1;
+					canvasObj.resizeCanvas(op);
+				}
+				
+				///< 初始化canvas
+				canvasObj.init();
+				///< input标签绑定onchange事件
+				EventUtils.addEventListener(document.getElementById('fileOne'), "change", inputChangefun);
+				///< resize按钮绑定click事件
+				EventUtils.addEventForButtons(document.getElementById("id-resize-button"), "click", resizeCanvasByButton);
+			
+				
+			}
+		</script>
+	<body>
+</html>

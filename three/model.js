@@ -17,8 +17,6 @@ const init = () => {
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	document.body.appendChild(renderer.domElement);
 
-
-
 	// Camera
 	const aspect = window.innerWidth / window.innerHeight;
 	camera = new THREE.PerspectiveCamera(100, aspect, 0.01, 100);
@@ -42,6 +40,16 @@ const init = () => {
 	spotLight1.position.set(-150, -150, -150)
 	spotLight1.castShadow = true
 	scene.add(spotLight1)
+	
+	const shelterGeometry = new THREE.BoxBufferGeometry(0.005, 0.56, 0.55);
+	const shelterLocation = new THREE.Mesh(shelterGeometry, new THREE.MeshNormalMaterial({
+	  transparent: true,
+	  opacity: 0.6
+	}));
+	shelterLocation.rotation.z = 0.025 * Math.PI
+	shelterLocation.translateY(0.25)
+	shelterLocation.translateX(0.85)
+	scene.add(shelterLocation);
 
 
 
@@ -76,7 +84,7 @@ const init = () => {
 		var mesh = new THREE.Mesh(geometry,material);*/
 		// 创建材质
 		console.log(2)
-		const materia = new THREE.MeshLambertMaterial({
+		const materia = new THREE.MeshPhongMaterial({
 			color: 0x7777ff
 		})
 		geometry.name = "stl002"
@@ -85,13 +93,13 @@ const init = () => {
 		mesh2.scale.set(0.6, 0.6, 0.6)
 		mesh2.translateX(0.5); //网格模型mesh平移
 		group.add(mesh2)
-		outlineMeshBasicMaterial(mesh2, scene)
+		//outlineMeshBasicMaterial(mesh2, scene)
 	});
 
 	loader.load("model/1180815.stl", geometry => {
 		//获取模型的大小
 		console.log(3)
-		const materia = new THREE.MeshLambertMaterial({
+		const materia = new THREE.MeshPhongMaterial({
 			color: 0x7777ff
 		})
 		geometry.name = "stl003"
@@ -102,7 +110,7 @@ const init = () => {
 		mesh3.scale.set(0.005, 0.005, 0.005)
 		mesh3.translateX(-0.75); //网格模型mesh平移
 		group.add(mesh3)
-		outlineMeshBasicMaterial(mesh3, scene)
+		//outlineMeshBasicMaterial(mesh3, scene)
 	});
 
 	const geometry = new THREE.TorusGeometry(0.2, 0.1, 2, 10);
@@ -124,17 +132,19 @@ const init = () => {
 		composer.addPass(renderPass);
 		outlinePass = new THREE.OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera,
 			selectedObjects);
-		outlinePass.edgeStrength = 10; //边缘强度
-		outlinePass.edgeGlow = 1; //缓缓接近
-		outlinePass.edgeThickness = 4; //边缘厚度
+		outlinePass.edgeStrength = 2; //边缘强度
+		outlinePass.edgeGlow = 0; //缓缓接近
+		outlinePass.edgeThickness = 0.5; //边缘厚度
 		outlinePass.renderToScreen = true;
 		//outlinePass.pulsePeriod = 1 //闪烁
 		outlinePass.usePatternTexture = false //是否使用贴图
-		outlinePass.visibleEdgeColor.set(0xf00000); // 高光颜色
-		outlinePass.hiddenEdgeColor.set(0x000000); // 阴影颜色
+		outlinePass.visibleEdgeColor.set('#fff'); // 高光颜色0xff0000
+		outlinePass.hiddenEdgeColor.set('#fff'); // 阴影颜色
+		outlinePass.usePatternTexture = false; //是否使用父级的材质
+		outlinePass.downSampleRatio = 2; // 边框弯曲度
 		composer.addPass(outlinePass);
 	}
-
+	
 	function outlineMeshBasicMaterial(mesh, scene) {
 		var outlineMaterial = new THREE.MeshBasicMaterial({
 			color: 0xffffff,
@@ -148,76 +158,6 @@ const init = () => {
 		outlineMesh.rotation.z = 0 * Math.PI
 		scene.add(outlineMesh);
 	}
-
-	/**
-	 * 简单使用 法线 进行描边处理
-	 * @param {Object} mesh 要描边的物体
-	 * @param {Object} scene
-	 */
-	function outLineNormalMaterial(mesh, scene) {
-		var outlineMaterial = getOutLineNormalMaterial(0.1);
-		var outlineMesh = new THREE.Mesh(mesh.geometry, outlineMaterial);
-		outlineMesh.position.set(mesh.position.x, mesh.position.y, mesh.position.z)
-		outlineMesh.scale.set(0.0052, 0.0052, 0.005)
-		outlineMesh.rotation.x = -0.5 * Math.PI
-		outlineMesh.rotation.y = 0 * Math.PI
-		outlineMesh.rotation.z = 0 * Math.PI
-		scene.add(outlineMesh);
-	}
-
-	/**
-	 * 简单发现扩展描边
-	 * @param {float} lineWidth 描边宽带
-	 * @param {float} lineAlpha 描边的透明度
-	 * @param {Object} lineColor 描边颜色
-	 */
-	function getOutLineNormalMaterial(lineWidth = 1.0, lineAlpha = 1.0, lineColor = {
-		r: 1.0,
-		g: 1.0,
-		b: 0
-	}) {
-		let uniforms = {
-			lineWidth: {
-				value: lineWidth
-			},
-			lineColor: {
-				value: new THREE.Color(lineColor.r, lineColor.g, lineColor.b)
-			},
-			lineAlpha: {
-				value: lineAlpha
-			},
-			timer: {
-				value: 3.14
-			}
-		}
-
-		let vertexShader = `
-							  uniform float lineWidth;
-							  void main()
-							  {
-							    gl_Position = projectionMatrix * modelViewMatrix * vec4( position + normal * lineWidth, 1.0 );
-							  }
-							  `
-		let fragmentShader = `
-							  uniform vec3 lineColor;
-							  uniform float lineAlpha;
-							  uniform float timer;
-							  void main(){
-							    float factor = (sin(timer * 10.0 + 3.14 / 2.0) + 1.0) / 2.0;
-							    float alpha = lineAlpha * factor;
-							    gl_FragColor = vec4( lineColor , alpha);
-							  }`
-		let material = new THREE.ShaderMaterial({
-			uniforms: uniforms,
-			vertexShader: vertexShader,
-			fragmentShader: fragmentShader,
-			side: THREE.BackSide,
-			transparent: true
-		});
-		return material
-	}
-
-
 
 	animate();
 	//获取与射线相交的对象数组
@@ -255,7 +195,7 @@ const init = () => {
 		console.log(intersects);
 		console.log(intersects[0].object.geometry.name);
 
-		//outlineOperate([intersects[0].object])
+		outlineOperate([intersects[0].object])
 
 		//获取选中最近的Mesh对象
 		//instance坐标是对象，右边是类，判断对象是不是属于这个类的

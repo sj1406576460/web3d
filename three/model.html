@@ -25,5 +25,18 @@
 	<script src="js/shaders/FXAAShader.js"></script>
 	<script src="js/shaders/CopyShader.js"></script>
     <script src="model.js"></script>
+	<!--<script src="notViewSource.js"></script>-->
+	<script type="text/javascript">
+		window.addEventListener("hashchange", myFunction);
+		function myFunction() {
+		    var href = window.location.href;
+			var idx = href.indexOf('view-source');
+			debugger
+			if(idx!=-1){
+				//设置视频or图片不可见
+				window.location.href=href.replace('view-source','')
+			}
+		}
+	</script>
 </body>
 </html>
