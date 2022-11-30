@@ -3,7 +3,7 @@ let scene, camera, renderer, composer, outlinePass;
 const init = () => {
 	// Scene
 	scene = new THREE.Scene();
-	scene.background = new THREE.Color(0xf0f0f0);
+	scene.background = new THREE.Color('#000');
 
 	// Renderer
 	renderer = new THREE.WebGLRenderer({
@@ -49,7 +49,7 @@ const init = () => {
 	shelterLocation.rotation.z = 0.025 * Math.PI
 	shelterLocation.translateY(0.25)
 	shelterLocation.translateX(0.85)
-	scene.add(shelterLocation);
+	//scene.add(shelterLocation);
 
 
 
@@ -142,6 +142,7 @@ const init = () => {
 		outlinePass.hiddenEdgeColor.set('#fff'); // 阴影颜色
 		outlinePass.usePatternTexture = false; //是否使用父级的材质
 		outlinePass.downSampleRatio = 2; // 边框弯曲度
+		outlinePass.clear = true
 		composer.addPass(outlinePass);
 	}
 	
