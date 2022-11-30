@@ -30,25 +30,57 @@
 			  position: absolute;
 			  top:0;bottom:0;
 			}
+			 
+			 .point{
+				position: absolute;
+				z-index: 5;
+				transform: translate(-50%, -50%);
+				display: flex;
+				-webkit-box-align: center;
+				align-items: center;
+				-webkit-box-pack: center;
+				justify-content: center;
+				cursor: pointer; 
+			 }
+			 
+			 .point-item{
+				width: 30px;
+				height: 30px;
+				line-height: 30px;
+				padding: 4px; 
+				top:100px;
+				left:100px;
+				z-index:10;
+				font-size: 16px;
+				background-color: rgba(255, 255, 255, 0.8);
+				border-radius: 100%;
+				padding: 2px;
+			 }
+			 
+			 .point-item-inner{
+				height: 24px;
+				width:24px;
+				background-color: rgba(255, 255, 255);
+				display: inline-block;
+				border-radius: 100%;
+			 }
+}
+			    
 		</style>
 	</head>
 	<body>
 		<div class="box">
 			<div class="gntgqn">
 				<div class="wv">
-					<img src="img/all.jpg" class="bg-image"/>
+					<img src="img/background.jpg" class="bg-image"/>
 					
 					<img src="img/12.webp"  class="bg-image"/>
 					
 					<img src="img/14.webp"  class="bg-image"/>
 					<img src="img/13.webp"  class="bg-image"/>
 					
-					
-					
 					<img src="img/17.webp"  class="bg-image"/>
 					<img src="img/18.webp"  class="bg-image"/>
-					
-					
 					
 					
 					<img src="img/01.webp"  class="bg-image"/>
@@ -56,10 +88,8 @@
 					
 					<img src="img/16.webp"  class="bg-image"/>
 					
-					
 					<img src="img/06.webp"  class="bg-image"/>
 					<img src="img/05.webp"  class="bg-image"/>
-					
 					
 					<img src="img/3.webp"  class="bg-image"/>
 					<img src="img/4.webp"  class="bg-image"/>
@@ -72,15 +102,17 @@
 					<img src="img/08.webp"  class="bg-image"/>
 					<img src="img/07.webp"  class="bg-image"/>
 					
-					
 					<img src="img/1.webp"  class="bg-image"/>
 					<img src="img/2.webp"  class="bg-image"/>
 					<img src="img/7.webp"  class="bg-image"/>
 					<img src="img/8.webp"  class="bg-image"/>
 					
-					
-					
-					
+					<div class="point point-item">
+						<span class="point-item-inner"></span>
+					</div>
+					<div class="point point-item" style="top:200px;">
+						<span class="point-item-inner"></span>
+					</div>
 				</div>
 			</div>
 		</div>
