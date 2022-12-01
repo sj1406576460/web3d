@@ -58,16 +58,101 @@
 			 }
 			 
 			 .point-item-inner{
-				height: 24px;
-				width:24px;
+				height: 20px;
+				width:20px;
 				background-color: rgba(255, 255, 255);
 				display: inline-block;
 				border-radius: 100%;
+				position: relative;
 			 }
-}
-			    
+			 
+			 .inner-other{
+				 background-color:#777473;
+				 z-index:10
+			 }
+			 
+			 .point-item-inner::before,.point-item-inner::after{
+				display: inline-block;
+				border-radius: 100%;
+				position: absolute;
+				height: 20px;
+				width:20px;
+				content: '';
+				background-color: rgba(255, 255, 255, .9);
+			 }
+			.point-item-inner::before{animation: scale 2s infinite; }
+			.point-item-inner::after{animation: scale2 2s infinite; }
+			 
+			 @keyframes scale{0%{ transform: scale(1); opacity:.9}100%{ transform: scale(3); opacity: 0;}}
+			 @keyframes scale2{0%{ transform: scale(1);opacity:.9;}100%{ transform: scale(3);opacity:0;}}
+                .gu-box{
+					    position: absolute;
+					    background-color: transparent;
+					    width: 100%;
+					    overflow-x: auto;
+					    padding-top: 20px;
+					    padding-bottom: 20px;
+					    top: 540px;
+						left:200px;
+						z-index:10;
+				}
+			     .gu-list{
+					 position: relative;
+					 z-index: 20;
+					 display: flex;
+					 -webkit-box-align: center;
+					 align-items: center;
+					 -webkit-box-pack: start;
+					 justify-content: flex-start;
+					 margin-left: 20px; 
+				  }
+			  
+			  
+			   .gu-item {
+				   width:130px;
+			       height: 110px;
+			       margin-right: 20px;
+				   transform-style: preserve-3d;
+			       display: flex;
+			       -webkit-box-align: center;
+			       align-items: center;
+			       -webkit-box-pack: center;
+			       justify-content: center;
+				   cursor: pointer;
+				   backface-visibility: hidden;
+				   border-radius: 4px;
+				   padding: 6px;
+				   box-sizing: border-box;
+				   background-color: #fff;
+				   transition: all 0.2s ease 0s;
+			   } 
+			   
+			   .gu-item-other:hover{
+				   transform: scale3d(1.05, 1.06, 1) !important
+			   }
+			   
+			   .selected{
+				   transform: scale(1.15);
+				   cursor: default;
+			   }
+			   
+			    .selected:hover{
+				   cursor: default;
+			    }
+			   
+			   .gu-item>img{
+				    max-width: 100%;
+				    max-height: 100%;
+				    object-fit: contain;
+				    line-height: 1;
+					border-radius: 4px;
+			   }
 		</style>
+		<script src="js/jquery.min.js"></script>
+		
+     
 	</head>
+	
 	<body>
 		<div class="box">
 			<div class="gntgqn">
@@ -90,8 +175,8 @@
 					<img src="img/06.webp"  class="bg-image"/>
 					<img src="img/05.webp"  class="bg-image"/>
 					
-					<img src="img/3.webp"  class="bg-image"/>
-					<img src="img/4.webp"  class="bg-image"/>
+					<img src="img/4.webp"  class="bg-image" id="bg4"/>
+					<img src="img/3.webp"  class="bg-image" id="bg3"/>
 					
 					<img src="img/11.webp"  class="bg-image"/>
 					
@@ -101,19 +186,80 @@
 					<img src="img/08.webp"  class="bg-image"/>
 					<img src="img/07.webp"  class="bg-image"/>
 					
-					<img src="img/1.webp"  class="bg-image"/>
-					<img src="img/2.webp"  class="bg-image"/>
+					
+					<img src="img/2.webp"  class="bg-image" id="bg2"/>
+					<img src="img/1.webp"  class="bg-image" id="bg1"/>
+					
 					<img src="img/7.webp"  class="bg-image"/>
 					<img src="img/8.webp"  class="bg-image"/>
 					
-					<div class="point point-item">
-						<span class="point-item-inner"></span>
+					<div class="point point-item" style="top:290px;left:380px">
+						<div class="point-item-inner"></div>
 					</div>
-					<div class="point point-item" style="top:200px;">
-						<span class="point-item-inner"></span>
+					<div class="point point-item" style="top:700px;left:320px">
+						<div class="point-item-inner inner-other"></div>
+					</div>
+					<div class="point point-item" style="top:556px;left:480px">
+						<div class="point-item-inner"></div>
+					</div>
+					<div class="point point-item" style="top:500px;left:780px">
+						<div class="point-item-inner"></div>
+					</div>
+					<div class="point point-item" style="top:750px;left:680px">
+						<div class="point-item-inner"></div>
+					</div>
+					<div class="point point-item" style="top:690px;left:1120px">
+						<div class="point-item-inner"></div>
+					</div>
+					<div class="point point-item" style="top:140px;left:1620px">
+						<div class="point-item-inner"></div>
+					</div>
+					<div class="point point-item" style="top:440px;left:1440px">
+						<div class="point-item-inner"></div>
+					</div>
+					<div class="point point-item" style="top:640px;left:2050px">
+						<div class="point-item-inner"></div>
+					</div>
+					<div class="point point-item" style="top:800px;left:1560px">
+						<div class="point-item-inner"></div>
+					</div>
+					
+					
+					<div class="gu-box">
+					   <div class="gu-list">
+					   	   <div class="gu-item selected"><img src="img/desk-01.webp"></div>
+						   <div class="gu-item gu-item-other"><img src="img/desk-03.webp"></div>
+						   <div class="gu-item gu-item-other"><img src="img/desk-04.webp"></div>
+						   <div class="gu-item gu-item-other" 
+						   data-bg-shaw1='img/101.webp' data-bg-img1='img/102.webp'>
+							  <img src="img/desk-05.webp">
+						   </div>
+						   <div class="gu-item gu-item-other"
+							 data-bg-shaw1='img/103.webp' data-bg-img1='img/104.webp'
+							 data-bg-shaw2='img/1042.webp' data-bg-img2='img/1041.webp'>
+							 <img src="img/desk-06.webp"></div>
+						   <div class="gu-item gu-item-other"><img src="img/desk-07.webp"></div>
+						   <div class="gu-item gu-item-other"><img src="img/desk-08.webp"></div>
+					   </div>	
 					</div>
 				</div>
 			</div>
 		</div>
 	</body>
+	<script type="text/javascript">
+		$(function(){
+			$(".gu-item-other").click(function(){
+				let shawPath1=$(this).attr("data-bg-shaw1");
+				let imgPath1=$(this).attr("data-bg-img1");
+				
+				let shawPath2=$(this).attr("data-bg-shaw2");
+				let imgPath2=$(this).attr("data-bg-img2");
+				
+				$("#bg2").attr('src',shawPath1)
+				$("#bg1").attr('src',imgPath1)
+				$("#bg4").attr('src',shawPath2)
+				$("#bg3").attr('src',imgPath2)
+			});
+		})
+	</script>
 </html>
