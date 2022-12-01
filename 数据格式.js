@@ -30,31 +30,29 @@ scnce:''
 	{
 		image:'',//展示图
 		url: '', //图层替换路劲
-		shawUrl: '', //图层底部阴影替换路劲
 		imageId:'',//图层唯一标识
-		shawId:'',///图层底部阴影唯一标识
 		roundId:'',//与关联圆点id相同
 		isLinkMany:false//是否关联多个
 	},
 	{
 		image:'',//展示图
 		url: '', //图层替换路劲
-		shawUrl: '', //图层底部阴影替换路劲
 		imageId:'',//图层唯一标识
-		shawId:'',///图层底部阴影唯一标识
 		roundId:'',//与关联圆点id相同
 		isLinkMany:false//是否关联多个
 	},
 	{
 		image:'',//展示图
-		url: '', //图层替换路劲1
-		shawUrl: '', //图层底部阴影替换路劲1
-		imageId:'',//图层唯一标识1
-		shawId:'',///图层底部阴影唯一标识2
-		url2: '', //图层替换路劲2
-		shawUrl2: '', //图层底部阴影替换路劲2
-		imageId2:'',//图层唯一标识2
-		shawId2:'',///图层底部阴影唯一标识2
+		list:[
+			{
+			 url: '', //图层替换路劲1
+			 imageId:'',//图层唯一标识1	
+			},
+			{
+			 url: '', //图层替换路劲1
+			 imageId:'',//图层唯一标识1	
+			}
+		]
 		roundId:'',//与关联圆点id相同
 		isLinkMany:true //是否关联多个
 	}

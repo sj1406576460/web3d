@@ -191,9 +191,43 @@
 				line-height: 1;
 				border-radius: 4px;
 			}
+			
+			
+			.swiper {
+			  width: 100%;
+			  height: 100%;
+			}
+			
+			.swiper-slide {
+			  text-align: center;
+			  font-size: 18px;
+			  background: #fff;
+			  /* Center slide text vertically */
+			  display: -webkit-box;
+			  display: -ms-flexbox;
+			  display: -webkit-flex;
+			  display: flex;
+			  -webkit-box-pack: center;
+			  -ms-flex-pack: center;
+			  -webkit-justify-content: center;
+			  justify-content: center;
+			  -webkit-box-align: center;
+			  -ms-flex-align: center;
+			  -webkit-align-items: center;
+			  align-items: center;
+			  width: auto!important;
+			}
+			
+			.swiper-slide img {
+			  display: block;
+			  width: 100%;
+			  height: 100%;
+			  object-fit: cover;
+			}
 		</style>
+		<link rel="stylesheet" href="css/swiper-bundle.min.css"/>
 		<script src="js/jquery.min.js"></script>
-
+        
 
 	</head>
 
@@ -292,10 +326,27 @@
 							<div class="gu-item gu-item-other"><img src="img/desk-08.webp"></div>
 						</div>
 					</div>
+					<div class="swiper mySwiper gu-box">
+					  <div class="swiper-wrapper">
+					   <div class="swiper-slide gu-item gu-item-other">
+					   		<img src="img/desk-04.webp">
+					   	</div>
+					   <div class="swiper-slide gu-item gu-item-other">
+					   		<img src="img/desk-04.webp">
+					   	</div>
+					   <div class="swiper-slide gu-item gu-item-other">
+					   		<img src="img/desk-04.webp">
+					   	</div>
+					  </div>
+					  <div class="swiper-button-next"></div>
+					  <div class="swiper-button-prev"></div>
+					  <div class="swiper-pagination"></div>
+					</div>
 				</div>
 			</div>
 		</div>
 	</body>
+	<script src="js/swiper-bundle.min.js"></script>
 	<script type="text/javascript">
 		$(function() {
 			var selectedIndex=null
@@ -312,7 +363,6 @@
 					$("#bg4").attr('src', shawPath2)
 					$("#bg3").attr('src', imgPath2)
 				}
-
 			});
 
 			document.addEventListener("click", e => {
@@ -348,6 +398,18 @@
 				if($("#gu-box").is(':visible')){
 					$(this).children('div').removeClass('inner-other');
 				}
+			});
+			
+			var swiper = new Swiper(".mySwiper", {
+			  spaceBetween: 30,
+			  allowTouchMove: false, 
+			  slidesPerView: "auto",
+			  loop: false,
+			  loopFillGroupWithBlank: true,
+			  navigation: {
+			    nextEl: ".swiper-button-next",
+			    prevEl: ".swiper-button-prev",
+			  },
 			});
 		})
 	</script>
