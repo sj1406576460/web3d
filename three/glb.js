@@ -671,8 +671,8 @@ const init = () => {
 		composer.addPass(renderPass);
 		outlinePass = new THREE.OutlinePass(new THREE.Vector2(initWidth, initHeight), scene, camera,
 			selectedObjects);
-		outlinePass.edgeStrength = 3; //边缘强度
-		outlinePass.edgeGlow = 0.5; //缓缓接近
+		outlinePass.edgeStrength = 4; //边缘强度
+		outlinePass.edgeGlow = 0; //缓缓接近
 		outlinePass.edgeThickness = 1; //边缘厚度
 		outlinePass.renderToScreen = true;
 		//outlinePass.pulsePeriod = 1 //闪烁
@@ -680,7 +680,7 @@ const init = () => {
 		outlinePass.visibleEdgeColor.set('#ffffff'); // 高光颜色0xff0000
 		outlinePass.hiddenEdgeColor.set('#ffffff'); // 阴影颜色
 		outlinePass.usePatternTexture = false; //是否使用父级的材质
-		outlinePass.downSampleRatio = 1; // 边框弯曲度
+		outlinePass.downSampleRatio = 2; // 边框弯曲度
 
 		effectFXAA = new THREE.ShaderPass(THREE.FXAAShader);
 		effectFXAA.uniforms['resolution'].value.set(1 / initWidth, 1 / initHeight);
