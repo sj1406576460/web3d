@@ -1,12 +1,12 @@
 let scene, camera, group, renderer, composer, outlinePass, plusGroup;
 var initWidth = 1200
-var initHeight = 598
+var initHeight = 700
 var selectedObject = null
 
 const init = () => {
 	// Scene
 	scene = new THREE.Scene();
-	scene.background = new THREE.Color('#000'); //
+	scene.background = new THREE.Color('#CECFCF'); //
 
 	// Renderer
 	renderer = new THREE.WebGLRenderer({
@@ -370,90 +370,91 @@ const init = () => {
 		}
 	}
 
-	var modelList = [{
-			name: "1180813.stl",
-			stlPath: "model/1180813.stl",
-			stlId: 1180813,
-			w: 100,
-			h: 100,
-			left: false,
-			right: true,
-			isAvailable: true,
-			selectable: false,
-			index: 0
-		},
+	var modelList = [
 		{
-			name: "1180818.stl",
-			stlPath: "model/80818.stl",
-			stlId: 1180818,
-			w: 100,
-			h: 100,
-			left: true,
-			right: true,
-			isAvailable: true,
-			selectable: false,
-			index: 1
-		},
-		{
-			name: "1180816.stl",
-			stlPath: "model/80818.stl",
-			stlId: 1180816,
-			w: 100,
-			h: 100,
-			left: true,
-			right: true,
-			isAvailable: true,
-			selectable: false,
-			index: 2
-		},
-		{
-			name: "1180815.stl",
-			stlPath: "model/80815.stl",
-			stlId: 1180815,
-			w: 100,
-			h: 100,
-			left: true,
-			right: false,
-			isAvailable: true,
-			selectable: false,
-			index: 3
-		},
-		{
-			name: "1180819.stl",
-			stlPath: "model/80813.stl",
-			stlId: 1180819,
-			w: 100,
-			h: 100,
-			left: false,
-			right: true,
-			isAvailable: true,
-			selectable: false,
-			index: 4
-		},
-		{
-			name: "1180820.stl",
-			stlPath: "model/80815.stl",
-			stlId: 1180820,
-			w: 100,
-			h: 100,
-			left: true,
-			right: false,
-			isAvailable: true,
-			selectable: false,
-			index: 5
-		},
-		{
-			name: "1180821.stl",
-			stlPath: "model/80815.stl",
-			stlId: 1180820,
-			w: 100,
-			h: 100,
-			left: false,
-			right: false,
-			isAvailable: true,
-			selectable: false,
-			index: 6
-		}
+				name: "1180813.stl",
+				stlPath: "model/1180813.stl",
+				stlId: 1180813,
+				w: 100,
+				h: 100,
+				left: false,
+				right: true,
+				isAvailable: true,
+				selectable: false,
+				index: 0
+			},
+			{
+				name: "1180818.stl",
+				stlPath: "model/1180818.stl",
+				stlId: 1180818,
+				w: 100,
+				h: 100,
+				left: true,
+				right: true,
+				isAvailable: true,
+				selectable: false,
+				index: 1
+			},
+			{
+				name: "1180816.stl",
+				stlPath: "model/1180818.stl",
+				stlId: 1180816,
+				w: 100,
+				h: 100,
+				left: true,
+				right: true,
+				isAvailable: true,
+				selectable: false,
+				index: 2
+			},
+			{
+				name: "1180815.stl",
+				stlPath: "model/1180815.stl",
+				stlId: 1180815,
+				w: 100,
+				h: 100,
+				left: true,
+				right: false,
+				isAvailable: true,
+				selectable: false,
+				index: 3
+			},
+			{
+				name: "1180819.stl",
+				stlPath: "model/1180813.stl",
+				stlId: 1180819,
+				w: 100,
+				h: 100,
+				left: false,
+				right: true,
+				isAvailable: true,
+				selectable: false,
+				index: 4
+			},
+			{
+				name: "1180820.stl",
+				stlPath: "model/1180815.stl",
+				stlId: 1180820,
+				w: 100,
+				h: 100,
+				left: true,
+				right: false,
+				isAvailable: true,
+				selectable: false,
+				index: 5
+			},
+			{
+				name: "1180821.stl",
+				stlPath: "model/1180815.stl",
+				stlId: 1180821,
+				w: 100,
+				h: 100,
+				left: false,
+				right: false,
+				isAvailable: true,
+				selectable: false,
+				index: 6
+			}
 	]
 
 	var addFlag = true
@@ -685,9 +686,9 @@ const init = () => {
 		composer.addPass(renderPass);
 		outlinePass = new THREE.OutlinePass(new THREE.Vector2(initWidth, initHeight), scene, camera,
 			selectedObjects);
-		outlinePass.edgeStrength = 2; //边缘强度
-		outlinePass.edgeGlow = 0.5; //缓缓接近
-		outlinePass.edgeThickness = 0.3; //边缘厚度
+		outlinePass.edgeStrength = 4; //边缘强度
+		outlinePass.edgeGlow = 0; //缓缓接近
+		outlinePass.edgeThickness = 1; //边缘厚度
 		outlinePass.renderToScreen = true;
 		//outlinePass.pulsePeriod = 1 //闪烁
 		outlinePass.usePatternTexture = false //是否使用贴图
