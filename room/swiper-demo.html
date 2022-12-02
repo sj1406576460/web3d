@@ -132,13 +132,14 @@
 			.gu-box {
 				position: absolute;
 				background-color: transparent;
-				max-width: 100%;
-				overflow-x: auto;
+				max-width: 800px;
+				overflow-x: hidden;
 				padding-top: 20px;
 				padding-bottom: 20px;
 				top: 540px;
 				left: 200px;
-				z-index: 10;
+				z-index: 100;
+				border: 1px solid red;;
 			}
 
 			.gu-list {
@@ -170,6 +171,7 @@
 				box-sizing: border-box;
 				background-color: #fff;
 				transition: all 0.2s ease 0s;
+				z-index:11
 			}
 
 			.gu-item-other:hover {
@@ -195,7 +197,6 @@
 
 
 			.swiper {
-				max-width: 60%;
 				height: 140px;
 				padding-left: 30px !important;
 				padding-right: 30px !important;
@@ -262,7 +263,7 @@
 					<img src="img/03.webp" class="bg-image" />
 
 					<img src="img/desk-bg2.webp" class="bg-image" />
-					<img src="img/desk2.webp" class="bg-image" />
+					<img src="img/desk2.webp"    class="bg-image" />
 
 					<img src="img/06.webp" class="bg-image" />
 					<img src="img/05.webp" class="bg-image" />
@@ -291,28 +292,28 @@
 					<div class="point point-item" style="top:74.56%;left:10.58%">
 						<div class="point-item-inner inner-other"></div>
 					</div>
-					<div class="point point-item" style="top:556px;left:480px">
+					<div class="point point-item" style="top:48.26%;left:16.474%">
 						<div class="point-item-inner"></div>
 					</div>
-					<div class="point point-item" style="top:500px;left:780px">
+					<div class="point point-item" style="top:54.2%;left:30.47%">
 						<div class="point-item-inner"></div>
 					</div>
-					<div class="point point-item" style="top:750px;left:680px">
+					<div class="point point-item" style="top:80.65%;left:26.57%">
 						<div class="point-item-inner"></div>
 					</div>
-					<div class="point point-item" style="top:690px;left:1120px">
+					<div class="point point-item" style="top:74.194%;left:43.75%">
 						<div class="point-item-inner"></div>
 					</div>
-					<div class="point point-item" style="top:140px;left:1620px">
+					<div class="point point-item" style="top:15.05%;left:63.281%">
 						<div class="point-item-inner"></div>
 					</div>
-					<div class="point point-item" style="top:440px;left:1440px">
+					<div class="point point-item" style="top:47.31%;left:56.25%">
 						<div class="point-item-inner"></div>
 					</div>
-					<div class="point point-item" style="top:640px;left:2050px">
+					<div class="point point-item" style="top:68.82%;left:80.08%">
 						<div class="point-item-inner"></div>
 					</div>
-					<div class="point point-item" style="top:800px;left:1560px">
+					<div class="point point-item" style="top:86.02%;left:60.94%">
 						<div class="point-item-inner"></div>
 					</div>
 
@@ -341,7 +342,7 @@
 						</div>
 					</div>-->
 					<div class="swiper mySwiper gu-box" id="gu-box">
-						<div class="swiper-wrapper gu-list">
+						<div class="swiper-wrapper gu-list" id="gu-list">
 							<div class="swiper-slide gu-item selected">
 								<img src="img/desk-03.webp">
 							</div>
@@ -402,7 +403,7 @@
 					allowTouchMove: false,
 					slidesPerView: "auto",
 					loop: false,
-					loopFillGroupWithBlank: true,
+					//loopFillGroupWithBlank: true,
 					observer: true, //修改swiper自己或子元素时，自动初始化swiper，主要是这两行
 					observeParents: true,//修改swiper的父元素时，自动初始化swiper
 					navigation: {
@@ -424,10 +425,11 @@
 				if (contentWrap) {
 					if (!contentWrap.contains(e.target)) {
 						if (e.target.className.indexOf('point') != -1) {
-							let boxW = $("#gu-box").width() / 2
+							let boxW = 200
 							let domX = e.clientX - boxW
 							let domY = 100
 							let persentX = (domX / window.innerWidth) * 100
+							debugger
 							let persentY = e.clientY / window.innerHeight
 							if (persentY > 0.65) {
 								domY = e.clientY - 180
@@ -457,8 +459,6 @@
 					$(this).children('div').removeClass('inner-other');
 				}
 			});
-
-			
 		})
 	</script>
 </html>

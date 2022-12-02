@@ -154,7 +154,7 @@
 
 			.gu-item {
 				width: 130px;
-			    height: 110px;
+				height: 110px;
 				margin-right: 20px;
 				transform-style: preserve-3d;
 				display: flex;
@@ -193,7 +193,6 @@
 			}
 		</style>
 		<script src="js/jquery.min.js"></script>
-
 
 	</head>
 
@@ -237,36 +236,37 @@
 					<img src="img/7.webp" class="bg-image" />
 					<img src="img/8.webp" class="bg-image" />
 
-					<div class="point point-item" style="top:290px;left:380px">
-						 <div class="point-item-inner"></div>
-					</div>
-					<div class="point point-item" style="top:700px;left:320px">
+					<div class="point point-item" style="top:32.16%;left:16.42%">
+						<div class="point-item-inner"></div>
+				    </div>
+					<div class="point point-item" style="top:74.56%;left:10.58%">
 						<div class="point-item-inner inner-other"></div>
 					</div>
-					<div class="point point-item" style="top:556px;left:480px">
+					<div class="point point-item" style="top:48.26%;left:16.474%">
 						<div class="point-item-inner"></div>
 					</div>
-					<div class="point point-item" style="top:500px;left:780px">
+					<div class="point point-item" style="top:54.2%;left:30.47%">
 						<div class="point-item-inner"></div>
 					</div>
-					<div class="point point-item" style="top:750px;left:680px">
+					<div class="point point-item" style="top:80.65%;left:26.57%">
 						<div class="point-item-inner"></div>
 					</div>
-					<div class="point point-item" style="top:690px;left:1120px">
+					<div class="point point-item" style="top:74.194%;left:43.75%">
 						<div class="point-item-inner"></div>
 					</div>
-					<div class="point point-item" style="top:140px;left:1620px">
+					<div class="point point-item" style="top:15.05%;left:63.281%">
 						<div class="point-item-inner"></div>
 					</div>
-					<div class="point point-item" style="top:440px;left:1440px">
+					<div class="point point-item" style="top:47.31%;left:56.25%">
 						<div class="point-item-inner"></div>
 					</div>
-					<div class="point point-item" style="top:640px;left:2050px">
+					<div class="point point-item" style="top:68.82%;left:80.08%">
 						<div class="point-item-inner"></div>
 					</div>
-					<div class="point point-item" style="top:800px;left:1560px">
+					<div class="point point-item" style="top:86.02%;left:60.94%">
 						<div class="point-item-inner"></div>
 					</div>
+
 
 
 					<div class="gu-box" id="gu-box">
@@ -298,7 +298,7 @@
 	</body>
 	<script type="text/javascript">
 		$(function() {
-			var selectedIndex=null
+			var selectedIndex = null
 			$(".gu-item-other").click(function() {
 				let shawPath1 = $(this).attr("data-bg-shaw1");
 				let imgPath1 = $(this).attr("data-bg-img1");
@@ -320,32 +320,42 @@
 				if (contentWrap) {
 					if (!contentWrap.contains(e.target)) {
 						if (e.target.className.indexOf('point') != -1) {
-								let boxW=$("#gu-box").width()/2
-								let domX=e.clientX-boxW
-								let domY=100
-								let persentX=(domX/window.innerWidth)*100
-								let persentY=e.clientY/window.innerHeight
-								if(persentY>0.65){
-									domY=e.clientY-180
-								}else{
-								    domY=e.clientY+40
-								}
-								$("#gu-box").css({'left':persentX+'%','top':domY});
-								$("#gu-box").show()
+							let boxW = $("#gu-box").width() / 2
+							let clientX=e.clientX
+							let domX = clientX- boxW
+							if(domX<0){
+								domX=0
+							}
+							if((clientX+boxW)>window.innerWidth){
+								domX=window.innerWidth-(clientX+boxW-window.innerWidth)-$("#gu-box").width()
+							}
+							let domY = 100
+							let persentX = (domX / window.innerWidth) * 100
+							let persentY = e.clientY / window.innerHeight
+							if (persentY > 0.65) {
+								domY = e.clientY - 180
+							} else {
+								domY = e.clientY + 40
+							}
+							$("#gu-box").css({
+								'left': persentX + '%',
+								'top': domY
+							});
+							$("#gu-box").show()
 						} else {
 							$(".point-item").children('div').removeClass("inner-other");
 							$("#gu-box").hide()
 						}
 					}
-			    }
+				}
 			})
-			
-			$(".point-item").click(function(){
-				if($(this).index()==selectedIndex){
+
+			$(".point-item").click(function() {
+				if ($(this).index() == selectedIndex) {
 					$("#gu-box").hide()
 				}
 				$(this).siblings(".point-item").children('div').addClass("inner-other");
-				if($("#gu-box").is(':visible')){
+				if ($("#gu-box").is(':visible')) {
 					$(this).children('div').removeClass('inner-other');
 				}
 			});
