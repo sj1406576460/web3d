@@ -3,7 +3,7 @@ let scene, camera, renderer, composer, outlinePass;
 const init = () => {
 	// Scene
 	scene = new THREE.Scene();
-	scene.background = new THREE.Color('#000');
+	//scene.background = new THREE.Color('#000');
 
 	// Renderer
 	renderer = new THREE.WebGLRenderer({
@@ -12,7 +12,7 @@ const init = () => {
 	});
 	renderer.shadowMap.enabled = true // 显示阴影
 	renderer.shadowMap.type = THREE.PCFSoftShadowMap
-	renderer.setClearColor(0x3f3f3f, 1) // 设置背景颜色
+	//renderer.setClearColor(0xffffff, 1) // 设置背景颜色
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	document.body.appendChild(renderer.domElement);
@@ -138,8 +138,8 @@ const init = () => {
 		outlinePass.renderToScreen = true;
 		//outlinePass.pulsePeriod = 1 //闪烁
 		outlinePass.usePatternTexture = false //是否使用贴图
-		outlinePass.visibleEdgeColor.set('#fff'); // 高光颜色0xff0000
-		outlinePass.hiddenEdgeColor.set('#fff'); // 阴影颜色
+		outlinePass.visibleEdgeColor.set('#EB3C00'); // 高光颜色0xff0000
+		outlinePass.hiddenEdgeColor.set('#EB3C00'); // 阴影颜色
 		outlinePass.usePatternTexture = false; //是否使用父级的材质
 		outlinePass.downSampleRatio = 2; // 边框弯曲度
 		outlinePass.clear = true
@@ -204,7 +204,7 @@ const init = () => {
 
 			for (var i = 0; i < intersects.length; i++) {
 				if (intersects[i].object.geometry.name === 'stl003') {
-					intersects[i].object.material.color.set(0xff0000); //变为红色
+					//intersects[i].object.material.color.set(0xff0000); //变为红色
 				} else {
 
 				}
