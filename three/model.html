@@ -7,24 +7,271 @@
     <title>Load STL</title>
     <style>
         body{ margin: 0; padding: 0; overflow: hidden;}
-        canvas { width: 100%; height: 100%;background-color: #fff;}
+		.container{
+			width:100%;
+			height:600px;
+			display: flex;
+		}
+		.box-left{
+			width:20%;
+			height:700px;
+			/*overflow:auto;*/
+			border:0px solid #ddd;
+			display: flex;
+			flex-direction: column;
+			box-sizing: border-box;
+		}
+		
+		.item{
+			width:100%;
+			height:100px;
+			border:1px solid #ddd;
+			border-top:none;
+			display: flex;
+			cursor: pointer;
+			box-sizing: border-box;
+			position: relative;
+			background-color: #fff;
+		}
+		.item.active{
+		   box-shadow: inset 0px 0px 0px 2px #bc5801;
+		}
+		
+		.item.disabled{
+			opacity: 0.7;
+			z-index:9;
+		}
+		
+		
+		
+		.item-left{
+			padding:4px;
+			width:100px;
+			box-sizing: border-box;
+		}
+		
+		.item-left>img{
+			max-width: 100%;
+			height:90%;
+		}
+		.item-right{
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+		}
+		
+		.item-right .product-name{
+			font-size: 14px;
+			color: #000;
+			margin-bottom:10px;
+		}
+		
+		.item-right .product-size{
+			font-size: 12px;
+			color: #666666;
+		}
+		
+		.box-right{
+			width: 1200px;
+			height: 700px;
+			flex:1;
+			position: relative;
+			border:1px solid #ddd;
+			box-sizing: border-box;
+		}
+		
+		#canvasBox{
+			width: 1200px;
+			height: 700px;
+			position: absolute;
+			left:0;
+			top:0;
+			right:0;
+		}
+        canvas { width: 100%; height: 100% }
+		
+		.config-button-center {
+			position: absolute;
+			display: flex;
+			bottom: 30px;
+			left:30%;
+			margin-left:-100px;
+			z-index: 1;
+			width:160px;
+		}
+		
+		.control-button {
+		    transition: none;
+		    border: 2px solid #bc5801;
+			width:44px;
+			height:44px;
+			border-radius:44px;
+			cursor: pointer;
+			margin-right:20px;
+		}
+		
+		.control-button:hover{
+			border:2px solid #ddd;
+		}
+		
+		.control-button-disabled{
+			opacity: 0.5;
+			z-index:9;
+			border:2px solid #eee;
+		}
+		
+		
+		#load-container{
+			position: absolute;
+			top:0;
+			left:0;
+			height:100%;
+			width:100%;
+			display: flex;
+			background: rgba(255,255,255);
+			justify-content: center;
+			align-items: center;
+			z-index:9
+		}
+		
+		.control-button img{
+			max-width: 100%;
+		}
+		
+		
+		#loading-box {
+		  position: relative;
+		  width: 400px;
+		  height: 20px;
+		  margin:auto;
+		  /*border-radius: 10px;*/
+		  background-color: #fafafa;
+		  box-sizing: border-box;
+		  text-align: center;
+		  display: flex;
+		}
+		 
+		#range {
+		  position: absolute;
+		  width: 0;
+		  height: 20px;
+		  top: -16px;
+		  left: 0;
+		  bottom:0;
+		  background: #4A8BF5;
+		  /*border-top-left-radius: 10px;
+		  border-bottom-left-radius: 10px;*/
+		}
+		 
+		#percent {
+		  position: absolute;
+		  width:100%;
+		  left: 0;
+		  top: 36px;
+		  color:#4A8BF5;
+		  line-height: 20px;
+		  font-size:15px;
+		  text-align: center;
+		}
+		
+		.pin:after {
+		    content: "";
+		    position: absolute;
+		    box-shadow: rgb(0 0 0 / 30%) 2px 2px 2px;
+		    -moz-transform: translateX(-50%) rotate(45deg);
+		    -webkit-transform: translateX(-50%) rotate(45deg);
+		    bottom: -4px;
+		    left: 50%;
+		    border-width: 5px;
+		    border-style: solid;
+		    border-color: transparent #fff #fff transparent;
+		}
     </style>
+	<script src="../3d/js/jquery.min.js"></script>
 </head>
 <body>
-    <script src="js/three.min.js"></script>
-    <script src="js/loaders/STLLoader.js"></script>
-    <script src="js/controls/OrbitControls.js"></script>
-	<!-- 后期处理js -->
-	<!-- EffectComposer（效果组合器）对象 -->
-	<script src="js/postprocessing/EffectComposer.js"></script>
-	<!-- RenderPass/该通道在指定的场景和相机的基础上渲染出一个新场景 -->
-	<script src="js/postprocessing/RenderPass.js"></script>
-	<!-- ShaderPass/使用该通道你可以传入一个自定义的着色器，用来生成高级的、自定义的后期处理通道 -->
-	<script src="js/postprocessing/ShaderPass.js"></script>
-	<script src="js/postprocessing/OutlinePass.js"></script>
-	<script src="js/shaders/FXAAShader.js"></script>
-	<script src="js/shaders/CopyShader.js"></script>
+	<div class="container">
+		<div class="box-left">
+			<div class="item" data-id="1180813">
+				<div class="item-left"><img src="model/1180813.png"></div>
+				<div class="item-right">
+					<div class="product-name">Family Den Right-Arm Facing Power 1180813</div>
+					<div class="product-size">52"W x 42"D x 44"H</div>
+				</div>
+			</div>
+			<div class="item" data-id="1180818">
+				<div class="item-left"><img src="model/1180818.png"></div>
+				<div class="item-right">
+					<div class="product-name">Family Den Right-Arm Facing Power 1180818</div>
+					<div class="product-size">52"W x 42"D x 44"H</div>
+				</div>
+			</div>
+			<div class="item" data-id="1180816">
+				<div class="item-left"><img src="model/1180818.png"></div>
+				<div class="item-right">
+					<div class="product-name">Family Den Right-Arm Facing Power 1180815</div>
+					<div class="product-size">52"W x 42"D x 44"H</div>
+				</div>
+			</div>
+			
+			<div class="item" data-id="1180815">
+				<div class="item-left"><img src="model/1180815.png"></div>
+				<div class="item-right">
+					<div class="product-name">Family Den Right-Arm Facing Power 1180815</div>
+					<div class="product-size">52"W x 42"D x 44"H</div>
+				</div>
+			</div>
+			<div class="item" data-id="1180819">
+				<div class="item-left"><img src="model/1180813.png"></div>
+				<div class="item-right">
+					<div class="product-name">Family Den Right-Arm Facing Power 1180813</div>
+					<div class="product-size">52"W x 42"D x 44"H</div>
+				</div>
+			</div>
+			<div class="item" data-id="1180820">
+				<div class="item-left"><img src="model/1180815.png"></div>
+				<div class="item-right">
+					<div class="product-name">Family Den Right-Arm Facing Power 1180815</div>
+					<div class="product-size">52"W x 42"D x 44"H 1180821</div>
+				</div>
+			</div>
+			<div class="item" data-id="1180821">
+				<div class="item-left"><img src="model/1180815.png"></div>
+				<div class="item-right">
+					<div class="product-name">Family Den Right-Arm Facing Power 1180815</div>
+					<div class="product-size">52"W x 42"D x 44"H 1180821</div>
+				</div>
+			</div>
+		</div>
+		<div class="box-right">
+		   <div id="canvasBox"></div>
+		   <div class="config-button-center">
+			   <!--<div class="control-button control-button-disabled"  id="addMeshLeft"><img src="model/icon-plus.svg"></div>-->
+			   <div class="control-button control-button-disabled"  id="removeMesh"><img src="model/original.svg"></div>
+			   <div class="control-button control-button-disabled"  id="removeAllMesh"><img src="model/original-all.svg"></div>
+			   <!--<div class="control-button control-button-disabled"  id="addMeshRight"><img src="model/icon-plus.svg"></div>-->
+		   </div> 
+		</div>
+		<div id="load-container">
+					  <div id="loading-box">
+					  		<p id="range"></p>
+					  		<span id="percent"></span>
+					  </div>  
+		</div>
+	</div>
+   <script src="lib/three.min.js"></script>
+   <script src="jsm/loaders/STLLoader.js"></script>
+   <script src="jsm/controls/OrbitControls.js"></script>
+   <!-- 后期处理js -->
+   <!-- EffectComposer（效果组合器）对象 -->
+   <script src="jsm/postprocessing/EffectComposer.js"></script>
+   <!-- RenderPass/该通道在指定的场景和相机的基础上渲染出一个新场景 -->
+   <script src="jsm/postprocessing/RenderPass.js"></script>
+   <!-- ShaderPass/使用该通道你可以传入一个自定义的着色器，用来生成高级的、自定义的后期处理通道 -->
+   <script src="jsm/postprocessing/ShaderPass.js"></script>
+   <script src="jsm/postprocessing/OutlinePass.js"></script>
+   <script src="jsm/shaders/FXAAShader.js"></script>
+   <script src="jsm/shaders/CopyShader.js"></script>
     <script src="model.js"></script>
-	<!--<script src="notViewSource.js"></script>-->
 </body>
 </html>

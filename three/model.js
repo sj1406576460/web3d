@@ -1,9 +1,12 @@
-let scene, camera, renderer, composer, outlinePass;
+let scene, camera, group, renderer, composer, outlinePass, plusGroup;
+var initWidth = 1200
+var initHeight = 700
+var selectedObject = null
 
 const init = () => {
 	// Scene
 	scene = new THREE.Scene();
-	//scene.background = new THREE.Color('#000');
+	//scene.background = new THREE.Color('#CECFCF'); //CECFCF
 
 	// Renderer
 	renderer = new THREE.WebGLRenderer({
@@ -11,21 +14,26 @@ const init = () => {
 		alpha: true
 	});
 	renderer.shadowMap.enabled = true // 显示阴影
-	renderer.shadowMap.type = THREE.PCFSoftShadowMap
+	//renderer.shadowMap.type = THREE.PCFSoftShadowMap
 	//renderer.setClearColor(0xffffff, 1) // 设置背景颜色
 	renderer.setPixelRatio(window.devicePixelRatio);
-	renderer.setSize(window.innerWidth, window.innerHeight);
-	document.body.appendChild(renderer.domElement);
+	renderer.setSize(initWidth, initHeight);
+	// 把渲染器的渲染结果canvas对象插入到body
+	//document.body.appendChild(renderer.domElement);
+	// 把渲染器的渲染结果canvas对象插入到'pos'对应的div元素中
+	document.getElementById("canvasBox").appendChild(renderer.domElement);
+
 
 	// Camera
-	const aspect = window.innerWidth / window.innerHeight;
+	const aspect = initHeight / initHeight;
 	camera = new THREE.PerspectiveCamera(100, aspect, 0.01, 100);
 	// camera.rotation.y = (90 / 180 ) * Math.PI;
-	camera.position.set(0, 0, 2);
+	camera.position.set(0, 0, 3);
 
 	// Camera Controls
 	let controls = new THREE.OrbitControls(camera, renderer.domElement);
-	controls.addEventListener("change", renderer);
+	//controls.addEventListener("change", renderer);
+	controls.update()
 
 	// Light
 	const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
@@ -41,77 +49,593 @@ const init = () => {
 	spotLight1.castShadow = true
 	scene.add(spotLight1)
 	
-	const shelterGeometry = new THREE.BoxBufferGeometry(0.005, 0.56, 0.55);
-	const shelterLocation = new THREE.Mesh(shelterGeometry, new THREE.MeshNormalMaterial({
-	  transparent: true,
-	  opacity: 0.6
-	}));
-	shelterLocation.rotation.z = 0.025 * Math.PI
-	shelterLocation.translateY(0.25)
-	shelterLocation.translateX(0.85)
-	//scene.add(shelterLocation);
-
-
-
-	var group = new THREE.Group();
+	 /*var boxline = new THREE.BoxGeometry(100,100,100);//创建一个立方体几何对象
+	 var materialline=new THREE.MeshLambertMaterial({
+		 color:'#1AA034',
+		 opacity:0.7,
+		 //transparent:true
+	  });//材质对象
+     var meshLine = new THREE.Mesh(boxline,materialline);//网格模型对象
+	 scene.add(meshLine);//网格模型添加到场景中*/
+    
+	//加辅助坐标
+	//var axes = new THREE.AxisHelper(100, 20, 20); //红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴
+	//scene.add(axes);
+	group = new THREE.Group();
 
 	// Loader new THREE STLLoader
 	const loader = new THREE.STLLoader();
-	/*loader.load("img/2.STL", (result) => {
-		debugger
-        scene.add(result);
-        animate();
-    });*/
-	loader.load("model/1.STL", geometry => {
-		/*var material = new THREE.MeshPhongMaterial({color:0x48D1CC});
-		var mesh = new THREE.Mesh(geometry,material);*/
-		// 创建材质
-		console.log(1)
-		const material = new THREE.MeshLambertMaterial({
-			color: 0x7777ff
-		})
-		///先将对应的模型加入 对应的groud中，再讲整个groud 加入场景，同时为模型定义唯一的名字，方便后期知道是否点击了整个模型
-		geometry.name = "stl001"
-		var mesh = new THREE.Mesh(geometry, material)
-		mesh.rotation.x = -0.5 * Math.PI
-		mesh.scale.set(0.6, 0.6, 0.6)
-		//scene.add(mesh)
-		group.add(mesh)
-	});
+	plusGroup = new THREE.Group();
 
-	loader.load("model/2.STL", geometry => {
-		/*var material = new THREE.MeshPhongMaterial({color:0x48D1CC});
-		var mesh = new THREE.Mesh(geometry,material);*/
-		// 创建材质
-		console.log(2)
-		const materia = new THREE.MeshPhongMaterial({
-			color: 0x7777ff
-		})
-		geometry.name = "stl002"
-		var mesh2 = new THREE.Mesh(geometry, materia)
-		mesh2.rotation.x = -0.5 * Math.PI
-		mesh2.scale.set(0.6, 0.6, 0.6)
-		mesh2.translateX(0.5); //网格模型mesh平移
-		group.add(mesh2)
-		//outlineMeshBasicMaterial(mesh2, scene)
-	});
+	function addPlusItems(plusItems) {
+		plusGroup.children = []
+		plusItems.forEach((plus) => {
+			let map = new THREE.TextureLoader().load('model/add.png');
+			let spriteMaterial = new THREE.SpriteMaterial({
+				map: map,
+				sizeAttenuation: false
+				//color: 0xffffff
+			});
+			//为精灵贴图，其特点在于图片会始终面向用户
+			let sprite = new THREE.Sprite(spriteMaterial)
+			sprite.scale.set(0.08,0.08, 0.08)
+			sprite.rotation.x = 0.1 * Math.PI
+			let item = group.children.find((it) => {
+				return plus.stlId == it.stlId
+			})
+			if (item != undefined) {
+				if (plus['index'] == 2) {
+					sprite.position.set(item.position.x + item.x - 0.6, 1.4, 0.2)
+					sprite.x = item.x
+					sprite.isRight = true
+				} else {
+					if (plus['isEnd'] == 2) {
+						sprite.position.set(item.position.x + item.x - 0.6, 1.4, 0.2)
+						sprite.x = item.x
+						sprite.isRight = true
+					} else {
+						sprite.position.set(item.position.x - 0.6, 1.4, 0.2)
+						sprite.x = item.x
+						sprite.isRight = false
+					}
 
-	loader.load("model/1180815.stl", geometry => {
-		//获取模型的大小
-		console.log(3)
-		const materia = new THREE.MeshPhongMaterial({
-			color: 0x7777ff
+				}
+			}
+			sprite.geometry.name = plus.stlId
+			sprite.stId = plus.stlId
+			sprite.name = 'plus-icon'
+			plusGroup.add(sprite);
 		})
-		geometry.name = "stl003"
-		let mesh3 = new THREE.Mesh(geometry, materia)
-		mesh3.rotation.x = -0.5 * Math.PI
-		mesh3.rotation.y = 0 * Math.PI
-		mesh3.rotation.z = 0 * Math.PI
-		mesh3.scale.set(0.005, 0.005, 0.005)
-		mesh3.translateX(-0.75); //网格模型mesh平移
-		group.add(mesh3)
-		//outlineMeshBasicMaterial(mesh3, scene)
-	});
+
+		console.log(plusGroup)
+	}
+
+
+	function plusModel(stlId, isRight) {
+		addPlusList = []
+		plusGroup.children = []
+		let items = models;
+		let len = items.length
+		if (model != null) {
+			//加在右边
+			loadModel(model, stlId, isRight)
+		}
+	}
+	
+	
+	function preloadModel(){
+			modelList.forEach((item)=>{
+				if(item.left==false && item.right==false){
+					$(".box-left .item").eq(item.index).addClass("disabled");
+					modelList[item.index].isAvailable=false
+				}
+			})
+	}
+
+	function loadModel(item, stlId, isRight) {
+		/**
+		 * type 1:在右边添加push  
+		 *      2.在左边添加unshift
+		 */
+		loader.load(item.stlPath, geometry => {
+			/*var material = new THREE.MeshPhongMaterial({color:0x48D1CC});
+			var mesh = new THREE.Mesh(geometry,material);*/
+			// 创建材质
+			//获取模型的大小
+			const materia = new THREE.MeshLambertMaterial({
+				//color: '#605A54' 0x7777ff #79746D
+				color: 0x7777ff
+			})
+			geometry.name = item.stlId
+			let mesh = new THREE.Mesh(geometry, materia)
+			mesh['addLeft'] = item.left
+			mesh['addRight'] = item.right
+			mesh['stlId'] = item.stlId
+			mesh.rotation.x = -0.4 * Math.PI
+			mesh.rotation.y = 0* Math.PI
+			mesh.rotation.z = 0 * Math.PI
+			mesh.scale.set(0.007, 0.007, 0.007)
+			//mesh5.translateX(1.25); //网格模型mesh平移
+			let box3 = new THREE.Box3().setFromObject(mesh);
+			let size = box3.getSize();
+			console.log("mesh5模型大小" + JSON.stringify(size) + isRight);
+			mesh['x'] = size.x
+
+			let index = group.children.findIndex((it) => {
+				return it.stlId == stlId
+			})
+			if (isRight) {
+				index = index + 1
+			}
+
+
+			group.children.splice(index, 0, mesh)
+			models.splice(index, 0, item)
+			dealModelList(item)
+			calcPostion()
+		});
+	}
+
+
+	function addModel(item, type) {
+
+		/**
+		 * type 1:在右边添加push  
+		 *      2.在左边添加unshift
+		 */
+		loader.load(item.stlPath, geometry => {
+			/*var material = new THREE.MeshPhongMaterial({color:0x48D1CC});
+			var mesh = new THREE.Mesh(geometry,material);*/
+			// 创建材质
+			//获取模型的大小
+			debugger
+			console.log(JSON.stringify(geometry.computeBoundingBox()));
+			console.log(3)
+			const materia = new THREE.MeshLambertMaterial({
+				//color: '#605A54' 0x7777ff #79746D
+				color: 0x7777ff
+			})
+			geometry.name = item.stlId
+			let mesh = new THREE.Mesh(geometry, materia)
+			mesh['addLeft'] = item.left
+			mesh['addRight'] = item.right
+			mesh['stlId'] = item.stlId
+			mesh.rotation.x = -0.4* Math.PI
+			mesh.rotation.y = 0 * Math.PI
+			mesh.rotation.z = 0* Math.PI
+			mesh.scale.set(0.007, 0.007, 0.007)
+			//mesh5.translateX(1.25); //网格模型mesh平移
+			let box3 = new THREE.Box3().setFromObject(mesh);
+			let size = box3.getSize();
+			console.log("mesh5模型大小" + JSON.stringify(size));
+			mesh['x'] = size.x
+			if (type == 1) {
+				group.children.push(mesh)
+				models.push(item)
+				dealModelList(item)
+			} else {
+				group.children.unshift(mesh)
+				models.unshift(item)
+				dealModelList(item)
+			}
+			calcPostion()
+			console.log(models)
+		});
+	}
+
+
+	function dealModelList(item) {
+		modelList.map((it) => {
+			if (it.stlId == item.stlId) {
+				it.isAvailable = false
+			}
+		})
+		$(".box-left .item").eq(item.index).addClass("disabled");
+		$(".box-left .item").removeClass("active")
+		model = null
+		dealModelLeftRight()
+	}
+
+	function restoreModelList(item) {
+		modelList.map((it) => {
+			if (it.stlId == item.stlId) {
+				it.isAvailable = true
+			}
+			if (it.left==false && it.right==false) {
+				it.isAvailable = false
+			}
+		})
+		let itemIndex = modelList.findIndex((i) => {
+			return item.stlId == i.stlId
+		})
+
+		//去除已添加数据
+		models = models.filter((it) => {
+			return it.stlId != item.stlId
+		})
+		let len = models.length
+		if (models.length >= 1) {
+			if ((item.right && item.right == models[0].left) || (item.left && item.left == models[len - 1].right) ||
+				(models[0].right && models[len - 1].left)) {
+				$(".box-left .item").eq(itemIndex).removeClass("disabled");
+			} else {
+				modelList.map((it) => {
+					if (it.stlId == item.stlId) {
+						it.isAvailable = false
+					}
+				})
+				$(".box-left .item").eq(itemIndex).addClass("disabled");
+			}
+		} else {
+			modelList.map((it) => {
+				if (it.left==false && it.right==false) {
+					it.isAvailable = false
+					$(".box-left .item").eq(it.index).addClass("disabled");
+				}else{
+					$(".box-left .item").eq(it.index).removeClass("disabled");
+				}
+			})
+		}
+		dealModelLeftRight()
+		model = null
+
+	}
+
+
+	function dealModelLeftRight() {
+		let isAddLeft = false
+		let isAddRight = false
+		models.forEach((item) => {
+			if (item.left == false && item.right == true) {
+				isAddLeft = true
+			}
+
+			if (item.left == true && item.right == false) {
+				isAddRight = true
+			}
+		})
+
+		if (isAddLeft) {
+			modelList.map((item) => {
+				if (item.left == false && item.right == true) {
+					item.isAvailable = false
+					$(".box-left .item").eq(item.index).addClass("disabled");
+				}
+		    })
+		}else{
+			modelList.map((item) => {
+				if (item.left == false && item.right == true) {
+					item.isAvailable = true
+					$(".box-left .item").eq(item.index).removeClass("disabled");
+				}
+			})
+		}
+
+		if (isAddRight) {
+			modelList.map((item) => {
+				if (item.left == true && item.right == false) {
+					item.isAvailable = false
+					$(".box-left .item").eq(item.index).addClass("disabled");
+				}
+			})
+		}else{
+			modelList.map((item) => {
+				if (item.left == true && item.right == false) {
+					item.isAvailable = true
+					$(".box-left .item").eq(item.index).removeClass("disabled");
+				}
+			})
+		}
+	}
+
+	function restoreAllModelList() {
+		models = []
+		$(".box-left .item").removeClass("disabled").removeClass('active')
+		$("#removeAllMesh").addClass("control-button-disabled")
+		model = null
+		modelList.map((it) => {
+			it.isAvailable = true
+			if(it.left==false && it.right==false){
+				$(".box-left .item").eq(it.index).addClass("disabled");
+				it.isAvailable=false
+			}
+		})
+	}
+
+	function deleteClass(item) {
+		restoreModelList(item)
+	}
+
+
+	function calcPostion() {
+		let totalWidth = 0
+		if (group.children.length !== 0) {
+			group.children.forEach(item => {
+				totalWidth += item.x
+			})
+			let initX = -totalWidth / 2
+			let diffX = 0.4
+			let list = group.children;
+			list.forEach((item, index) => {
+				if (index == 0) {
+					item.position.x = initX + diffX
+				} else {
+					item.position.x = initX + diffX
+				}
+				initX = initX + item.x
+				group.children[index] = item
+			})
+		} else {
+			$("#removeAllMesh").addClass("control-button-disabled")
+		}
+	}
+
+	var modelList = [
+		{
+				name: "1180813.stl",
+				stlPath: "model/1180813.stl",
+				stlId: 1180813,
+				w: 100,
+				h: 100,
+				left: false,
+				right: true,
+				isAvailable: true,
+				selectable: false,
+				index: 0
+			},
+			{
+				name: "1180818.stl",
+				stlPath: "model/1180818.stl",
+				stlId: 1180818,
+				w: 100,
+				h: 100,
+				left: true,
+				right: true,
+				isAvailable: true,
+				selectable: false,
+				index: 1
+			},
+			{
+				name: "1180816.stl",
+				stlPath: "model/1180818.stl",
+				stlId: 1180816,
+				w: 100,
+				h: 100,
+				left: true,
+				right: true,
+				isAvailable: true,
+				selectable: false,
+				index: 2
+			},
+			{
+				name: "1180815.stl",
+				stlPath: "model/1180815.stl",
+				stlId: 1180815,
+				w: 100,
+				h: 100,
+				left: true,
+				right: false,
+				isAvailable: true,
+				selectable: false,
+				index: 3
+			},
+			{
+				name: "1180819.stl",
+				stlPath: "model/1180813.stl",
+				stlId: 1180819,
+				w: 100,
+				h: 100,
+				left: false,
+				right: true,
+				isAvailable: true,
+				selectable: false,
+				index: 4
+			},
+			{
+				name: "1180820.stl",
+				stlPath: "model/1180815.stl",
+				stlId: 1180820,
+				w: 100,
+				h: 100,
+				left: true,
+				right: false,
+				isAvailable: true,
+				selectable: false,
+				index: 5
+			},
+			{
+				name: "1180821.stl",
+				stlPath: "model/1180815.stl",
+				stlId: 1180821,
+				w: 100,
+				h: 100,
+				left: false,
+				right: false,
+				isAvailable: true,
+				selectable: false,
+				index: 6
+			}
+	]
+
+	var addFlag = true
+	var model = null
+	var models = []
+	var addPlusList = []
+	$(function() {
+		
+		    $("#load-container").click(function(){
+				return false
+			})
+		
+		      var loadingBox = document.getElementById('loading-box')
+		      var range = document.getElementById('range')
+		      var percent = document.getElementById('percent')
+			  
+		      // 创建一个定时器，让里面的函数每隔20毫秒自动执行一次
+		      let timer = setInterval(function () {
+		        // 使range部分的宽度每次增加2px
+		        range.style.width = range.clientWidth + 2 + 'px'
+		 
+		        // 当宽度达到和外部盒子宽度一致时，清除定时器
+		        if (range.clientWidth >= 300) {
+		          clearInterval(timer)
+				  $("#load-container").hide();
+		        }
+		 
+		        // 通过range的宽度和外部盒子宽度的数值比，得到进度的百分比
+		        var num = parseInt((range.clientWidth / loadingBox.clientWidth) * 100) + '%'
+		        percent.innerHTML = num
+		    }, 20)
+			preloadModel()
+
+		$(".box-left .item").click(function() {
+			let index = $(this).index()
+			let item = modelList[index]
+			if (item.isAvailable) {
+				$(this).addClass("active").siblings().removeClass("active")
+				if (group.children.length == 0) {
+					addModel(item, 1)
+					$("#removeAllMesh").removeClass("control-button-disabled")
+				} else {
+					model = item
+					let items = models;
+					let len = items.length
+					addPlusList = []
+					if (model != null) {
+						//addPlusList.push({x:group.children[0].x,stlId:group.children[0].stlId
+						if (items.length == 1) {
+							if (model.right == true && items[0].left == true) {
+								//组合最左边位置可以添加
+								addPlusList.push({
+									x: group.children[0].x,
+									stlId: group.children[0].stlId,
+									index: 1
+								})
+							}
+
+							if (model.left == true && items[0].right == true) {
+								//组合的最右边位置可以添加
+								addPlusList.push({
+									x: group.children[0].x,
+									stlId: group.children[0].stlId,
+									index: 2
+								})
+							}
+						}
+
+						if (items.length > 1) {
+							if (model.right == true && items[0].left == true) {
+								//组合最左边位置可以添加
+								addPlusList.push({
+									x: group.children[0].x,
+									stlId: group.children[0].stlId,
+									index: 1
+								})
+							}
+
+							if (model.left == true && items[items.length - 1].right == true) {
+								if (model.right) {
+									//组合的最右边位置可以添加
+									addPlusList.push({
+										x: group.children[items.length - 1].x,
+										stlId: group.children[items.length - 1].stlId,
+										index: 1,
+										isEnd: 1
+									})
+								} else {
+									//组合的最右边位置可以添加
+									addPlusList.push({
+										x: group.children[items.length - 1].x,
+										stlId: group.children[items.length - 1].stlId,
+										index: 1,
+										isEnd: 2
+									})
+								}
+							}
+
+							if (model.left == true && model.right == true) {
+								//组合的中间位置都可以添加
+								for (i = 1; i < items.length; i++) {
+									let it = addPlusList.find((item) => {
+										return item.stlId == group.children[i].stlId
+									})
+
+									if (it != undefined) {
+										addPlusList.push({
+											x: group.children[i].x,
+											stlId: group.children[i].stlId,
+											index: 2
+										})
+									} else {
+										addPlusList.push({
+											x: group.children[i].x,
+											stlId: group.children[i].stlId,
+											index: 1
+										})
+									}
+								}
+							}
+						}
+					}
+					addPlusItems(addPlusList)
+				}
+			}
+		})
+
+
+		$("#addMeshLeft").click(function() {
+			let items = models;
+			let len = items.length
+			addPlusList = []
+			plusGroup.children = []
+			if (model != null) {
+				//加载左边
+				if (model.right && model.right == items[0].left) {
+					addModel(model, 2);
+					$("#addMeshLeft").addClass("control-button-disabled");
+				}
+			}
+		})
+
+		$("#addMeshRight").click(function() {
+			addPlusList = []
+			plusGroup.children = []
+			let items = models;
+			let len = items.length
+			if (model != null) {
+				//加在右边
+				if (model.left && model.left == items[len - 1].right) {
+					addModel(model, 1);
+					$("#addMeshRight").addClass("control-button-disabled");
+				}
+			}
+		})
+
+
+		$("#removeMesh").click(function() {
+			if (selectedObject != null) {
+				addPlusList = []
+				plusGroup.children = []
+				let stlId = selectedObject.geometry.name;
+				let items = modelList.filter((item) => {
+					return item.stlId == stlId
+				})
+				group.remove(selectedObject);
+				deleteClass(items[0])
+				calcPostion()
+			}
+		})
+
+		$("#removeAllMesh").click(function() {
+			selectedObject = null
+			model = null
+			group.children = []
+			plusGroup.children = []
+			restoreAllModelList()
+		})
+	})
+
+
 
 	const geometry = new THREE.TorusGeometry(0.2, 0.1, 2, 10);
 	const material = new THREE.MeshBasicMaterial({
@@ -122,59 +646,85 @@ const init = () => {
 	torus.position.set(-2, 0, 0)
 	torus.rotation.x = 1 * Math.PI
 	//group.add(torus)
-	scene.add(group);
-	console.log(scene)
 
+
+	// 创建一个矩形平面几何体，宽度100，长度200
+	var plane = new THREE.PlaneGeometry(0.55, 0.6)
+	var material6 = new THREE.MeshPhongMaterial({
+		color: 0xad4fde,
+		// 矩形平面网格模型默认单面显示，可以设置side属性值为THREE.DoubleSide双面显示
+		side: THREE.DoubleSide,
+		transparent: true
+	});
+	var mesh6 = new THREE.Mesh(plane, material6);
+	mesh6.rotation.x = 0 * Math.PI
+	mesh6.rotation.y = 0.54 * Math.PI
+	mesh6.rotation.z = 0. * Math.PI
+	mesh6.position.set(0.82, 0.25, 0)
+	//scene.add(mesh6)
+
+	/**
+	 * 包围盒全自动计算：模型整体居中
+	 */
+	var box3 = new THREE.Box3()
+	// 计算层级模型group的包围盒
+	// 模型group是加载一个三维模型返回的对象，包含多个网格模型
+	box3.expandByObject(group)
+	// 计算一个层级模型对应包围盒的几何体中心在世界坐标中的位置
+	var center = new THREE.Vector3()
+	box3.getCenter(center)
+	console.log('查看几何体中心坐标', center);
+	console.log('查看组合体', group);
+	/* 重新设置模型的位置，使之居中。
+	group.position.x = group.position.x - center.x
+	group.position.y = group.position.y - center.y
+	group.position.z = group.position.z - center.z*/
 
 	function outlineOperate(selectedObjects) {
 		composer = new THREE.EffectComposer(renderer);
 		const renderPass = new THREE.RenderPass(scene, camera);
 		composer.addPass(renderPass);
-		outlinePass = new THREE.OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera,
+		outlinePass = new THREE.OutlinePass(new THREE.Vector2(initWidth, initHeight), scene, camera,
 			selectedObjects);
-		outlinePass.edgeStrength = 2; //边缘强度
+		outlinePass.edgeStrength = 4; //边缘强度
 		outlinePass.edgeGlow = 0; //缓缓接近
-		outlinePass.edgeThickness = 0.5; //边缘厚度
+		outlinePass.edgeThickness = 1; //边缘厚度
 		outlinePass.renderToScreen = true;
 		//outlinePass.pulsePeriod = 1 //闪烁
 		outlinePass.usePatternTexture = false //是否使用贴图
-		outlinePass.visibleEdgeColor.set('#EB3C00'); // 高光颜色0xff0000
-		outlinePass.hiddenEdgeColor.set('#EB3C00'); // 阴影颜色
+		outlinePass.visibleEdgeColor.set('#ffffff'); // 高光颜色0xff0000 ffffff
+		outlinePass.hiddenEdgeColor.set('#ffffff'); // 阴影颜色 
 		outlinePass.usePatternTexture = false; //是否使用父级的材质
 		outlinePass.downSampleRatio = 2; // 边框弯曲度
-		outlinePass.clear = true
-		composer.addPass(outlinePass);
-	}
-	
-	function outlineMeshBasicMaterial(mesh, scene) {
-		var outlineMaterial = new THREE.MeshBasicMaterial({
-			color: 0xffffff,
-			side: THREE.BackSide
-		});
-		var outlineMesh = new THREE.Mesh(mesh.geometry, outlineMaterial);
-		outlineMesh.position.set(mesh.position.x, mesh.position.y, mesh.position.z)
-		outlineMesh.scale.set(0.0052, 0.0052, 0.005)
-		outlineMesh.rotation.x = -0.5 * Math.PI
-		outlineMesh.rotation.y = 0 * Math.PI
-		outlineMesh.rotation.z = 0 * Math.PI
-		scene.add(outlineMesh);
+
+		effectFXAA = new THREE.ShaderPass(THREE.FXAAShader);
+		effectFXAA.uniforms['resolution'].value.set(1 / initWidth, 1 / initHeight);
+		composer.addPass(effectFXAA);
+
+		//outlinePass.clear = true;
+		composer.addPass(outlinePass)
 	}
 
+
 	animate();
+
 	//获取与射线相交的对象数组
 	function getIntersects(event) {
-		event
-	.preventDefault(); // 阻止默认的点击事件执行, https://developer.mozilla.org/zh-CN/docs/Web/API/Event/preventDefault
+		event.preventDefault(); // 阻止默认的点击事件执行
+		//console.log("event.clientX:" + event.clientX);
+		//console.log("event.clientY:" + event.clientY);
 
 		//声明 rayCaster 和 mouse 变量
 		let rayCaster = new THREE.Raycaster();
 		let mouse = new THREE.Vector2();
 
+		let box = document.getElementById("canvasBox")
+
+		//mouse.x = (event.offsetX / window.innerWidth) * 2 - 1;
+		//mouse.y = -(event.offsetY / window.innerHeight) * 2 + 1;
 		//通过鼠标点击位置，计算出raycaster所需点的位置，以屏幕为中心点，范围-1到1
-		mouse.x = (event.clientX / document.body.offsetWidth) * 2 -
-			1;
-		mouse.y = -(event.clientY / document.body.offsetHeight) * 2 +
-			1; //这里为什么是-号，没有就无法点中
+		mouse.x = (event.offsetX / box.offsetWidth) * 2 - 1;
+		mouse.y = -(event.offsetY / box.offsetHeight) * 2 + 1; //这里为什么是-号，没有就无法点中
 
 		//通过鼠标点击的位置(二维坐标)和当前相机的矩阵计算出射线位置
 		rayCaster.setFromCamera(mouse, camera);
@@ -189,33 +739,98 @@ const init = () => {
 		return intersects;
 	}
 
+
+	function getPlusIntersects(event) {
+		event.preventDefault(); // 阻止默认的点击事件执行
+		//console.log("event.clientX:" + event.clientX);
+		//console.log("event.clientY:" + event.clientY);
+		//声明 rayCaster 和 mouse 变量
+		let rayCaster = new THREE.Raycaster();
+		let mouse = new THREE.Vector2();
+
+		let box = document.getElementById("canvasBox")
+
+		//mouse.x = (event.offsetX / window.innerWidth) * 2 - 1;
+		//mouse.y = -(event.offsetY / window.innerHeight) * 2 + 1;
+		//通过鼠标点击位置，计算出raycaster所需点的位置，以屏幕为中心点，范围-1到1
+		mouse.x = (event.offsetX / box.offsetWidth) * 2 - 1;
+		mouse.y = -(event.offsetY / box.offsetHeight) * 2 + 1; //这里为什么是-号，没有就无法点中
+
+		//通过鼠标点击的位置(二维坐标)和当前相机的矩阵计算出射线位置
+		rayCaster.setFromCamera(mouse, camera);
+
+		//获取与射线相交的对象数组， 其中的元素按照距离排序，越近的越靠前。
+		//+true，是对其后代进行查找，这个在这里必须加，因为模型是由很多部分组成的，后代非常多。
+		let intersects = rayCaster.intersectObjects(plusGroup.children, true);
+
+		//返回选中的对象
+		// console.log(intersects)
+		return intersects;
+	}
+
 	//鼠标双击触发的方法
 	function onMouseDblclick(event) {
 		//获取raycaster和所有模型相交的数组，其中的元素按照距离排序，越近的越靠前
 		let intersects = getIntersects(event);
+		let plusIntersects = getPlusIntersects(event);
 		console.log(intersects);
-		console.log(intersects[0].object.geometry.name);
-
-		outlineOperate([intersects[0].object])
-
 		//获取选中最近的Mesh对象
 		//instance坐标是对象，右边是类，判断对象是不是属于这个类的
-		if (intersects.length !== 0 && intersects[0].object.geometry.name === 'stl003') {
-
+		if (intersects.length !== 0) {
+			console.log(intersects[0].object.geometry.name);
+			selectedObject = intersects[0].object
+			outlineOperate([intersects[0].object])
+			//group.remove(mesh5) 可以实现模型删除 remove(intersects[0].object)
 			for (var i = 0; i < intersects.length; i++) {
 				if (intersects[i].object.geometry.name === 'stl003') {
 					//intersects[i].object.material.color.set(0xff0000); //变为红色
 				} else {
 
 				}
+				//render();
 			}
-
+			$("#removeMesh").removeClass("control-button-disabled")
 		} else {
-			console.log('未选中 Mesh!');
+			selectedObject = null
+			outlineOperate([])
+			$("#removeMesh").addClass("control-button-disabled")
+		}
+
+		if (plusIntersects.length !== 0) {
+			if (plusIntersects[0].object.geometry.name) {
+				plusModel(plusIntersects[0].object.stId, plusIntersects[0].object.isRight)
+			}
 		}
 	}
 
 	document.addEventListener('click', onMouseDblclick);
+	document.addEventListener('mousemove', onDocumentMouseMove, false);
+	 
+	function onDocumentMouseMove(event) {
+		// 点击屏幕创建一个向量
+		let intersects = getIntersects(event);
+		let plusIntersects = getPlusIntersects(event);
+		console.log(intersects);
+		//获取选中最近的Mesh对象
+		//instance坐标是对象，右边是类，判断对象是不是属于这个类的
+		if (intersects.length !== 0) {
+			console.log(intersects[0].object.geometry.name);
+			//group.remove(mesh5) 可以实现模型删除 remove(intersects[0].object)
+			for (var i = 0; i < intersects.length; i++) {
+				document.body.style.cursor = "pointer";
+			}
+		}else if(plusIntersects.length !== 0){
+		            plusIntersects.forEach((e) =>{
+		   			var obj = e.object;
+		               // 判断相交的是否是精灵对象并且是对应标签的名称，如果是鼠标变小手
+		   			if (obj instanceof THREE.Sprite && obj.name.indexOf("plus-icon") > -1) {
+		   				document.body.style.cursor = "pointer";
+		   			}
+		   		})
+		}else{
+			document.body.style.cursor = "default";
+		}
+	}
 };
 
 
@@ -224,7 +839,29 @@ const init = () => {
 
 
 const animate = () => {
+	/**
+	 * 包围盒全自动计算：模型整体居中
+	 */
+	/*var box3 = new THREE.Box3()
+	// 计算层级模型group的包围盒
+	// 模型group是加载一个三维模型返回的对象，包含多个网格模型
+	box3.expandByObject(group)
+	// 计算一个层级模型对应包围盒的几何体中心在世界坐标中的位置
+	var center = new THREE.Vector3()
+	box3.getCenter(center)
+	console.log('查看几何体中心坐标', center);
+	console.log('查看组合体', group);
+	/* 重新设置模型的位置，使之居中。
+	group.position.x = group.position.x - center.x
+	group.position.y = group.position.y - center.y
+	group.position.z = group.position.z - center.z*/
+
+	scene.add(group);
+	scene.add(plusGroup);
+
 	renderer.render(scene, camera);
+	//scene.updateMatrixWorld(true);
+	//camera.updateMatrixWorld(true);
 	requestAnimationFrame(animate);
 	if (composer) {
 		composer.render()

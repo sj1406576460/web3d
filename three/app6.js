@@ -6,7 +6,7 @@ var selectedObject = null
 const init = () => {
 	// Scene
 	scene = new THREE.Scene();
-	scene.background = new THREE.Color('#CECFCF'); //CECFCF
+	//scene.background = new THREE.Color('#CECFCF'); //CECFCF
 
 	// Renderer
 	renderer = new THREE.WebGLRenderer({
@@ -14,8 +14,8 @@ const init = () => {
 		alpha: true
 	});
 	renderer.shadowMap.enabled = true // 显示阴影
-	renderer.shadowMap.type = THREE.PCFSoftShadowMap
-	renderer.setClearColor(0x000000, 1) // 设置背景颜色
+	//renderer.shadowMap.type = THREE.PCFSoftShadowMap
+	//renderer.setClearColor(0xffffff, 1) // 设置背景颜色
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(initWidth, initHeight);
 	// 把渲染器的渲染结果canvas对象插入到body
