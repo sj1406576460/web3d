@@ -156,8 +156,8 @@ const init = () => {
 			mesh.rotation.z = 0 * Math.PI
 			mesh.scale.set(0.007, 0.007, 0.007)
 			//mesh5.translateX(1.25); //网格模型mesh平移
-			let box3 = new THREE.Box3().setFromObject(mesh);
-			let size = box3.getSize();
+			let box = new THREE.Box3().setFromObject(mesh);
+			let size = box.getSize();
 			console.log("mesh5模型大小" + JSON.stringify(size) + isRight);
 			mesh['x'] = size.x
 
@@ -188,9 +188,6 @@ const init = () => {
 			var mesh = new THREE.Mesh(geometry,material);*/
 			// 创建材质
 			//获取模型的大小
-			debugger
-			console.log(JSON.stringify(geometry.computeBoundingBox()));
-			console.log(3)
 			const materia = new THREE.MeshLambertMaterial({
 				//color: '#605A54' 0x7777ff #79746D
 				color: 0x7777ff
@@ -205,9 +202,9 @@ const init = () => {
 			mesh.rotation.z = 0* Math.PI
 			mesh.scale.set(0.007, 0.007, 0.007)
 			//mesh5.translateX(1.25); //网格模型mesh平移
-			let box3 = new THREE.Box3().setFromObject(mesh);
-			let size = box3.getSize();
-			console.log("mesh5模型大小" + JSON.stringify(size));
+			let box = new THREE.Box3().setFromObject(mesh);
+			let size = box.getSize();
+			//console.log("mesh5模型大小" + JSON.stringify(size));
 			mesh['x'] = size.x
 			if (type == 1) {
 				group.children.push(mesh)
