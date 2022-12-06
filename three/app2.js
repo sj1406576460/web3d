@@ -11,7 +11,7 @@ const init = () => {
 		alpha: true
 	});
 	renderer.shadowMap.enabled = true // 显示阴影
-	renderer.shadowMap.type = THREE.PCFSoftShadowMap
+	//renderer.shadowMap.type = THREE.PCFSoftShadowMap
 	//renderer.setClearColor(0xffffff, 1) // 设置背景颜色
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(window.innerWidth, window.innerHeight);
@@ -235,8 +235,8 @@ const init = () => {
 		composer.addPass(renderPass);
 		outlinePass = new THREE.OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera,
 			selectedObjects);
-		outlinePass.edgeStrength = 2; //边缘强度
-		outlinePass.edgeGlow = 0.5; //缓缓接近
+		outlinePass.edgeStrength = 3; //边缘强度
+		outlinePass.edgeGlow = 0.1; //缓缓接近
 		outlinePass.edgeThickness = 0.2; //边缘厚度
 		outlinePass.renderToScreen = true;
 		//outlinePass.pulsePeriod = 1 //闪烁
@@ -250,7 +250,7 @@ const init = () => {
 		effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
 		composer.addPass(effectFXAA);
 
-		outlinePass.clear = true;
+		//outlinePass.clear = true;
 		composer.addPass(outlinePass)
 	}
 

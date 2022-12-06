@@ -6,7 +6,7 @@ var selectedObject = null
 const init = () => {
 	// Scene
 	scene = new THREE.Scene();
-	//scene.background = new THREE.Color('#CECFCF'); //CECFCF
+	scene.background = new THREE.Color('#000'); //CECFCF
 
 	// Renderer
 	renderer = new THREE.WebGLRenderer({
@@ -15,7 +15,7 @@ const init = () => {
 	});
 	renderer.shadowMap.enabled = true // 显示阴影
 	//renderer.shadowMap.type = THREE.PCFSoftShadowMap
-	//renderer.setClearColor(0xffffff, 1) // 设置背景颜色
+	//renderer.setClearColor('#ffffff',1) // 设置背景颜色
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(initWidth, initHeight);
 	// 把渲染器的渲染结果canvas对象插入到body
@@ -36,7 +36,7 @@ const init = () => {
 	controls.update()
 
 	// Light
-	const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
+	const ambientLight = new THREE.AmbientLight(0xffffff,0.4);
 	scene.add(ambientLight);
 
 	const spotLight = new THREE.SpotLight(0xffffff) // 创建聚光灯
@@ -651,7 +651,7 @@ const init = () => {
 		color: 0xad4fde,
 		// 矩形平面网格模型默认单面显示，可以设置side属性值为THREE.DoubleSide双面显示
 		side: THREE.DoubleSide,
-		transparent: true
+		//transparent: true
 	});
 	var mesh6 = new THREE.Mesh(plane, material6);
 	mesh6.rotation.x = 0 * Math.PI
@@ -683,22 +683,27 @@ const init = () => {
 		composer.addPass(renderPass);
 		outlinePass = new THREE.OutlinePass(new THREE.Vector2(initWidth, initHeight), scene, camera,
 			selectedObjects);
-		outlinePass.edgeStrength = 4; //边缘强度
+		/*edgeStrength：强度 ，默认3
+		edgeGlow:：强度 默认1
+		edgeThickness:：边缘浓度
+		pulsePeriod:：闪烁频率 ，默认0 ，值越大频率越低
+		usePatternTexture：使用纹理
+		visibleEdgeColor：边缘可见部分发光颜色
+		hiddenEdgeColor：边缘遮挡部分发光颜色*/
+		outlinePass.edgeStrength = 5; //边缘强度
 		outlinePass.edgeGlow = 0; //缓缓接近
 		outlinePass.edgeThickness = 1; //边缘厚度
 		outlinePass.renderToScreen = true;
 		//outlinePass.pulsePeriod = 1 //闪烁
-		outlinePass.usePatternTexture = false //是否使用贴图
-		outlinePass.visibleEdgeColor.set('#ffffff'); // 高光颜色0xff0000 ffffff
-		outlinePass.hiddenEdgeColor.set('#ffffff'); // 阴影颜色 
-		outlinePass.usePatternTexture = false; //是否使用父级的材质
+		outlinePass.usePatternTexture = false; //是否使用贴图
+		outlinePass.visibleEdgeColor.set('#F92672'); // 高光颜色0xff0000 ffffff F92672
+		outlinePass.hiddenEdgeColor.set('#F92672');// 阴影颜色 
 		outlinePass.downSampleRatio = 2; // 边框弯曲度
+		outlinePass.clear = true;
 
 		effectFXAA = new THREE.ShaderPass(THREE.FXAAShader);
 		effectFXAA.uniforms['resolution'].value.set(1 / initWidth, 1 / initHeight);
 		composer.addPass(effectFXAA);
-
-		//outlinePass.clear = true;
 		composer.addPass(outlinePass)
 	}
 
