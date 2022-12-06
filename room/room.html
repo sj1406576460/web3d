@@ -458,6 +458,7 @@
 							}else{
 								$(".point-item").children('div').removeClass("inner-other");
 								$("#gu-box").hide()
+								selectedIndex=null
 								$(".gu-item").eq(0).css({'marginLeft':0})
 								boxMarginLeft=0
 								showChose=false
@@ -491,9 +492,13 @@
 				$(".gu-item").eq(0).css({'marginLeft':boxMarginLeft})
 			});
 
-			$(".point-item").click(function() {
+			$(".point-item").click(function(e) {
 				if ($(this).index() == selectedIndex) {
 					$("#gu-box").hide()
+					selectedIndex=null
+					e.stopPropagation()
+				}else{
+					selectedIndex=$(this).index()
 				}
 				$(this).siblings(".point-item").children('div').addClass("inner-other");
 				if ($("#gu-box").is(':visible')) {
