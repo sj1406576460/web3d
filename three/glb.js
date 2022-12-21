@@ -360,7 +360,7 @@ const init = () => {
 
 	var modelList = [{
 			name: "1180813.stl",
-			stlPath: "model/1180813.glb",
+			stlPath: "model/9190265.glb",
 			stlId: 1180813,
 			w: 100,
 			h: 100,
