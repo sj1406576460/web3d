@@ -27,9 +27,9 @@ const init = () => {
 
 	// Camera
 	const aspect = initWidth / initHeight;
-	camera = new THREE.PerspectiveCamera(100, aspect,0.2,100);
+	camera = new THREE.PerspectiveCamera(100, aspect,0.01,1000);
 	//camera.rotation.y = (90 / 180 ) * Math.PI;
-	camera.position.set(0, 0, 3);
+	camera.position.set(0, 0, 2);
 
 	// Camera Controls
 	let controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -51,8 +51,8 @@ const init = () => {
 	scene.add(spotLight1)
 
 	//加辅助坐标
-	//var axes = new THREE.AxisHelper(100, 20, 20); //红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴
-	//scene.add(axes);
+	var axes = new THREE.AxesHelper(100, 20, 20); //红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴
+	scene.add(axes);
 
 	// Loader new THREE STLLoader
 	const loader = new THREE.GLTFLoader();
