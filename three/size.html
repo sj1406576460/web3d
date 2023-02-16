@@ -14,7 +14,7 @@
 		}
 		.box-left{
 			width:20%;
-			height:700px;
+			height:600px;
 			/*overflow:auto;*/
 			border:0px solid #ddd;
 			display: flex;
@@ -25,10 +25,10 @@
 		.item{
 			width:100%;
 			height:100px;
-			border:1px solid #ddd;
 			border-top:none;
 			display: flex;
 			cursor: pointer;
+			border:1px solid #ddd;
 			box-sizing: border-box;
 			position: relative;
 			background-color: #fff;
@@ -72,17 +72,18 @@
 		}
 		
 		.box-right{
-			width: 1200px;
-			height: 700px;
+			width: 1600px;
+			height: 600px;
 			flex:1;
 			position: relative;
 			border:1px solid #ddd;
 			box-sizing: border-box;
+			/*background-color: #7E7E7E;*/
 		}
 		
 		#canvasBox{
-			width: 1200px;
-			height: 700px;
+			width: 1500px;
+			height: 600px;
 			position: absolute;
 			left:0;
 			top:0;
@@ -111,7 +112,7 @@
 		}
 		
 		.control-button:hover{
-			border:2px solid #ddd;
+			border:2px solid #bc5801;
 		}
 		
 		.control-button-disabled{
@@ -192,56 +193,55 @@
 <body>
 	<div class="container">
 		<div class="box-left">
-			<div class="item" data-id="1180813">
-				<div class="item-left"><img src="model/1180813.png"></div>
+			<div class="item" data-id="915">
+				<div class="item-left"><img src="model/915.png"></div>
 				<div class="item-right">
-					<div class="product-name">Family Den Right-Arm Facing Power 1180813</div>
+					<div class="product-name">Family Den Right-Arm Facing Power 915</div>
 					<div class="product-size">52"W x 42"D x 44"H</div>
 				</div>
 			</div>
-			<div class="item" data-id="1180818">
-				<div class="item-left"><img src="model/1180818.png"></div>
+			<div class="item" data-id="916">
+				<div class="item-left"><img src="model/916.png"></div>
 				<div class="item-right">
-					<div class="product-name">Family Den Right-Arm Facing Power 1180818</div>
+					<div class="product-name">Family Den Right-Arm Facing Power 916</div>
 					<div class="product-size">52"W x 42"D x 44"H</div>
 				</div>
 			</div>
-			<div class="item" data-id="1180816">
-				<div class="item-left"><img src="model/1180818.png"></div>
+			<div class="item" data-id="9162">
+				<div class="item-left"><img src="model/916.png"></div>
+				<div class="item-right">
+					<div class="product-name">Family Den Right-Arm Facing Power 9162</div>
+					<div class="product-size">52"W x 42"D x 44"H</div>
+				</div>
+			</div>
+			<div class="item" data-id="917">
+				<div class="item-left"><img src="model/917.png"></div>
 				<div class="item-right">
 					<div class="product-name">Family Den Right-Arm Facing Power 1180815</div>
 					<div class="product-size">52"W x 42"D x 44"H</div>
 				</div>
 			</div>
-			
-			<div class="item" data-id="1180815">
-				<div class="item-left"><img src="model/1180815.png"></div>
+			<div class="item" data-id="917">
+				<div class="item-left"><img src="model/917.png"></div>
 				<div class="item-right">
-					<div class="product-name">Family Den Right-Arm Facing Power 1180815</div>
+					<div class="product-name">Family Den Right-Arm Facing Power 917</div>
 					<div class="product-size">52"W x 42"D x 44"H</div>
 				</div>
 			</div>
-			<div class="item" data-id="1180819">
-				<div class="item-left"><img src="model/1180813.png"></div>
+			<div class="item" data-id="918">
+				<div class="item-left"><img src="model/918.png"></div>
 				<div class="item-right">
-					<div class="product-name">Family Den Right-Arm Facing Power 1180813</div>
+					<div class="product-name">Family Den Right-Arm Facing Power 918</div>
 					<div class="product-size">52"W x 42"D x 44"H</div>
 				</div>
 			</div>
-			<div class="item" data-id="1180820">
+			<!--<div class="item" data-id="1180821">
 				<div class="item-left"><img src="model/1180815.png"></div>
 				<div class="item-right">
 					<div class="product-name">Family Den Right-Arm Facing Power 1180815</div>
 					<div class="product-size">52"W x 42"D x 44"H 1180821</div>
 				</div>
-			</div>
-			<div class="item" data-id="1180821">
-				<div class="item-left"><img src="model/1180815.png"></div>
-				<div class="item-right">
-					<div class="product-name">Family Den Right-Arm Facing Power 1180815</div>
-					<div class="product-size">52"W x 42"D x 44"H 1180821</div>
-				</div>
-			</div>
+			</div>-->
 		</div>
 		<div class="box-right">
 		   <div id="canvasBox"></div>
@@ -250,8 +250,11 @@
 			   <div class="control-button control-button-disabled"  id="removeMesh"><img src="model/original.svg"></div>
 			   <div class="control-button control-button-disabled"  id="removeAllMesh"><img src="model/original-all.svg"></div>
 			   <!--<div class="control-button control-button-disabled"  id="addMeshRight"><img src="model/icon-plus.svg"></div>-->
-		   </div> 
+			   <div class="control-button control-button-disabled"  id="addMeshY"><img src="model/icon-plus.svg"></div>
+		   </div>
+		  
 		</div>
+		
 		<div id="load-container">
 					  <div id="loading-box">
 					  		<p id="range"></p>
@@ -259,19 +262,22 @@
 					  </div>  
 		</div>
 	</div>
-   <script src="js/three.min.js"></script>
-   <script src="js/loaders/STLLoader.js"></script>
-   <script src="js/controls/OrbitControls.js"></script>
-   <!-- 后期处理js -->
-   <!-- EffectComposer（效果组合器）对象 -->
-   <script src="js/postprocessing/EffectComposer.js"></script>
-   <!-- RenderPass/该通道在指定的场景和相机的基础上渲染出一个新场景 -->
-   <script src="js/postprocessing/RenderPass.js"></script>
-   <!-- ShaderPass/使用该通道你可以传入一个自定义的着色器，用来生成高级的、自定义的后期处理通道 -->
-   <script src="js/postprocessing/ShaderPass.js"></script>
-   <script src="js/postprocessing/OutlinePass.js"></script>
-   <script src="js/shaders/FXAAShader.js"></script>
-   <script src="js/shaders/CopyShader.js"></script>
+	<div style="margin:auto;width:60%;"><img src="model/plan.png" style="max-height:100%"></div>
+	
+    <script src="liby/three.min.js"></script>
+    <!--<script src="js/loaders/STLLoader.js"></script>-->
+	<script src="jsm/loaders/GLTFLoader.js"></script>
+    <script src="jsm/controls/OrbitControls.js"></script>
+	<!-- 后期处理js -->
+	<!-- EffectComposer（效果组合器）对象 -->
+	<script src="jsm/postprocessing/EffectComposer.js"></script>
+	<!-- RenderPass/该通道在指定的场景和相机的基础上渲染出一个新场景 -->
+	<script src="jsm/postprocessing/RenderPass.js"></script>
+	<!-- ShaderPass/使用该通道你可以传入一个自定义的着色器，用来生成高级的、自定义的后期处理通道 -->
+	<script src="jsm/postprocessing/ShaderPass.js"></script>
+	<script src="jsm/postprocessing/OutlinePass.js"></script>
+	<script src="jsm/shaders/FXAAShader.js"></script>
+	<script src="jsm/shaders/CopyShader.js"></script>
     <script src="size.js"></script>
 </body>
 </html>
