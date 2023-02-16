@@ -51,8 +51,8 @@ const init = () => {
 	scene.add(spotLight1)
 
 	//加辅助坐标
-	var axes = new THREE.AxesHelper(100, 20, 20); //红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴
-	scene.add(axes);
+	/*var axes = new THREE.AxesHelper(100, 20, 20); //红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴
+	scene.add(axes);*/
 
 	// Loader new THREE STLLoader
 	const loader = new THREE.GLTFLoader();
@@ -150,6 +150,7 @@ const init = () => {
 			mesh.scale.set(1, 1,1)
 			let box = new THREE.Box3().expandByObject(mesh);
 			mesh['x'] = box.max.x-box.min.x
+			mesh['y'] = box.max.y-box.min.y
 			//geometry.computeBoundingBox();
 			//let boundingBox = geometry.boundingBox;
 			//var boundingBoxWidth  = boundingBox.max.x - boundingBox.min.x;
@@ -348,8 +349,9 @@ const init = () => {
 			})
 			console.log(totalWidth)
 			let initX = -totalWidth / 2
-			let diffX = 0.25
+			let diffX = 0.2
 			let list = group.children;
+			let listLength=list.length/2
 			list.forEach((item, index) => {
 				if (index == 0) {
 					//item.position.x = initX + diffX
@@ -646,13 +648,69 @@ const init = () => {
 			    mesh.scale.set(1, 1,1)
 				let box = new THREE.Box3().expandByObject(mesh);
 				console.log("mesh5模型大小" + JSON.stringify(box));
+				let totalWidth=0
+				group.children.forEach(item => {
+					totalWidth += item.x
+				})
 				mesh['x'] = box.max.x-box.min.x
 				mesh['y'] = box.max.y-box.min.y
-				mesh.position.set(-0.215,0,0.8)
+				mesh.position.set(totalWidth/2-0.94,0,0.8)
 				scene.add(mesh)
 				console.log(models)
 			});
 		})
+		
+		
+		$("#addMeshY1").click(function() {
+			let item={
+					name: "1180815.stl",
+					stlPath: "model/917.glb",
+					stlId: 917,
+					w: 100,
+					h: 100,
+					left: true,
+					right: false,
+					isAvailable: true,
+					selectable: false,
+					index: 3
+			}
+			
+			loader.load(item.stlPath, gltf => {
+				gltf.scene.name = item.stlId
+				gltf.scene.castShadow=true;
+				gltf.scene.traverse(function(child) {
+					if (child.isMesh) {
+						child.frustumCulled = false;
+						 //模型阴影
+						child.castShadow = true;
+						//模型自发光
+						child.material.emissive =  child.material.color;
+						child.material.emissiveMap = child.material.map ;
+					}
+				});
+				let mesh = gltf.scene
+				mesh.name = item.stlId
+				mesh['addLeft'] = item.left
+				mesh['addRight'] = item.right
+				mesh['stlId'] = item.stlId
+				mesh.rotation.x = 0 * Math.PI
+				mesh.rotation.y =  -Math.PI / 2
+			    mesh.scale.set(1, 1,1)
+				let box = new THREE.Box3().expandByObject(mesh);
+				console.log("mesh5模型大小" + JSON.stringify(box));
+				let totalWidth=0
+				group.children.forEach(item => {
+					totalWidth += item.x
+				})
+				mesh['x'] = box.max.x-box.min.x
+				mesh['y'] = box.max.y-box.min.y
+				mesh.position.set(totalWidth/2-0.94,0,1.4)
+				scene.add(mesh)
+				console.log(models)
+			});
+		})
+		
+		
 
 
 		$("#removeMesh").click(function() {
