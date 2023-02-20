@@ -160,6 +160,7 @@ const init = () => {
 			let box = new THREE.Box3().expandByObject(mesh);
 			mesh['x'] = box.max.x-box.min.x
 			mesh['y'] = box.max.y-box.min.y
+			mesh['z'] = box.max.z-box.min.z
 			//geometry.computeBoundingBox();
 			//let boundingBox = geometry.boundingBox;
 			//var boundingBoxWidth  = boundingBox.max.x - boundingBox.min.x;
@@ -211,6 +212,7 @@ const init = () => {
 			console.log("mesh5模型大小" + JSON.stringify(box));
 			mesh['x'] = box.max.x-box.min.x
 			mesh['y'] = box.max.y-box.min.y
+			mesh['z'] = box.max.z-box.min.z
 			scene.add(mesh)
 			if (type == 1) {
 				group.children.push(mesh)
@@ -663,6 +665,7 @@ const init = () => {
 				})
 				mesh['x'] = box.max.x-box.min.x
 				mesh['y'] = box.max.y-box.min.y
+				mesh['z'] = box.max.z-box.min.z
 				mesh.position.set(totalWidth/2-0.94,0,0.8)
 				scene.add(mesh)
 				group.children.push(mesh)
@@ -717,8 +720,9 @@ const init = () => {
 				})
 				mesh['x'] = box.max.x-box.min.x
 				mesh['y'] = box.max.y-box.min.y
-				mesh.position.set(totalWidth/2-mesh['x'],0,1.4)
+				mesh.position.set(totalWidth/2-mesh['x'],0,1.6)
 				scene.add(mesh)
+				debugger
 				group.children.push(mesh)
 				console.log(models)
 			});
