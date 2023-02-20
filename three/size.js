@@ -1,6 +1,6 @@
 let scene, camera, group, renderer, composer, outlinePass, plusGroup;
 var initWidth = 1500
-var initHeight = 598
+var initHeight = 608
 var selectedObject = null
 
 const init = () => {
@@ -17,6 +17,7 @@ const init = () => {
 	renderer.shadowMap.type = THREE.PCFSoftShadowMap
 	//renderer.setClearColor(0x000000, 1) // 设置背景颜色
 	renderer.outputEncoding = THREE.sRGBEncoding;
+	renderer.precision='mediump'
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(initWidth, initHeight);
 	// 把渲染器的渲染结果canvas对象插入到body
@@ -35,10 +36,18 @@ const init = () => {
 	let controls = new THREE.OrbitControls(camera, renderer.domElement);
 	//controls.addEventListener("change", renderer);
 	controls.update()
+	
+	/*var point = new THREE.PointLight('#fff'); //点光源  
+	point.position.set(300, 100, 200); //点光源位置  
+	scene.add(point); //点光源添加到场景中*/
 
-	// Light
+	// Light //将环境光添加到场景中
 	const ambientLight = new THREE.AmbientLight(0xffffff);
 	scene.add(ambientLight);
+	
+	
+	var light = new THREE.DirectionalLight(0xffffff);
+	scene.add(light); //将平行光添加到场景中
 
 	const spotLight = new THREE.SpotLight(0xffffff) // 创建聚光灯
 	spotLight.position.set(150, 150, 150)
@@ -202,7 +211,6 @@ const init = () => {
 			console.log("mesh5模型大小" + JSON.stringify(box));
 			mesh['x'] = box.max.x-box.min.x
 			mesh['y'] = box.max.y-box.min.y
-			debugger
 			scene.add(mesh)
 			if (type == 1) {
 				group.children.push(mesh)
@@ -440,7 +448,7 @@ const init = () => {
 			isAvailable: true,
 			selectable: false,
 			index: 5,
-			isTransferY:true,
+			isZhuanjiao:true,
 		},
 		{
 			name: "1180821.stl",
@@ -642,6 +650,7 @@ const init = () => {
 				mesh.name = item.stlId
 				mesh['addLeft'] = item.left
 				mesh['addRight'] = item.right
+				mesh['isAddY'] = true
 				mesh['stlId'] = item.stlId
 				mesh.rotation.x = 0 * Math.PI
 				mesh.rotation.y =  -Math.PI / 2
@@ -656,6 +665,8 @@ const init = () => {
 				mesh['y'] = box.max.y-box.min.y
 				mesh.position.set(totalWidth/2-0.94,0,0.8)
 				scene.add(mesh)
+				group.children.push(mesh)
+				debugger
 				console.log(models)
 			});
 		})
@@ -700,12 +711,15 @@ const init = () => {
 				console.log("mesh5模型大小" + JSON.stringify(box));
 				let totalWidth=0
 				group.children.forEach(item => {
-					totalWidth += item.x
+					if(!item.isAddY){
+						totalWidth += item.x
+					}
 				})
 				mesh['x'] = box.max.x-box.min.x
 				mesh['y'] = box.max.y-box.min.y
-				mesh.position.set(totalWidth/2-0.94,0,1.4)
+				mesh.position.set(totalWidth/2-mesh['x'],0,1.4)
 				scene.add(mesh)
+				group.children.push(mesh)
 				console.log(models)
 			});
 		})
