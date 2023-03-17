@@ -33,6 +33,9 @@ const init = () => {
 
 	// Camera Controls
 	let controls = new THREE.OrbitControls(camera, renderer.domElement);
+	
+	controls.minDistance=1.6
+	controls.maxDistance=4
 	//controls.addEventListener("change", renderer);
 	controls.update()
 
