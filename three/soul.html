@@ -14,7 +14,6 @@
   <!--引入three.js三维引擎https://cdn.bootcdn.net/ajax/libs/three.js/100/three.js-->
   <script src="js/three.min.js"></script>
   <script src="js/controls/OrbitControls.js"></script>
-  
 </head>
 
 <body>
@@ -123,8 +122,13 @@
     renderer.setPixelRatio(window.devicePixelRatio);
     document.body.appendChild(renderer.domElement); //body元素中插入canvas对象
     //执行渲染操作   指定场景、相机作为参数
-    renderer.render(scene, camera);
+    renderer.render(scene, camera); 
     var controls = new THREE.OrbitControls(camera,renderer.domElement);
+	//controls.minZoom = 0.5;
+	//controls.maxZoom = 2;
+	controls.minDistance  = 1500;
+	controls.maxDistance  = 2500;
+	console.log(controls)
 	
 	//获取与射线相交的对象数组
 	function getIntersects(event) {
@@ -196,16 +200,23 @@
 	document.addEventListener('touchstart', onMouseDblclick);
 	
 	
+	function limitScale(object3D,minScale,maxScale){
+		const scale = object3D.scale;
+		scale.x = THREE.MathUtils.clamp(scale.x,{minScale,maxScale})
+		scale.y = THREE.MathUtils.clamp(scale.y,{minScale,maxScale})
+		scale.z = THREE.MathUtils.clamp(scale.z,{minScale,maxScale})
+	}
+	
+	
     function render() {
-      renderer.render(scene,camera);//执行渲染操作
       group.rotateY(-0.0006);//每次绕y轴旋转0.01弧度
-      group.rotateX(0.0006)
-      controls.update()
-      
+      group.rotateX(0.0006);
+      controls.update();
       requestAnimationFrame(render);//请求再次执行渲染函数render
+	  renderer.render(scene,camera);//执行渲染操作
     }
+	
     render();
-    
   </script>
 </body>
 </html>
