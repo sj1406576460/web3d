@@ -42,7 +42,7 @@
     camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 10000 );
 		
     camera.position.set(0, 0, 3000);
-    function createS (){
+    function createS (text){
       // 将文字放在画布中间
         function makeTextCanvas(text, width, height) {
           var canvas = document.createElement("canvas");
@@ -73,7 +73,7 @@
 		  ctx.stroke()
           return ctx.canvas;
         }
-        var textCanvas = makeTextCanvas("房东的猫", 200, 100);
+        var textCanvas = makeTextCanvas(text, 220, 100);
         
         var texture = new THREE.CanvasTexture(textCanvas);
         texture.generateMipmaps = false;
@@ -98,7 +98,7 @@
       var phi = Math.acos( - 1 + ( 2 * i ) / l );
       var theta = Math.sqrt( l * Math.PI ) * phi;
 
-      var sprite = createS()
+      var sprite = createS("房东的猫"+i)
       sprite.scale.set(80, 40, 4);
       sprite.position.setFromSphericalCoords( 400, phi, theta )
       
