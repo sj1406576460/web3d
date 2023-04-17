@@ -32,10 +32,41 @@
     </style>
 </head>
 <body>
-<div id="stage"></div>
+<div id="stage">
+	
+</div>
+<!-- CSS布局方式写法很多，不一定和课程一致 -->
+	<div id="tag" style="background-color: brown;width:400px;">
+	    <!-- position:relative;约束子元素绝对定位参照点 -->
+	    <div style="position:relative;width:400px;height:322px;color: #fff;">
+	        <!-- 图片绝对定位100%填充父元素，作为标签的背景 -->
+	        <img src="./信息背景.png" alt="" style="width:100%;position: absolute;left: 0px;top: 0px;">
+	        <!-- 名称、存储量、设备状态、等信息叠加到背景图上即可 -->
+	        <div style="position:absolute;left:48px;top:36px;font-size:16px;">
+	            <div style="font-size:20px;font-weight: 400;">
+	                <span>设备A</span>
+	            </div>
+	            <div style="margin-top: 30px;">
+	                <span style="font-weight: 400;margin-left: 80px;font-size: 40px;color: #00ffff;">276559 L</span>
+	            </div>
+	            <div style="margin-top: 20px;">
+	                <span style="color: #ccc;font-weight: 300;">管理</span><span
+	                   style="font-weight: 400;margin-left: 30px;">郭老师</span>
+	            </div>
+	            <div style="margin-top: 10px;">
+	                <span style="color: #ccc;font-weight: 300;">工号</span><span
+	                   style="font-weight: 400;margin-left: 30px;">webgl3d.cn</span>
+	            </div>
+	        </div>
+	        <div style="position:absolute;left:285px;top:35px;">
+	            <span style="color: #ffff00;">异常</span>
+	        </div>
+	    </div>
+	</div>
 <script src="js/three.min.js"></script>
 <script src="js/controls/OrbitControls.js"></script>
 <script src="js/loaders/OBJLoader.js"></script>
+<script src="js/renderers/CSS2DRenderer.js"></script>
 <script>
     let stage = document.querySelector('#stage');
     let container;
@@ -68,7 +99,13 @@
 
             let mesh = new THREE.Mesh(geometry, material);
             mesh.scale.multiplyScalar(.3);
-            scene.add(mesh);
+			scene.add(mesh);
+			
+			const div = document.getElementById('tag');
+			// HTML元素转化为threejs的CSS2模型对象
+			const tag = new THREE.CSS2DObject(div);
+			tag.position.y += 180; 
+			scene.add(tag);
         });
         renderer = new THREE.WebGLRenderer({
             antialias: true,    // 平滑效果
