@@ -67,6 +67,8 @@
 <script src="js/controls/OrbitControls.js"></script>
 <script src="js/loaders/OBJLoader.js"></script>
 <script src="js/renderers/CSS2DRenderer.js"></script>
+
+
 <script>
     let stage = document.querySelector('#stage');
     let container;
@@ -99,13 +101,21 @@
 
             let mesh = new THREE.Mesh(geometry, material);
             mesh.scale.multiplyScalar(.3);
-			scene.add(mesh);
 			
 			const div = document.getElementById('tag');
+			div.style.pointerEvents = 'none';//避免HTML标签遮挡三维场景的鼠标事件
+			console.log(div)
 			// HTML元素转化为threejs的CSS2模型对象
 			const tag = new THREE.CSS2DObject(div);
-			tag.position.y += 180; 
-			scene.add(tag);
+			console.log(tag)
+			mesh.add(tag);
+			scene.add(mesh);
+			
+			// 创建一个CSS2渲染器CSS2DRenderer
+			const css2Renderer = new CSS2DRenderer();
+			document.body.appendChild(css2Renderer.domElement);
+			css2Renderer.render(scene, camera);
+			
         });
         renderer = new THREE.WebGLRenderer({
             antialias: true,    // 平滑效果
