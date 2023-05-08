@@ -28,7 +28,7 @@ const init = () => {
 
 	// Camera
 	const aspect = initWidth / initHeight;
-	camera = new THREE.PerspectiveCamera(100, aspect,0.01,1000);
+	camera = new THREE.PerspectiveCamera(50, aspect,0.01,1000);
 	/*camera.rotation.y = (90 / 180 ) * Math.PI;*/
 	camera.position.set(0, 0, 2);
 
@@ -80,23 +80,23 @@ const init = () => {
 			});
 			//为精灵贴图，其特点在于图片会始终面向用户
 			let sprite = new THREE.Sprite(spriteMaterial)
-			sprite.scale.set(0.12, 0.12, 0.12)
+			sprite.scale.set(0.06, 0.06, 0.06)
 			sprite.rotation.x = 0.1 * Math.PI
 			let item = group.children.find((it) => {
 				return plus.stlId == it.stlId
 			})
 			if (item != undefined) {
 				if (plus['index'] == 2) {
-					sprite.position.set(item.position.x + item.x - 0.6, 1.2, 0.2)
+					sprite.position.set(item.position.x + item.x - 0.3, 0.6, 0.2)
 					sprite.x = item.x
 					sprite.isRight = true
 				} else {
 					if (plus['isEnd'] == 2) {
-						sprite.position.set(item.position.x + item.x - 0.6,1.2, 0.2)
+						sprite.position.set(item.position.x + item.x - 0.3,0.6, 0.2)
 						sprite.x = item.x
 						sprite.isRight = true
 					} else {
-						sprite.position.set(item.position.x - 0.6, 1.2, 0.2)
+						sprite.position.set(item.position.x - 0.3, 0.6, 0.2)
 						sprite.x = item.x
 						sprite.isRight = false
 					}
@@ -156,7 +156,7 @@ const init = () => {
 			mesh.rotation.x = 0 * Math.PI
 			mesh.rotation.y = 0 * Math.PI
 			mesh.rotation.z = 0 * Math.PI
-			mesh.scale.set(1, 1,1)
+			mesh.scale.set(0.5, 0.5, 0.5)
 			let box = new THREE.Box3().expandByObject(mesh);
 			mesh['x'] = box.max.x-box.min.x
 			mesh['y'] = box.max.y-box.min.y
@@ -185,7 +185,7 @@ const init = () => {
 			group.children.splice(index, 0, mesh)
 			models.splice(index, 0, item)
 			dealModelList(item)
-			calcPostion()
+			calcPosition()
 		});
 	}
 
@@ -215,7 +215,7 @@ const init = () => {
 			mesh['stlId'] = item.stlId
 			mesh.rotation.x = 0 * Math.PI
 			mesh.rotation.y = 0 * Math.PI
-		    mesh.scale.set(1, 1,1)
+		    mesh.scale.set(0.5, 0.5, 0.5)
 			let box = new THREE.Box3().expandByObject(mesh);
 			console.log("mesh5模型大小" + JSON.stringify(box));
 			mesh['x'] = box.max.x-box.min.x
@@ -236,7 +236,7 @@ const init = () => {
 				group.children.unshift(mesh)
 				models.unshift(item)
 			}
-			calcPostion()
+			calcPosition()
 			console.log(models)
 		});
 	}
@@ -365,7 +365,7 @@ const init = () => {
 	}
 
 
-	function calcPostion() {
+	function calcPosition() {
 		console.log(group)
 		let totalWidth = 0
 		if (group.children.length !== 0) {
@@ -374,7 +374,7 @@ const init = () => {
 			})
 			console.log(totalWidth)
 			let initX = -totalWidth / 2
-			let diffX = 0.2
+			let diffX = 0.1
 			let list = group.children;
 			let listLength=list.length/2
 			list.forEach((item, index) => {
@@ -671,7 +671,7 @@ const init = () => {
 				mesh['stlId'] = item.stlId
 				mesh.rotation.x = 0 * Math.PI
 				mesh.rotation.y =  -Math.PI / 2
-			    mesh.scale.set(1, 1,1)
+			    mesh.scale.set(0.5, 0.5, 0.5)
 				let box = new THREE.Box3().expandByObject(mesh);
 				console.log("mesh5模型大小" + JSON.stringify(box));
 				let totalWidth=0
@@ -723,7 +723,7 @@ const init = () => {
 				mesh['stlId'] = item.stlId
 				mesh.rotation.x = 0 * Math.PI
 				mesh.rotation.y =  -Math.PI / 2
-			    mesh.scale.set(1, 1,1)
+			    mesh.scale.set(0.5, 0.5,0.5)
 				let box = new THREE.Box3().expandByObject(mesh);
 				console.log("mesh5模型大小" + JSON.stringify(box));
 				let totalWidth=0
@@ -755,7 +755,7 @@ const init = () => {
 				group.remove(selectedObject);
 				scene.remove(selectedObject);
 				deleteClass(items[0])
-				calcPostion()
+				calcPosition()
 			}
 		})
 
