@@ -28,8 +28,9 @@ const init = () => {
 	// Camera
 	const aspect = initWidth / initHeight;
 	camera = new THREE.PerspectiveCamera(100, aspect,0.01,1000);
-	//camera.rotation.y = (90 / 180 ) * Math.PI;
-	camera.position.set(0, 0, 2);
+	// 将相机的旋转角度沿y轴增加30度
+	camera.rotation.x += Math.PI/6; // Math.PI / 6 等于 30度（弧度制）
+	camera.position.set(0, 0, 2.2);
 
 	// Camera Controls
 	let controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -133,6 +134,10 @@ const init = () => {
 		 *      2.在左边添加unshift
 		 */
 		loader.load(item.stlPath, geometry => {
+			
+			//parent.rotation.y += Math.PI / 6; // Math.PI / 6 等于 30度（弧度制）
+			//parent.scale.set(2, 2, 2);
+			  
 			geometry.scene.name = item.stlId
 			geometry.scene.traverse(function(child) {
 				if (child.isMesh) {
@@ -143,14 +148,16 @@ const init = () => {
 				}
 			});
 			let mesh = geometry.scene
+			
+			  
 			mesh.name = item.stlId
 			mesh['addLeft'] = item.left
 			mesh['addRight'] = item.right
 			mesh['stlId'] = item.stlId
-			mesh.rotation.x = 0.12 * Math.PI
+			mesh.rotation.x = 0 * Math.PI
 			mesh.rotation.y = 0 * Math.PI
 			mesh.rotation.z = 0 * Math.PI
-			mesh.scale.set(1.5, 1.5,1.5)
+			mesh.scale.set(1, 1,1)
 			let box = new THREE.Box3().expandByObject(mesh);
 			mesh['x'] = box.max.x-box.min.x
 			//geometry.computeBoundingBox();
@@ -158,7 +165,15 @@ const init = () => {
 			//var boundingBoxWidth  = boundingBox.max.x - boundingBox.min.x;
 			//mesh5.translateX(1.25); //网格模型mesh平移
 			//mesh['x'] =boundingBoxWidth
+			// 将模型添加到场景中
             scene.add(mesh)
+			
+			// 获取模型对象的父级
+			let parent = mesh.parent;
+			// 修改父级的位置、旋转和缩放
+			//parent.position.y-=0.2;
+			parent.rotation.x= Math.PI / 12; // Math.PI / 6 等于 30度（弧度制）
+			
 			let index = group.children.findIndex((it) => {
 				return it.stlId == stlId
 			})
@@ -197,15 +212,21 @@ const init = () => {
 			mesh['addLeft'] = item.left
 			mesh['addRight'] = item.right
 			mesh['stlId'] = item.stlId
-			mesh.rotation.x = 0.12 * Math.PI
+			mesh.rotation.x = 0 * Math.PI
 			mesh.rotation.y = 0 * Math.PI
-		    mesh.scale.set(1.5, 1.5,1.5)
+		    mesh.scale.set(1, 1,1)
 			let box = new THREE.Box3().expandByObject(mesh);
 			console.log("mesh5模型大小" + JSON.stringify(box));
 			mesh['x'] = box.max.x-box.min.x
 			mesh['y'] = box.max.y-box.min.y
-			debugger
 			scene.add(mesh)
+			
+			// 获取模型对象的父级
+			let parent = mesh.parent;
+			// 修改父级的位置、旋转和缩放
+			//parent.position.y-=0.2;
+			parent.rotation.x= Math.PI / 12; // Math.PI / 6 等于 30度（弧度制）
+			
 			if (type == 1) {
 				group.children.push(mesh)
 				models.push(item)

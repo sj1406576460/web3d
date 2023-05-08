@@ -29,7 +29,7 @@ const init = () => {
 	// Camera
 	const aspect = initWidth / initHeight;
 	camera = new THREE.PerspectiveCamera(100, aspect,0.01,1000);
-	//camera.rotation.y = (90 / 180 ) * Math.PI;
+	/*camera.rotation.y = (90 / 180 ) * Math.PI;*/
 	camera.position.set(0, 0, 2);
 
 	// Camera Controls
@@ -167,6 +167,14 @@ const init = () => {
 			//mesh5.translateX(1.25); //网格模型mesh平移
 			//mesh['x'] =boundingBoxWidth
             scene.add(mesh)
+			// 获取模型对象的父级
+			let parent = mesh.parent;
+			//修改父级的位置、旋转和缩放
+			//parent.position.y-=0.2;
+			if(parent.rotation.x!=Math.PI / 12){
+			  parent.rotation.x= Math.PI / 12; // Math.PI / 6 等于 30度（弧度制）
+			}
+			
 			let index = group.children.findIndex((it) => {
 				return it.stlId == stlId
 			})
@@ -214,6 +222,13 @@ const init = () => {
 			mesh['y'] = box.max.y-box.min.y
 			mesh['z'] = box.max.z-box.min.z
 			scene.add(mesh)
+			
+			// 获取模型对象的父级
+			let parent = mesh.parent;
+			// 修改父级的位置、旋转和缩放
+			//parent.position.y-=0.2;
+			parent.rotation.x= Math.PI / 12; // Math.PI / 6 等于 30度（弧度制）
+			
 			if (type == 1) {
 				group.children.push(mesh)
 				models.push(item)
@@ -669,7 +684,6 @@ const init = () => {
 				mesh.position.set(totalWidth/2-0.94,0,0.8)
 				scene.add(mesh)
 				group.children.push(mesh)
-				debugger
 				console.log(models)
 			});
 		})
@@ -677,16 +691,16 @@ const init = () => {
 		
 		$("#addMeshY1").click(function() {
 			let item={
-					name: "1180815.stl",
-					stlPath: "model/917.glb",
-					stlId: 917,
-					w: 100,
-					h: 100,
-					left: true,
-					right: false,
-					isAvailable: true,
-					selectable: false,
-					index: 3
+				name: "1180815.stl",
+				stlPath: "model/917.glb",
+				stlId: 917,
+				w: 100,
+				h: 100,
+				left: true,
+				right: false,
+				isAvailable: true,
+				selectable: false,
+				index: 3
 			}
 			
 			loader.load(item.stlPath, gltf => {
@@ -722,7 +736,6 @@ const init = () => {
 				mesh['y'] = box.max.y-box.min.y
 				mesh.position.set(totalWidth/2-mesh['x'],0,1.6)
 				scene.add(mesh)
-				debugger
 				group.children.push(mesh)
 				console.log(models)
 			});
@@ -774,8 +787,8 @@ const init = () => {
 	});
 	var mesh6 = new THREE.Mesh(plane, material6);
 	mesh6.rotation.x = 0 * Math.PI
-	mesh6.rotation.y = 0.54 * Math.PI
-	mesh6.rotation.z = 0. * Math.PI
+	//mesh6.rotation.y = 0.54 * Math.PI
+	//mesh6.rotation.z = 0. * Math.PI
 	mesh6.position.set(0.82, 0.25, 0)
 	//scene.add(mesh6)
 
