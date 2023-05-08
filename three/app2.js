@@ -3,7 +3,7 @@ let scene, camera, group, renderer, composer, outlinePass;
 const init = () => {
 	// Scene
 	scene = new THREE.Scene();
-	scene.background = new THREE.Color(0x000000, 0.01);
+	//scene.background = new THREE.Color(0x000000, 0.01);
 
 	// Renderer
 	renderer = new THREE.WebGLRenderer({
@@ -11,8 +11,8 @@ const init = () => {
 		alpha: true
 	});
 	renderer.shadowMap.enabled = true // 显示阴影
-	renderer.shadowMap.type = THREE.PCFSoftShadowMap
-	renderer.setClearColor(0x000000, 1) // 设置背景颜色
+	//renderer.shadowMap.type = THREE.PCFSoftShadowMap
+	//renderer.setClearColor(0xffffff, 1) // 设置背景颜色
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	document.body.appendChild(renderer.domElement);
@@ -235,14 +235,14 @@ const init = () => {
 		composer.addPass(renderPass);
 		outlinePass = new THREE.OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera,
 			selectedObjects);
-		outlinePass.edgeStrength = 2; //边缘强度
-		outlinePass.edgeGlow = 0.5; //缓缓接近
+		outlinePass.edgeStrength = 3; //边缘强度
+		outlinePass.edgeGlow = 0.1; //缓缓接近
 		outlinePass.edgeThickness = 0.2; //边缘厚度
 		outlinePass.renderToScreen = true;
 		//outlinePass.pulsePeriod = 1 //闪烁
 		outlinePass.usePatternTexture = false //是否使用贴图
-		outlinePass.visibleEdgeColor.set(0xffffff); // 高光颜色0xff0000
-		outlinePass.hiddenEdgeColor.set(0xffffff); // 阴影颜色
+		outlinePass.visibleEdgeColor.set('#EB3C00'); // 高光颜色0xff0000
+		outlinePass.hiddenEdgeColor.set('#EB3C00'); // 阴影颜色
 		outlinePass.usePatternTexture = false; //是否使用父级的材质
 		outlinePass.downSampleRatio = 2; // 边框弯曲度
 

@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0
+			}
+
+			body {
+				margin: 0;
+				overflow: hidden;
+			}
+			body, button, input, optgroup, select, textarea {
+			    font-family: Montserrat,sans-serif;
+			}
+			
+			.room-box{
+				margin:20px;
+				width:1360px;
+				height:711px;
+				display: flex;
+				justify-content: space-between;
+			}
+
+			.room-left {
+				width: 948px;
+				height: 711px;
+				/*margin: auto;*/
+			}
+			
+			.room-right{
+				flex:1;
+				border:2px solid #ddd;
+				margin-left:10px;
+				box-sizing:border-box;
+				height: 100%;
+				padding:4px 10px;
+				border-radius: 10px;
+			}
+
+			.gntgqn {
+				width: 100%;
+				height: 100%;
+				display: flex;
+				-webkit-box-align: center;
+				align-items: center;
+				-webkit-box-pack: center;
+				justify-content: center;
+			}
+
+			.wv {
+				height: 100%;
+				width: 100%;
+				position: relative;
+			}
+
+			.bg-image {
+				width: 100%;
+				height: 100%;
+				object-fit: fill;
+				line-height: 1;
+				position: absolute;
+				top: 0;
+				bottom: 0;
+			}
+
+			.point {
+				position: absolute;
+				z-index: 5;
+				transform: translate(-50%, -50%);
+				display: flex;
+				-webkit-box-align: center;
+				align-items: center;
+				-webkit-box-pack: center;
+				justify-content: center;
+				cursor: pointer;
+			}
+
+			.point-item {
+				width: 30px;
+				height: 30px;
+				line-height: 30px;
+				padding: 4px;
+				top: 100px;
+				left: 100px;
+				z-index: 10;
+				font-size: 16px;
+				background-color: rgba(255, 255, 255, 0.8);
+				border-radius: 100%;
+				padding: 2px;
+			}
+
+			.point-item-inner {
+				height: 20px;
+				width: 20px;
+				background-color: rgba(255, 255, 255);
+				display: inline-block;
+				border-radius: 100%;
+				position: relative;
+			}
+
+			.inner-other {
+				background-color: #777473;
+				z-index: 10
+			}
+
+			.point-item-inner::before,
+			.point-item-inner::after {
+				display: inline-block;
+				border-radius: 100%;
+				position: absolute;
+				height: 20px;
+				width: 20px;
+				content: '';
+				background-color: rgba(255, 255, 255, .9);
+			}
+
+			.point-item-inner::before {
+				animation: scale 2s infinite;
+			}
+
+			.point-item-inner::after {
+				animation: scale2 2s infinite;
+			}
+
+			@keyframes scale {
+				0% {
+					transform: scale(1);
+					opacity: .9
+				}
+
+				100% {
+					transform: scale(3);
+					opacity: 0;
+				}
+			}
+
+			@keyframes scale2 {
+				0% {
+					transform: scale(1);
+					opacity: .9;
+				}
+
+				100% {
+					transform: scale(3);
+					opacity: 0;
+				}
+			}
+
+			.gu-box {
+				position: absolute;
+				background-color: transparent;
+				max-width: 100%;
+				overflow-x: hidden;
+				padding-top: 20px;
+				padding-bottom: 20px;
+				display: none;
+				z-index: 10;
+				max-width:80%;
+			}
+			
+			.box-pre-button {
+				position: absolute;
+				top: 50px;
+				left:-1%;
+				z-index: 21;
+				width:48px;
+				height:60px;
+				display: none;
+				cursor: pointer;
+				background: url(./image/arrow-left.png) center center no-repeat;*/
+			}
+			
+			.box-next-button {
+				position: absolute;
+				top: 50px;
+				right:-1%;
+				z-index: 21;
+				width:48px;
+				height:60px;
+				display: none;
+				cursor: pointer;
+				background: url(./image/arrow-right.png) center center no-repeat;
+			}
+
+			.gu-list {
+				position: relative;
+				z-index: 20;
+				display: flex;
+				-webkit-box-align: center;
+				align-items: center;
+				-webkit-box-pack: start;
+				justify-content: flex-start;
+				margin-left: 20px;
+				padding-left:40px;
+				padding-right:40px;
+				margin-right: 40px;
+				/*overflow: hidden;*/
+			}
+
+
+			.gu-item {
+				width: 130px;
+				height: 110px;
+				margin-right: 20px;
+				transform-style: preserve-3d;
+				display: flex;
+				-webkit-box-align: center;
+				align-items: center;
+				-webkit-box-pack: center;
+				justify-content: center;
+				cursor: pointer;
+				backface-visibility: hidden;
+				border-radius: 4px;
+				padding: 6px;
+				box-sizing: border-box;
+				background-color: #fff;
+				transition: all 0.2s ease 0s;
+				box-sizing: border-box;
+			}
+
+			.gu-item-other:hover {
+				transform: scale3d(1.05, 1.06, 1) !important
+			}
+
+			.selected {
+				transform: scale(1.15);
+				cursor: default;
+			}
+
+			.selected:hover {
+				cursor: default;
+			}
+
+			.lgu-item>img {
+				width: 130px;
+				max-height: 100%;
+				object-fit: contain;
+				line-height: 1;
+				border-radius: 4px;
+			}
+			
+			   .swiper-container {
+			      width: 100%;
+			      height: 100%;
+				  position: relative;
+			    }
+				
+				
+				
+			    .swiper-slide {
+			      text-align: center;
+			      font-size: 18px;
+			      background: #fff;
+			      display: -webkit-box;
+			      display: -ms-fslexbox;
+			      display: -webkit-flex;
+			      display: flex;
+			      -webkit-box-pack: center;
+			      -ms-flex-pack: center;
+			      -webkit-justify-content: center;
+			      justify-content: center;
+			      -webkit-box-align: center;
+			      -ms-flex-align: center;
+			      -webkit-align-items: center;
+			      align-items: center;
+			    }
+				
+				.swiper-button-prev {
+					top: 4%!important;
+					left: 48%!important;
+					transform: rotate(90deg);
+					background-color: #f2f2f2;
+				    padding: 10px;
+					border-radius: 10px;
+					display: none!important;
+				}
+				
+				.swiper-button-next {
+					top: 96%!important;
+					left: 48% !important;
+					transform: rotate(90deg);
+					background-color: #f2f2f2;
+				    padding: 10px;
+					border-radius: 10px;
+					display: none!important;
+				}
+				
+				.swiper-container:hover .swiper-button-prev{
+					display: flex!important;
+				}
+				
+				.swiper-container:hover .swiper-button-next{
+					display: flex!important;
+				}
+				
+				.swiper-button-next.swiper-button-disabled, .swiper-button-prev.swiper-button-disabled {
+				    opacity: 0!important;
+				}
+				
+				.is-flex {
+				    display: -webkit-box!important;
+				    display: -ms-flexbox!important;
+				    display: flex!important;
+				}
+				
+				.is-justify-content-center {
+				    -webkit-box-pack: center!important;
+				    -ms-flex-pack: center!important;
+				    justify-content: center!important;
+				}
+				
+				.swiper-slide{
+					height:300px!important;
+					width:388px;
+					border-radius: 10px;
+				}
+				
+				.swiper-item-box{
+					width: 172px;
+					min-height: 250px;
+					display: block;
+					margin: auto;
+					border: 2px solid #ccc;
+					border-radius: 10px;
+					padding-top:10px;
+					cursor: pinter;
+				}
+				
+				.item-selected{
+					border:2px solid #000;
+				}
+				
+				.item-img{
+					min-width: 160px;
+					max-width: 160px;
+					max-height: 200px;
+					min-height: 120px;
+					border-radius: 10px;
+					margin:auto;
+				}
+				.item-name{
+					min-height: 28px
+					text-overflow: ellipsis;
+					-webkit-line-clamp:2;
+					font-size:13px;
+					color: #58595b;
+					margin-top:10px;
+					margin-bottom:4px;
+					
+				}
+				
+				.item-name:hover {
+				    color: #608497;
+				}
+				
+				.item-price{
+					line-height: 30px;
+					font-size:15px;
+					margin-bottom:4px;
+				}
+				
+				span.u-button-link{
+				    color: #58595b;
+					cursor: pointer;
+					font-size:13px;
+					font-weight: 600!important;
+				}
+				
+				span.u-button-link:hover {
+				  color: #313130;
+				}
+				.u-underline {
+				    text-decoration: underline!important;
+				    text-underline-offset: 3px;
+				}
+				.u-semi-bold {
+				    font-weight: 600!important;
+				}
+				.is-size-15 {
+				    font-size: 1.3rem!important;
+				}
+				.p-1 {
+				    padding: 0.5rem!important;
+				}
+				
+				button {
+				    background-color: transparent;
+				    padding: 0;
+				    margin: 0;
+				    border: none;
+				}
+				.link, a, a.link, button.link {
+				    color: #58595b;
+				    cursor: pointer;
+				    text-decoration: none;
+				}
+				
+				  .modal-overlay{
+					    position: fixed;
+					    top: 0;
+					    left: 0;
+					    right: 0;
+					    bottom: 0;
+					    background-color: rgba(80,80,80,.7);
+					    z-index: 100;
+					    display: -webkit-box;
+					    display: -ms-flexbox;
+					    display: none;
+					    -webkit-box-align: center;
+					    -ms-flex-align: center;
+					    align-items: center;
+					    -ms-flex-pack: distribute;
+					    justify-content: space-around;
+					}
+					.modal-dialog{
+						width:680px;
+						height:400px;
+						background-color:#fff;
+						z-index:111;
+						padding:30px;
+						border-radius: 4px;
+						box-sizing: border-box;
+					}
+					
+					.flex{
+						display: flex;
+					}
+					.modal-header{
+						display: flex;
+						justify-content: space-between;;
+					}
+					.modal-head-title{
+						    max-width: 100%;
+						    line-height:40px;
+						    overflow: hidden;
+						    text-overflow: ellipsis;
+						    white-space: nowrap;
+					}
+					
+					.modal-close{
+						width:56px;
+						height:56px;
+						border-radius:28px;
+						background: #F5F2F0;
+						cursor: pointer;
+						display: flex;
+						justify-content: center;
+						align-items: center;
+					}
+					
+					.modal-close img{
+						width:30px;
+						height:30px;
+					}
+					
+					
+					.model-content{
+						display: flex;
+						min-height:300px;
+						justify-content: space-between;
+					}
+					
+					.model-content-left{
+						width:50%;
+						height:300px;
+					}
+					
+					.color-selects{
+						margin-top:20px;
+						width:90%;
+						height:80px;
+						border:1px dashed #ddd;
+						box-sizing: border-box;
+					}
+					
+					
+					.show-price{
+						color:#333;
+						font-size:20px;
+						line-height:40px;
+					}
+					
+					.add-cart-btn{
+						background-color: #3a505d;
+						color: #fff;
+						border-color: #3a505d;
+						width:90%;
+						height:40px;
+						line-height:40px;
+						font-size: 15px;
+						border-radius:5px;
+						margin-top:40px;
+						cursor: pointer;
+					}
+					
+					
+					.model-content-right{
+						flex:1;
+						height:300px;
+					}
+					.model-content-right img{
+						max-width:100%;
+					}
+					
+		</style>
+		<link rel="stylesheet" href="css/swiper-bundle.min.css" />
+		<script src="js/jquery.min.js"></script>
+
+	</head>
+
+	<body>
+		<div id="app">
+		<div class="room-box" >
+			<div class="room-left">
+				<div class="gntgqn">
+					<div class="wv">
+						<img :src="scene" class="bg-image" />
+						<img  v-for="(item,index) in imgeList" :key="index" :src="item.imageUrl" class="bg-image" :id="item.imageId"/>
+			
+						<div class="point point-item" v-for="(item,index) in pointList" :key="index" v-bind:style="getStyleObj(item)" @click="selectItem(item)">
+							<div class="point-item-inner"></div>
+						</div>
+						
+						<div class="gu-box" id="gu-box">
+							<div class="gu-list">
+								<div class="gu-item" :class="item.selected ? 'selected':'gu-item-other'" v-for="(item,index) in imgList" :key="index" @click="choseItem(item)">
+									<img :src="item.image">
+								</div>
+							</div>
+							<div class="box-pre-button"></div>
+							<div class="box-next-button"></div>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+			<div class="room-right">
+				<div style="width:100%;height:99%;overflow: hidden;">
+					<div class="swiper-container mySwiper">
+					      <div class="swiper-wrapper">
+					        <div class="swiper-slide" v-for="(item,index) in itemList" :key="index">
+								<a  class="swiper-item-box" :class="{'item-selected':it.selected}" v-for="(it,i) in item" :key="i" @click.stop.prevent="catchClick">
+									<div class="item-img"><img :src="it.image"></div>
+									<div class="item-name">{{it.name}}</div>
+									<div class="item-price">${{it.price}}</div>
+									<div class="is-flex is-justify-content-center">
+										<span class="u-button-link u-underline" style="text-transform: none; height: auto;" @click="addCart(it)">Add to Cart</span>
+									</div>
+								</a>
+							</div>
+						  </div>
+					      <div class="swiper-button-prev"></div>
+					      <div class="swiper-button-next"></div>
+					</div>
+				</div>
+			</div>	
+		</div>
+		
+		<div class="modal-overlay">
+			<div class="modal-dialog">
+				<div class="modal-header">
+					<div class="modal-head-title">{{cartItem.name}}</div>
+					<div class="modal-close"><img src="image/x.png"></div>
+					
+				</div>
+				<div class="model-content">
+					<div class="model-content-left">
+						<p class="show-price">{{cartItem.price}}</p>
+						<div class="color-selects"></div>
+						<button class="add-cart-btn">Add To Cart</button>
+					</div>
+					<div class="model-content-right">
+						<img src="image/item-white.jpg">
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	  </div>
+	</body>
+	<script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+	<script src="js/swiper-bundle.min.js"></script>
+	<script type="text/javascript">
+		var boxW=948;
+		var boxH=711;
+		new Vue({
+		  el: '#app',
+		  data() {
+			  return {
+				        scene:'image/background.jpg',
+						showCart:false,
+						rightList:[
+							{image:'image/01/list/1.png',name:'Sagebrook Home Round Metal Wall Shelf',good_id:'90001',roundId:'1001',price:56.99,selected:false},
+							{image:'image/02/list/1.png',name:'Sagebrook Home Round Metal Wall Shelf',good_id:'90002',roundId:'1002',price:56.19,selected:false},
+							{image:'image/03/list/1.png',name:'Sagebrook Home Round Metal Wall Shelf',good_id:'90003',roundId:'1003',price:60.99,selected:false},
+							{image:'image/04/list/1.png',name:'Sagebrook Home Round Metal Wall Shelf',good_id:'90004',roundId:'1004',price:56.99,selected:false},
+							{image:'image/05/list/1.png',name:'Sagebrook Home Round Metal Wall Shelf',good_id:'90005',roundId:'1005',price:56.99,selected:false},
+							{image:'image/06/list/1.png',name:'Sagebrook Home Round Metal Wall Shelf',good_id:'90006',roundId:'1006',price:56.99,selected:false},
+							{image:'image/07/list/1.png',name:'Sagebrook Home Round Metal Wall Shelf',good_id:'90007',roundId:'1007',price:56.99,selected:false},
+							{image:'image/08/list/1.png',name:'Sagebrook Home Round Metal Wall Shelf',good_id:'90008',roundId:'1008',price:56.99,selected:false}
+						],
+						itemList:[],
+						cartItem:{
+							name:'',
+							good_id:'',
+							price:''
+						},
+						imgeList:[
+								  /*{
+									imageId:'',//图层唯一标识imageUrl: 'img/12.webp', //图层路劲layerIndex:1,//图层层级pointId:'1001'//圆点id},*/
+								  { imageId:'level1',imageUrl: 'image/01/a.png', layerIndex:1,pointId:'1001'},
+								  { imageId:'level2',imageUrl: 'image/02/a.png', layerIndex:2,pointId:'1002'},
+								  { imageId:'level3',imageUrl: 'image/03/a.png', layerIndex:3,pointId:'1003'},
+								  { imageId:'level4',imageUrl: 'image/04/a.png', layerIndex:4,pointId:'1004'},
+								  { imageId:'level5',imageUrl: 'image/05/a.png', layerIndex:5,pointId:'1005'},
+								  { imageId:'level6',imageUrl: 'image/06/a.png', layerIndex:6,pointId:'1006'},
+								  { imageId:'level7',imageUrl: 'image/07/a.png', layerIndex:7,pointId:'1007'},
+								  { imageId:'level8',imageUrl: 'image/08/a.png', layerIndex:8,pointId:'1008'},
+								  //{ imageId:'level19',imageUrl: 'img/8.webp', layerIndex:19,pointId:'1019'}
+							],
+							pointList:[
+								   {
+									//设计稿圆点对应坐标
+									left: (625/948)*100+'%',
+									top: (544/711)*100+'%',
+									imageId:'level1',//图层唯一标识
+									id:'1001',//圆点id,
+									items:[
+										{image:'image/01/list/1.png',roundId:'1001',price:'56.99',goodId:'100010',isLinkMany:false,selected:true,index:0,url: 'image/01/a.png',imageId:'level1'},
+										{image:'image/01/list/2.png',roundId:'1001',price:'54.99',goodId:'100011',isLinkMany:false,selected:false,index:1,url: 'image/01/b.png',imageId:'level1'},
+										{image:'image/01/list/2.png',roundId:'1001',price:'52.99',goodId:'100012',isLinkMany:false,selected:false,index:2,url: 'image/01/b.png',imageId:'level1'},
+										{image:'image/01/list/2.png',roundId:'1001',price:'50.99',goodId:'100013',isLinkMany:false,selected:false,index:3,url: 'image/01/b.png',imageId:'level1'},
+										{image:'image/01/list/2.png',roundId:'1001',price:'58.60',goodId:'100014',isLinkMany:false,selected:false,index:4,url: 'image/01/b.png',imageId:'level1'},
+										{image:'image/01/list/2.png',roundId:'1001',price:'56.99',goodId:'100015',isLinkMany:false,selected:false,index:5,url: 'image/01/b.png',imageId:'level1'},
+										{image:'image/01/list/2.png',roundId:'1001',price:'54.09',goodId:'100016',isLinkMany:false,selected:false,index:6,url: 'image/01/b.png',imageId:'level1'},
+										{image:'image/01/list/2.png',roundId:'1001',price:'52.99',goodId:'100017',isLinkMany:false,selected:false,index:7,url: 'image/01/b.png',imageId:'level1'},
+										{image:'image/01/list/2.png',roundId:'1001',price:'58.19',goodId:'100018',isLinkMany:false,selected:false,index:8,url: 'image/01/b.png',imageId:'level1'},
+										{image:'image/01/list/2.png',roundId:'1001',price:'60.29',goodId:'100019',isLinkMany:false,selected:false,index:9,url: 'image/01/b.png',imageId:'level1'},
+									  ]
+								    },
+								   {
+									//设计稿圆点对应坐标
+									left: (522/boxW)*100+'%',top: (390/boxH)*100+'%',imageId:'level2',id:'1002',
+									items:[
+										{image:'image/02/list/1.png',roundId:'1002',price:'56.19',goodId:'100020',isLinkMany:false,selected:true,index:0,url: 'image/02/a.png',imageId:'level2'},
+										{image:'image/02/list/2.png',roundId:'1002',price:'56.29',goodId:'100021',isLinkMany:false,selected:false,index:1,url: 'image/02/b.png',imageId:'level2'}
+									]
+								 },
+								 {
+								 left: (368/boxW)*100+'%',top: (404/boxH)*100+'%',imageId:'level3',id:'1003',
+								 items:[
+								 	{image:'image/03/list/1.png',roundId:'1003',price:'60.99',goodId:'100030',isLinkMany:false,selected:true,index:0,url: 'image/03/a.png',imageId:'level3'},
+								 	{image:'image/03/list/2.png',roundId:'1003',price:'60.19',goodId:'100031',isLinkMany:false,selected:false,index:1,url: 'image/03/b.png',imageId:'level3'}
+								 ]},
+								 {left: (89/boxW)*100+'%',top: (382/boxH)*100+'%',imageId:'level4',id:'1004',
+								 items:[
+								 	{image:'image/04/list/1.png',roundId:'1004',price:'56.99',goodId:'100040',isLinkMany:false,selected:true,index:0,url: 'image/04/a.png',imageId:'level4'},
+								 	{image:'image/04/list/2.png',roundId:'1004',price:'56.99',goodId:'100041',isLinkMany:false,selected:false,index:1,url: 'image/04/b.png',imageId:'level4'}
+								 ]},
+								 {
+								  left: (709/boxW)*100+'%',top: (388/boxH)*100+'%',imageId:'level5',id:'1005',
+								  items:[
+								  	{image:'image/05/list/1.png',roundId:'1005',price:'56.99',goodId:'100050',isLinkMany:false,selected:true,index:0,url: 'image/05/a.png',imageId:'level5'},
+								  	{image:'image/05/list/2.png',roundId:'1005',price:'56.99',goodId:'100051',isLinkMany:false,selected:false,index:1,url: 'image/05/b.png',imageId:'level5'}
+								  ]
+								 },
+								 {left: (200/boxW)*100+'%',top: (410/boxH)*100+'%',imageId:'level6',id:'1006',
+								 items:[
+								 	{image:'image/06/list/1.png',roundId:'1006',price:'56.99',goodId:'100060',isLinkMany:false,selected:true,index:0,url: 'image/06/a.png',imageId:'level6'},
+								 	{image:'image/06/list/2.png',roundId:'1006',price:'56.99',goodId:'100061',isLinkMany:false,selected:false,index:1,url: 'image/06/b.png',imageId:'level6'}
+								 ]},
+								 {left: (529/boxW)*100+'%',top: (450/boxH)*100+'%',imageId:'level7',id:'1007',
+								 items:[
+								 	{image:'image/07/list/1.png',roundId:'1007',price:'56.99',goodId:'100070',isLinkMany:false,selected:true,index:0,url: 'image/07/a.png',imageId:'level7'},
+								 	{image:'image/07/list/2.png',roundId:'1007',price:'56.99',goodId:'100071',isLinkMany:false,selected:false,index:1,url: 'image/07/b.png',imageId:'level7'}
+								 ]},
+								 {left: (195/boxW)*100+'%',top: (529/boxH)*100+'%',imageId:'level8',id:'1008',
+								 items:[
+								 	{image:'image/08/list/1.png',roundId:'1008',price:'56.99',goodId:'100080',isLinkMany:false,selected:true,index:0,url: 'image/08/a.png',imageId:'level8'},
+								 	{image:'image/08/list/2.png',roundId:'1008',price:'56.99',goodId:'100081',isLinkMany:false,selected:false,index:1,url: 'image/08/b.png',imageId:'level8'}
+								 ]}
+							  ],
+							  imgList:[],
+							  roundId:'',
+				}
+			  },
+		  mounted(){   //页面初始化方法
+		      this.formaterData()  
+		   },
+		  methods:{
+			  formaterData(){
+				  let lines=this.rightList.length/2
+				  for(i=0;i<lines;i++){
+				   this.itemList[i]=[]
+				   this.rightList.forEach((item,index)=>{
+				  	 if(index<2*(i+1) && index>=2*i){
+				  		this.itemList[i].push(item) 
+				  	 }
+				   })
+				  }
+				  this.$forceUpdate()
+			  },
+			  getStyleObj(item){
+			    return {left: item.left, top: item.top}
+			  },
+			  selectItem(item){
+				 this.roundId=item.id
+				 this.imgList=item.items
+				 if(item.items.length>=6){
+					 $(".box-pre-button").show()
+					 $(".box-next-button").show()
+				 }else{
+					 $(".box-pre-button").hide()
+					 $(".box-next-button").hide()
+				 }
+				 this.rightList.map((it,index)=>{
+				 	if(it.roundId==item.id){
+				 	   it.selected=true
+					   swiper.slideTo(Math.floor(index/2));
+				 	}else{
+					   it.selected=false
+					}
+				 	return it;
+				 })
+				 this.formaterData()
+			  },
+			  catchClick(e){
+				  e.stopPropagation();
+				  return false;
+			  },
+			  addCart(item,event){
+				this.cartItem={
+				  name:'',
+				  good_id:'',
+				  price:''
+				}
+				$(".modal-overlay").addClass("flex").show();
+				this.cartItem={
+					name:item.name,
+					good_id:item.good_id,
+					price:item.price
+				}
+			  },
+			  choseItem(item){
+				  if(!item.selected){
+					if(item.isLinkMany==true){
+						let list=item.list;
+						list.forEach((it)=>{
+						  $("#"+it.imageId).attr("src",it.url)
+						})  
+					}else{
+						$("#"+item.imageId).attr("src",item.url)
+						this.rightList.map((it)=>{
+							if(it.roundId==item.roundId){
+							   it.image=item.image
+							   it.price=item.price
+							   it.good_id=item.goodId
+							}
+							return it;
+						})
+						this.formaterData()
+					}
+					
+					this.imgList.map((imgItem)=>{
+					   if(item.index==imgItem.index){
+						 imgItem.selected=true
+					   }else{
+						 imgItem.selected=false
+					   }
+					})
+					
+					
+					let index=this.pointList.findIndex((point)=>{
+						return point.id==this.roundId
+					})
+					let pointItems=this.pointList[index].items;
+					pointItems.map((pointItem)=>{
+						if(item.index==pointItem.index){
+							 pointItem.selected=true   
+						}else{
+							pointItem.selected=false
+						}
+					})
+				  this.pointList[index].items=pointItems
+				  this.$set(this.pointList[index],"items", pointItems)
+			  }
+			}
+		  }
+		})
+	</script>
+	<script type="text/javascript">
+		var swiper = null
+		$(function() {
+			function initSwiper(){
+				swiper = new Swiper(".mySwiper", {
+				        direction: "vertical",
+						slidesPerView: 'auto',
+						navigation: {
+						    nextEl: '.swiper-button-next',
+						    prevEl: '.swiper-button-prev',
+						},
+			   });
+			}
+			
+			setTimeout(initSwiper(),500)
+			
+			$(".modal-close").click(function(){
+				$(".modal-overlay").hide()
+			})
+			
+			
+			var selectedIndex = null
+			$(".gu-item-other").click(function() {
+				let shawPath1 = $(this).attr("data-bg-shaw1");
+				let imgPath1 = $(this).attr("data-bg-img1");
+
+				let shawPath2 = $(this).attr("data-bg-shaw2");
+				let imgPath2 = $(this).attr("data-bg-img2");
+
+				$("#bg2").attr('src', shawPath1)
+				$("#bg1").attr('src', imgPath1)
+				if (shawPath2 != undefined) {
+					$("#bg4").attr('src', shawPath2)
+					$("#bg3").attr('src', imgPath2)
+				}
+			});
+            
+			var parentBox=document.querySelector(".room-left");
+			var showPonit=true
+			var showChose=false
+			if(parentBox){
+				parentBox.addEventListener("click", e => {
+					const contentWrap = document.getElementById("gu-box");
+					if (contentWrap) {
+						if (!contentWrap.contains(e.target)) {
+							if (e.target.className.indexOf('point') != -1) {
+								let guboxW = $("#gu-box").width() / 2
+								let clientX=e.pageX-parentBox.offsetLeft;
+								let domX = clientX- guboxW
+								if(domX<0){
+									domX=5
+								}
+								if((clientX+guboxW)>boxW){
+									domX=boxW-(clientX+guboxW-boxW)-guboxW*2
+									if(domX<0){
+										domX=5
+									}
+								}
+								let domY = 100
+								let persentX = (domX / boxW) * 100
+								let persentY = (e.pageY-parentBox.offsetTop) / boxH
+								if (persentY > 0.5) {
+									domY = (e.pageY-parentBox.offsetTop) - 180
+								} else {
+									domY = (e.pageY-parentBox.offsetTop) + 40
+								}
+								$("#gu-box").css({
+									'left': persentX + '%',
+									'top': domY
+								});
+								$("#gu-box").fadeIn()
+								showChose=true
+								e.stopPropagation()
+							} else {
+								if(!showChose){
+									if(showPonit){
+										$(".point-item").hide();
+										showPonit=false
+									}else{
+										$(".point-item").show();
+										showPonit=true
+									}
+								}else{
+									$(".point-item").children('div').removeClass("inner-other");
+									$("#gu-box").hide()
+									selectedIndex=null
+									$(".gu-item").eq(0).css({'marginLeft':0})
+									boxMarginLeft=0
+									showChose=false
+								}
+							}
+						}
+					}
+				})
+			}
+			
+			
+			var boxMarginLeft=0
+			var totalW=(130+20)*10+40
+			$(".box-next-button").click(function() {
+				boxMarginLeft=boxMarginLeft-300
+				if(boxMarginLeft<=-(totalW-$("#gu-box").width())){
+					boxMarginLeft=-(totalW-$("#gu-box").width())-45
+				}
+				$(".gu-item").eq(0).css({'marginLeft':boxMarginLeft})
+			});
+			
+			$(".box-pre-button").click(function() {
+				if(boxMarginLeft>=-300){
+					if(boxMarginLeft>=0){
+						boxMarginLeft=0
+					}else{
+						boxMarginLeft=boxMarginLeft+300
+						boxMarginLeft=-10
+					}
+				}else{
+					boxMarginLeft=boxMarginLeft+300
+				}
+				$(".gu-item").eq(0).css({'marginLeft':boxMarginLeft})
+			});
+
+			$(".point-item").click(function(e) {
+				if ($(this).index() == selectedIndex) {
+					$("#gu-box").hide()
+					selectedIndex=null
+					e.stopPropagation()
+				}else{
+					selectedIndex=$(this).index()
+				}
+				$(this).siblings(".point-item").children('div').addClass("inner-other");
+				if ($("#gu-box").is(':visible')) {
+					$(this).children('div').removeClass('inner-other');
+				}
+			});
+		})
+	</script>
+	<!--<script src="js/notViewSource.js"></script>-->
+</html>

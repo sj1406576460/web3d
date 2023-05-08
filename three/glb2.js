@@ -15,7 +15,11 @@ const init = () => {
 	});
 	renderer.shadowMap.enabled = true // 显示阴影
 	renderer.shadowMap.type = THREE.PCFSoftShadowMap
+<<<<<<< HEAD
 	//renderer.setClearColor(0x000000, 1) // 设置背景颜色
+=======
+	//renderer.setClearColor(0x000000, 1) // 设置背景颜色
+>>>>>>> 87847fcbfcf6f47385f14c404dfbbd658fc78d1e
 	renderer.outputEncoding = THREE.sRGBEncoding;
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(initWidth, initHeight);
@@ -26,6 +30,7 @@ const init = () => {
 
 
 	// Camera
+<<<<<<< HEAD
 	const aspect = initHeight / initHeight;
 	camera = new THREE.PerspectiveCamera(100, aspect, 0.01, 100);
 	// camera.rotation.y = (90 / 180 ) * Math.PI;
@@ -33,6 +38,19 @@ const init = () => {
 
 	// Camera Controls
 	let controls = new THREE.OrbitControls(camera, renderer.domElement);
+=======
+	const aspect = initWidth / initHeight;
+	camera = new THREE.PerspectiveCamera(100, aspect,0.01,1000);
+	// 将相机的旋转角度沿y轴增加30度
+	camera.rotation.x += Math.PI/6; // Math.PI / 6 等于 30度（弧度制）
+	camera.position.set(0, 0, 2.2);
+
+	// Camera Controls
+	let controls = new THREE.OrbitControls(camera, renderer.domElement);
+	
+	controls.minDistance=1.6
+	controls.maxDistance=4
+>>>>>>> 87847fcbfcf6f47385f14c404dfbbd658fc78d1e
 	//controls.addEventListener("change", renderer);
 	controls.update()
 
@@ -51,8 +69,13 @@ const init = () => {
 	scene.add(spotLight1)
 
 	//加辅助坐标
+<<<<<<< HEAD
 	//var axes = new THREE.AxisHelper(100, 20, 20); //红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴
 	//scene.add(axes);
+=======
+	var axes = new THREE.AxesHelper(100, 20, 20); //红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴
+	scene.add(axes);
+>>>>>>> 87847fcbfcf6f47385f14c404dfbbd658fc78d1e
 
 	// Loader new THREE STLLoader
 	const loader = new THREE.GLTFLoader();
@@ -67,11 +90,19 @@ const init = () => {
 			let spriteMaterial = new THREE.SpriteMaterial({
 				map: map,
 				sizeAttenuation: false
+<<<<<<< HEAD
 				//color: 0xffffff
 			});
 			//为精灵贴图，其特点在于图片会始终面向用户
 			let sprite = new THREE.Sprite(spriteMaterial)
 			sprite.scale.set(0.08, 0.08, 0.08)
+=======
+				//-color: 0xffffff
+			});
+			//为精灵贴图，其特点在于图片会始终面向用户
+			let sprite = new THREE.Sprite(spriteMaterial)
+			sprite.scale.set(0.12, 0.12, 0.12)
+>>>>>>> 87847fcbfcf6f47385f14c404dfbbd658fc78d1e
 			sprite.rotation.x = 0.1 * Math.PI
 			let item = group.children.find((it) => {
 				return plus.stlId == it.stlId
@@ -130,20 +161,37 @@ const init = () => {
 		 *      2.在左边添加unshift
 		 */
 		loader.load(item.stlPath, geometry => {
+<<<<<<< HEAD
+=======
+			
+			//parent.rotation.y += Math.PI / 6; // Math.PI / 6 等于 30度（弧度制）
+			//parent.scale.set(2, 2, 2);
+			  
+>>>>>>> 87847fcbfcf6f47385f14c404dfbbd658fc78d1e
 			geometry.scene.name = item.stlId
 			geometry.scene.traverse(function(child) {
 				if (child.isMesh) {
 					child.material.emissive = child.material.color;
 					child.material.emissiveMap = child.material.map;
+<<<<<<< HEAD
 					//child.material.color = new THREE.Color('#544E48');//0x7777ff 
+=======
+					//child.material.color = new THREE.Color('#544E48');//0x7777ff 
+>>>>>>> 87847fcbfcf6f47385f14c404dfbbd658fc78d1e
 					//child.material.color = new THREE.Color(0x7777ff);
 				}
 			});
 			let mesh = geometry.scene
+<<<<<<< HEAD
+=======
+			
+			  
+>>>>>>> 87847fcbfcf6f47385f14c404dfbbd658fc78d1e
 			mesh.name = item.stlId
 			mesh['addLeft'] = item.left
 			mesh['addRight'] = item.right
 			mesh['stlId'] = item.stlId
+<<<<<<< HEAD
 			mesh.rotation.x = 0.12 * Math.PI
 			mesh.rotation.y = 0 * Math.PI
 			mesh.rotation.z = 0 * Math.PI
@@ -156,6 +204,28 @@ const init = () => {
 			//mesh5.translateX(1.25); //网格模型mesh平移
 			//mesh['x'] =boundingBoxWidth
             scene.add(mesh)
+=======
+			mesh.rotation.x = 0 * Math.PI
+			mesh.rotation.y = 0 * Math.PI
+			mesh.rotation.z = 0 * Math.PI
+			mesh.scale.set(1, 1,1)
+			let box = new THREE.Box3().expandByObject(mesh);
+			mesh['x'] = box.max.x-box.min.x
+			//geometry.computeBoundingBox();
+			//let boundingBox = geometry.boundingBox;
+			//var boundingBoxWidth  = boundingBox.max.x - boundingBox.min.x;
+			//mesh5.translateX(1.25); //网格模型mesh平移
+			//mesh['x'] =boundingBoxWidth
+			// 将模型添加到场景中
+            scene.add(mesh)
+			
+			// 获取模型对象的父级
+			let parent = mesh.parent;
+			// 修改父级的位置、旋转和缩放
+			//parent.position.y-=0.2;
+			parent.rotation.x= Math.PI / 12; // Math.PI / 6 等于 30度（弧度制）
+			
+>>>>>>> 87847fcbfcf6f47385f14c404dfbbd658fc78d1e
 			let index = group.children.findIndex((it) => {
 				return it.stlId == stlId
 			})
@@ -177,6 +247,7 @@ const init = () => {
 		 *      2.在左边添加unshift
 		 */
 		loader.load(item.stlPath, gltf => {
+<<<<<<< HEAD
 			gltf.scene.name = item.stlId
 			gltf.scene.castShadow=true;
 			gltf.scene.traverse(function(child) {
@@ -187,6 +258,18 @@ const init = () => {
 					//模型自发光
 					child.material.emissive =  child.material.color;
 					child.material.emissiveMap = child.material.map ;
+=======
+			gltf.scene.name = item.stlId
+			gltf.scene.castShadow=true;
+			gltf.scene.traverse(function(child) {
+				if (child.isMesh) {
+					child.frustumCulled = false;
+					 //模型阴影
+					child.castShadow = true;
+					//模型自发光
+					child.material.emissive =  child.material.color;
+					child.material.emissiveMap = child.material.map ;
+>>>>>>> 87847fcbfcf6f47385f14c404dfbbd658fc78d1e
 				}
 			});
 			let mesh = gltf.scene
@@ -194,6 +277,7 @@ const init = () => {
 			mesh['addLeft'] = item.left
 			mesh['addRight'] = item.right
 			mesh['stlId'] = item.stlId
+<<<<<<< HEAD
 			mesh.rotation.x = 0.12 * Math.PI
 			mesh.rotation.y = 0 * Math.PI
 			mesh.rotation.z = 0 * Math.PI
@@ -204,6 +288,23 @@ const init = () => {
 			mesh['y'] = box.max.y-box.min.y
 			debugger
 			scene.add(mesh)
+=======
+			mesh.rotation.x = 0 * Math.PI
+			mesh.rotation.y = 0 * Math.PI
+		    mesh.scale.set(1, 1,1)
+			let box = new THREE.Box3().expandByObject(mesh);
+			console.log("mesh5模型大小" + JSON.stringify(box));
+			mesh['x'] = box.max.x-box.min.x
+			mesh['y'] = box.max.y-box.min.y
+			scene.add(mesh)
+			
+			// 获取模型对象的父级
+			let parent = mesh.parent;
+			// 修改父级的位置、旋转和缩放
+			//parent.position.y-=0.2;
+			parent.rotation.x= Math.PI / 12; // Math.PI / 6 等于 30度（弧度制）
+			
+>>>>>>> 87847fcbfcf6f47385f14c404dfbbd658fc78d1e
 			if (type == 1) {
 				group.children.push(mesh)
 				models.push(item)
@@ -353,15 +454,26 @@ const init = () => {
 			let list = group.children;
 			list.forEach((item, index) => {
 				if (index == 0) {
+<<<<<<< HEAD
 					//item.position.x = initX + diffX
 					item.position.x = initX+ diffX
 				} else {
 					//item.position.x = initX + diffX
+=======
+					//item.position.x = initX + diffX
+					item.position.x = initX+ diffX
+				} else {
+					//item.position.x = initX + diffX
+>>>>>>> 87847fcbfcf6f47385f14c404dfbbd658fc78d1e
 					item.position.x = initX
 				}
 				initX = initX + item.x
 				group.children[index] = item
+<<<<<<< HEAD
 			})
+=======
+			})
+>>>>>>> 87847fcbfcf6f47385f14c404dfbbd658fc78d1e
 			console.log(group.children)
 		} else {
 			$("#removeAllMesh").addClass("control-button-disabled")
@@ -438,7 +550,11 @@ const init = () => {
 			right: false,
 			isAvailable: true,
 			selectable: false,
+<<<<<<< HEAD
 			index: 5,
+=======
+			index: 5,
+>>>>>>> 87847fcbfcf6f47385f14c404dfbbd658fc78d1e
 			isTransferY:true,
 		},
 		{
@@ -614,11 +730,19 @@ const init = () => {
 		$("#removeMesh").click(function() {
 			if (selectedObject != null) {
 				addPlusList = []
+<<<<<<< HEAD
 				plusGroup.children = []
 				let stlId = selectedObject.stlId;//
 				let items = modelList.filter((item) => {
 					return item.stlId == stlId
 				})
+=======
+				plusGroup.children = []
+				let stlId = selectedObject.stlId;//
+				let items = modelList.filter((item) => {
+					return item.stlId == stlId
+				})
+>>>>>>> 87847fcbfcf6f47385f14c404dfbbd658fc78d1e
 				group.remove(selectedObject);
 				scene.remove(selectedObject);
 				deleteClass(items[0])
@@ -737,7 +861,11 @@ const init = () => {
 		event.preventDefault(); // 阻止默认的点击事件执行
 		//声明 rayCaster 和 mouse 变量
 		let rayCaster = new THREE.Raycaster();
+<<<<<<< HEAD
 		let mouse = new THREE.Vector3(10,10,1);
+=======
+		let mouse = new THREE.Vector3(10,10,1);
+>>>>>>> 87847fcbfcf6f47385f14c404dfbbd658fc78d1e
 
 		let box = document.getElementById("canvasBox")
 		//mouse.x = (event.offsetX / window.innerWidth) * 2 - 1;
@@ -764,9 +892,15 @@ const init = () => {
 		let plusIntersects = getPlusIntersects(event);
 		console.log(intersects);
 		//获取选中最近的Mesh对象
+<<<<<<< HEAD
 		//instance坐标是对象，右边是类，判断对象是不是属于这个类的
 		if (intersects.length !== 0) {
 			console.log(intersects[0].object.geometry.name);
+=======
+		//instance坐标是对象，右边是类，判断对象是不是属于这个类的
+		if (intersects.length !== 0) {
+			console.log(intersects[0].object.geometry.name);
+>>>>>>> 87847fcbfcf6f47385f14c404dfbbd658fc78d1e
 			selectedObject = intersects[0].object.parent.parent
 			outlineOperate([intersects[0].object.parent.parent])
 			//group.remove(mesh5) 可以实现模型删除 remove(intersects[0].object)

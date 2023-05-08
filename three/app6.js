@@ -6,7 +6,7 @@ var selectedObject = null
 const init = () => {
 	// Scene
 	scene = new THREE.Scene();
-	//scene.background = new THREE.Color('#CECFCF'); //CECFCF
+	scene.background = new THREE.Color('#000'); //CECFCF
 
 	// Renderer
 	renderer = new THREE.WebGLRenderer({
