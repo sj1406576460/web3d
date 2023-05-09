@@ -1,4 +1,4 @@
-let scene, camera, renderer, composer, outlinePass, plusGroup,groupX,groupY;
+let scene, camera, group, renderer, composer, outlinePass, plusGroup,groupY;
 var initWidth = 1500
 var initHeight = 608
 var selectedObject = null
@@ -66,8 +66,8 @@ const init = () => {
 	// Loader new THREE STLLoader
 	const loader = new THREE.GLTFLoader();
 	plusGroup = new THREE.Group();
-	groupX = new THREE.Group();
-	groupX.children=[]
+	group = new THREE.Group();
+	group.children=[]
 	
 	groupY = new THREE.Group();
 	groupY.children=[]
@@ -85,7 +85,7 @@ const init = () => {
 			let sprite = new THREE.Sprite(spriteMaterial)
 			sprite.scale.set(0.04, 0.04, 0.04)
 			sprite.rotation.x = 0.1 * Math.PI
-			let item = groupX.children.find((it) => {
+			let item = group.children.find((it) => {
 				return plus.stlId == it.stlId
 			})
 			if (item != undefined) {
@@ -165,7 +165,11 @@ const init = () => {
 			mesh['x'] = box.max.x-box.min.x
 			mesh['y'] = box.max.y-box.min.y
 			mesh['z'] = box.max.z-box.min.z
-			
+			//geometry.computeBoundingBox();
+			//let boundingBox = geometry.boundingBox;
+			//var boundingBoxWidth  = boundingBox.max.x - boundingBox.min.x;
+			//mesh5.translateX(1.25); //网格模型mesh平移
+			//mesh['x'] =boundingBoxWidth
             scene.add(mesh)
 			// 获取模型对象的父级
 			let parent = mesh.parent;
@@ -175,20 +179,14 @@ const init = () => {
 			  parent.rotation.x= Math.PI / 12; // Math.PI / 6 等于 30度（弧度制）
 			}
 			
-			let index = groupX.children.findIndex((it) => {
+			let index = group.children.findIndex((it) => {
 				return it.stlId == stlId
 			})
-			
 			if (isRight) {
 				index = index + 1
 			}
-			
-			if(!item["isZhuanjiao"] && (item["zhuanjiaoLeft"] || item["zhuanjiaoRight"])){
-				groupY.children.splice(index, 0, mesh)
-			}else{
-				groupX.children.splice(index, 0, mesh)
-			}
-			
+
+			group.children.splice(index, 0, mesh)
 			models.splice(index, 0, item)
 			dealModelList(item)
 			calcPosition()
@@ -235,15 +233,16 @@ const init = () => {
 			// 修改父级的位置、旋转和缩放
 			//parent.position.y-=0.2;
 			parent.rotation.x= Math.PI / 12; // Math.PI / 6 等于 30度（弧度制）
+			
 			if(!item["isZhuanjiao"] && (item["zhuanjiaoLeft"] || item["zhuanjiaoRight"])){
 				groupY.children.push(mesh)
 				models.push(item)
 			}else{
 				if (type == 1) {
-					groupX.children.push(mesh)
+					group.children.push(mesh)
 					models.push(item)
 				} else {
-					groupX.children.unshift(mesh)
+					group.children.unshift(mesh)
 					models.unshift(item)
 				}
 			}
@@ -265,7 +264,6 @@ const init = () => {
 		model = null
 		dealModelLeftRight()
 	}
-	
 
 	function restoreModelList(item) {
 		modelList.map((it) => {
@@ -379,16 +377,16 @@ const init = () => {
 
 
 	function calcPosition() {
-		console.log(groupX)
+		console.log(group)
 		let totalWidth = 0
-		if (groupX.children.length !== 0) {
-			groupX.children.forEach(item => {
+		if (group.children.length !== 0) {
+			group.children.forEach(item => {
 			   totalWidth += item.x
 			})
 			console.log(totalWidth)
 			let initX = -totalWidth / 2
 			let diffX = 0.06
-			let list = groupX.children;
+			let list = group.children;
 			let listLength=list.length/2
 			list.forEach((item, index) => {
 				if (index == 0) {
@@ -399,9 +397,9 @@ const init = () => {
 					item.position.x = initX
 				}
 				initX = initX + item.x
-				groupX.children[index] = item
+				group.children[index] = item
 			})
-			console.log(groupX.children)
+			console.log(group.children)
 		} else {
 			$("#removeAllMesh").addClass("control-button-disabled")
 		}
@@ -527,7 +525,7 @@ const init = () => {
 			
 			if (item.isAvailable) {
 				$(this).addClass("active").siblings().removeClass("active")
-				if (groupX.children.length == 0) {
+				if (group.children.length == 0) {
                     addModel(item, 1)
 					$("#removeAllMesh").removeClass("control-button-disabled")
 				} else {
@@ -541,8 +539,8 @@ const init = () => {
 							if (model.right == true && items[0].left == true) {
 								//组合最左边位置可以添加
 								addPlusList.push({
-									x: groupX.children[0].x,
-									stlId: groupX.children[0].stlId,
+									x: group.children[0].x,
+									stlId: group.children[0].stlId,
 									index: 1
 								})
 							}
@@ -550,8 +548,8 @@ const init = () => {
 							if (model.left == true && items[0].right == true) {
 								//组合的最右边位置可以添加
 								addPlusList.push({
-									x: groupX.children[0].x,
-									stlId: groupX.children[0].stlId,
+									x: group.children[0].x,
+									stlId: group.children[0].stlId,
 									index: 2
 								})
 							}
@@ -561,8 +559,8 @@ const init = () => {
 							if (model.right == true && items[0].left == true) {
 								//组合最左边位置可以添加
 								addPlusList.push({
-									x: groupX.children[0].x,
-									stlId: groupX.children[0].stlId,
+									x: group.children[0].x,
+									stlId: group.children[0].stlId,
 									index: 1
 								})
 							}
@@ -571,16 +569,16 @@ const init = () => {
 								if (model.right) {
 									//组合的最右边位置可以添加
 									addPlusList.push({
-										x: groupX.children[items.length - 1].x,
-										stlId: groupX.children[items.length - 1].stlId,
+										x: group.children[items.length - 1].x,
+										stlId: group.children[items.length - 1].stlId,
 										index: 1,
 										isEnd: 1
 									})
 								} else {
 									//组合的最右边位置可以添加
 									addPlusList.push({
-										x: groupX.children[items.length - 1].x,
-										stlId: groupX.children[items.length - 1].stlId,
+										x: group.children[items.length - 1].x,
+										stlId: group.children[items.length - 1].stlId,
 										index: 1,
 										isEnd: 2
 									})
@@ -591,19 +589,19 @@ const init = () => {
 								//组合的中间位置都可以添加
 								for (i = 1; i < items.length; i++) {
 									let it = addPlusList.find((item) => {
-										return item.stlId == groupX.children[i].stlId
+										return item.stlId == group.children[i].stlId
 									})
 
 									if (it != undefined) {
 										addPlusList.push({
-											x: groupX.children[i].x,
-											stlId: groupX.children[i].stlId,
+											x: group.children[i].x,
+											stlId: group.children[i].stlId,
 											index: 2
 										})
 									} else {
 										addPlusList.push({
-											x: groupX.children[i].x,
-											stlId: groupX.children[i].stlId,
+											x: group.children[i].x,
+											stlId: group.children[i].stlId,
 											index: 1
 										})
 									}
@@ -673,7 +671,7 @@ const init = () => {
 				let box = new THREE.Box3().expandByObject(mesh);
 				console.log("mesh5模型大小" + JSON.stringify(box));
 				let totalWidth=0
-				groupX.children.forEach(item => {
+				group.children.forEach(item => {
 					totalWidth += item.x
 				})
 				mesh['x'] = box.max.x-box.min.x
@@ -726,7 +724,7 @@ const init = () => {
 				let box = new THREE.Box3().expandByObject(mesh);
 				console.log("mesh5模型大小" + JSON.stringify(box));
 				let totalWidth=0
-				groupX.children.forEach(item => {
+				group.children.forEach(item => {
 					totalWidth += item.x
 				})
 				mesh['x'] = box.max.x-box.min.x
@@ -734,7 +732,7 @@ const init = () => {
 				mesh['z'] = box.max.z-box.min.z
 				mesh.position.set(totalWidth/2-mesh['x'],-0.1,0.3)
 				scene.add(mesh)
-				groupX.children.push(mesh)
+				group.children.push(mesh)
 				console.log(models)
 			});
 		})
@@ -778,7 +776,7 @@ const init = () => {
 				let box = new THREE.Box3().expandByObject(mesh);
 				console.log("mesh5模型大小" + JSON.stringify(box));
 				let totalWidth=0
-				groupX.children.forEach(item => {
+				group.children.forEach(item => {
 					if(!item.isAddY){
 						totalWidth += item.x
 					}
@@ -787,7 +785,7 @@ const init = () => {
 				mesh['y'] = box.max.y-box.min.y
 				mesh.position.set(totalWidth/2-mesh['x'],-0.1,0.6)
 				scene.add(mesh)
-				groupX.children.push(mesh)
+				group.children.push(mesh)
 				console.log(models)
 			});
 		})
@@ -803,7 +801,7 @@ const init = () => {
 				let items = modelList.filter((item) => {
 					return item.stlId == stlId
 				})
-				groupX.remove(selectedObject);
+				group.remove(selectedObject);
 				scene.remove(selectedObject);
 				deleteClass(items[0])
 				calcPosition()
@@ -820,7 +818,7 @@ const init = () => {
 					}
 				})
 			})
-			groupX.children = []
+			group.children = []
 			plusGroup.children = []
 			restoreAllModelList()
 		})
@@ -849,12 +847,12 @@ const init = () => {
 	var box3 = new THREE.Box3()
 	// 计算层级模型group的包围盒
 	// 模型group是加载一个三维模型返回的对象，包含多个网格模型
-	box3.expandByObject(groupX)
+	box3.expandByObject(group)
 	// 计算一个层级模型对应包围盒的几何体中心在世界坐标中的位置
 	var center = new THREE.Vector3()
 	box3.getCenter(center)
 	console.log('查看几何体中心坐标', center);
-	console.log('查看组合体', groupX);
+	console.log('查看组合体', group);
 	/* 重新设置模型的位置，使之居中。
 	group.position.x = group.position.x - center.x
 	group.position.y = group.position.y - center.y
@@ -910,7 +908,7 @@ const init = () => {
 		//获取与射线相交的对象数组， 其中的元素按照距离排序，越近的越靠前。
 		//+true，是对其后代进行查找，这个在这里必须加，因为模型是由很多部分组成的，后代非常多。
 		//console.log(group)
-		let intersects = rayCaster.intersectObjects(groupX.children, true);
+		let intersects = rayCaster.intersectObjects(group.children, true);
 		//返回选中的对象
 		console.log(intersects)
 		return intersects;
