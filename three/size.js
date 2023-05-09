@@ -30,7 +30,7 @@ const init = () => {
 	const aspect = initWidth / initHeight;
 	camera = new THREE.PerspectiveCamera(40, aspect,0.01,1000);
 	/*camera.rotation.y = (90 / 180 ) * Math.PI;*/
-	camera.position.set(0, 0, 2);
+	camera.position.set(0, 0.2, 2);
 
 	// Camera Controls
 	let controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -80,23 +80,23 @@ const init = () => {
 			});
 			//为精灵贴图，其特点在于图片会始终面向用户
 			let sprite = new THREE.Sprite(spriteMaterial)
-			sprite.scale.set(0.08, 0.08, 0.08)
+			sprite.scale.set(0.04, 0.04, 0.04)
 			sprite.rotation.x = 0.1 * Math.PI
 			let item = group.children.find((it) => {
 				return plus.stlId == it.stlId
 			})
 			if (item != undefined) {
 				if (plus['index'] == 2) {
-					sprite.position.set(item.position.x + item.x - 0.3, 0.68, 0.2)
+					sprite.position.set(item.position.x + item.x - 0.2, 0.56, 0.2)
 					sprite.x = item.x
 					sprite.isRight = true
 				} else {
 					if (plus['isEnd'] == 2) {
-						sprite.position.set(item.position.x + item.x - 0.3,0.68, 0.2)
+						sprite.position.set(item.position.x + item.x - 0.2,0.56, 0.2)
 						sprite.x = item.x
 						sprite.isRight = true
 					} else {
-						sprite.position.set(item.position.x - 0.3, 0.68, 0.2)
+						sprite.position.set(item.position.x - 0.2, 0.56, 0.2)
 						sprite.x = item.x
 						sprite.isRight = false
 					}
@@ -156,6 +156,7 @@ const init = () => {
 			mesh.rotation.x = 0 * Math.PI
 			mesh.rotation.y = 0 * Math.PI
 			mesh.rotation.z = 0 * Math.PI
+			mesh.translateY(-0.1) 
 			mesh.scale.set(0.4, 0.4, 0.4)
 			let box = new THREE.Box3().expandByObject(mesh);
 			mesh['x'] = box.max.x-box.min.x
@@ -213,6 +214,7 @@ const init = () => {
 			mesh['addLeft'] = item.left
 			mesh['addRight'] = item.right
 			mesh['stlId'] = item.stlId
+			mesh.translateY(-0.1)
 			mesh.rotation.x = 0 * Math.PI
 			mesh.rotation.y = 0 * Math.PI
 		    mesh.scale.set(0.4, 0.4, 0.4)
@@ -374,7 +376,7 @@ const init = () => {
 			})
 			console.log(totalWidth)
 			let initX = -totalWidth / 2
-			let diffX = 0.1
+			let diffX = 0.06
 			let list = group.children;
 			let listLength=list.length/2
 			list.forEach((item, index) => {
@@ -419,19 +421,7 @@ const init = () => {
 			index: 1
 		},
 		{
-			name: "1180816.stl",
-			stlPath: "model/916.glb",
-			stlId: 9162,
-			w: 100,
-			h: 100,
-			left: true,
-			right: true,
-			isAvailable: true,
-			selectable: false,
-			index: 2
-		},
-		{
-			name: "1180815.stl",
+			name: "917.stl 转角",
 			stlPath: "model/917.glb",
 			stlId: 917,
 			w: 100,
@@ -440,7 +430,8 @@ const init = () => {
 			right: false,
 			isAvailable: true,
 			selectable: false,
-			index: 3
+			index: 2,
+			isZhuanjiao:true,
 		},
 		{
 			name: "918.stl",
@@ -453,32 +444,6 @@ const init = () => {
 			isAvailable: true,
 			selectable: false,
 			index: 4
-		},
-		{
-			name: "1180820.stl",
-			stlPath: "model/918.glb",
-			stlId: 918,
-			w: 100,
-			h: 100,
-			left: true,
-			right: false,
-			isAvailable: true,
-			selectable: false,
-			index: 5,
-			isZhuanjiao:true,
-		},
-		{
-			name: "1180821.stl",
-			stlPath: "model/918.glb",
-			stlId: 1180820,
-			w: 100,
-			h: 100,
-			left: false,
-			right: false,
-			isAvailable: true,
-			selectable: false,
-			isZhuanjiao:true,
-			index: 6
 		}
 	]
 
@@ -681,7 +646,7 @@ const init = () => {
 				mesh['x'] = box.max.x-box.min.x
 				mesh['y'] = box.max.y-box.min.y
 				mesh['z'] = box.max.z-box.min.z
-				mesh.position.set(totalWidth/2-0.38,0,0.3)
+				mesh.position.set(totalWidth/2-0.38,-0.1,0.3)
 				scene.add(mesh)
 				group.children.push(mesh)
 				console.log(models)
@@ -734,7 +699,7 @@ const init = () => {
 				})
 				mesh['x'] = box.max.x-box.min.x
 				mesh['y'] = box.max.y-box.min.y
-				mesh.position.set(totalWidth/2-mesh['x'],0,0.6)
+				mesh.position.set(totalWidth/2-mesh['x'],-0.1,0.6)
 				scene.add(mesh)
 				group.children.push(mesh)
 				console.log(models)

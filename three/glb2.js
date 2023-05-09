@@ -15,11 +15,7 @@ const init = () => {
 	});
 	renderer.shadowMap.enabled = true // 显示阴影
 	renderer.shadowMap.type = THREE.PCFSoftShadowMap
-<<<<<<< HEAD
 	//renderer.setClearColor(0x000000, 1) // 设置背景颜色
-=======
-	//renderer.setClearColor(0x000000, 1) // 设置背景颜色
->>>>>>> 87847fcbfcf6f47385f14c404dfbbd658fc78d1e
 	renderer.outputEncoding = THREE.sRGBEncoding;
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(initWidth, initHeight);
@@ -30,7 +26,6 @@ const init = () => {
 
 
 	// Camera
-<<<<<<< HEAD
 	const aspect = initHeight / initHeight;
 	camera = new THREE.PerspectiveCamera(100, aspect, 0.01, 100);
 	// camera.rotation.y = (90 / 180 ) * Math.PI;
@@ -38,7 +33,6 @@ const init = () => {
 
 	// Camera Controls
 	let controls = new THREE.OrbitControls(camera, renderer.domElement);
-=======
 	const aspect = initWidth / initHeight;
 	camera = new THREE.PerspectiveCamera(100, aspect,0.01,1000);
 	// 将相机的旋转角度沿y轴增加30度
@@ -50,7 +44,6 @@ const init = () => {
 	
 	controls.minDistance=1.6
 	controls.maxDistance=4
->>>>>>> 87847fcbfcf6f47385f14c404dfbbd658fc78d1e
 	//controls.addEventListener("change", renderer);
 	controls.update()
 
@@ -68,14 +61,9 @@ const init = () => {
 	spotLight1.castShadow = true
 	scene.add(spotLight1)
 
-	//加辅助坐标
-<<<<<<< HEAD
-	//var axes = new THREE.AxisHelper(100, 20, 20); //红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴
-	//scene.add(axes);
-=======
+
 	var axes = new THREE.AxesHelper(100, 20, 20); //红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴
 	scene.add(axes);
->>>>>>> 87847fcbfcf6f47385f14c404dfbbd658fc78d1e
 
 	// Loader new THREE STLLoader
 	const loader = new THREE.GLTFLoader();
@@ -90,19 +78,16 @@ const init = () => {
 			let spriteMaterial = new THREE.SpriteMaterial({
 				map: map,
 				sizeAttenuation: false
-<<<<<<< HEAD
 				//color: 0xffffff
 			});
 			//为精灵贴图，其特点在于图片会始终面向用户
 			let sprite = new THREE.Sprite(spriteMaterial)
 			sprite.scale.set(0.08, 0.08, 0.08)
-=======
 				//-color: 0xffffff
 			});
 			//为精灵贴图，其特点在于图片会始终面向用户
 			let sprite = new THREE.Sprite(spriteMaterial)
 			sprite.scale.set(0.12, 0.12, 0.12)
->>>>>>> 87847fcbfcf6f47385f14c404dfbbd658fc78d1e
 			sprite.rotation.x = 0.1 * Math.PI
 			let item = group.children.find((it) => {
 				return plus.stlId == it.stlId
@@ -204,7 +189,6 @@ const init = () => {
 			//mesh5.translateX(1.25); //网格模型mesh平移
 			//mesh['x'] =boundingBoxWidth
             scene.add(mesh)
-=======
 			mesh.rotation.x = 0 * Math.PI
 			mesh.rotation.y = 0 * Math.PI
 			mesh.rotation.z = 0 * Math.PI
