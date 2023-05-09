@@ -487,7 +487,7 @@ const init = () => {
 			zhuanjiaoLeft:true,
 			zhuanjiaoRight:false,
 			index: 5
-		},
+		}
 	]
 
 	var addFlag = true
@@ -495,7 +495,7 @@ const init = () => {
 	var models = []
 	var addPlusList = []
 	$(function() {
-       $("#load-container").hide();
+        $("#load-container").hide();
 		$("#load-container").click(function() {
 			return false
 		})
@@ -519,7 +519,8 @@ const init = () => {
 			var num = parseInt((range.clientWidth / loadingBox.clientWidth) * 100) + '%'
 			percent.innerHTML = num
 		}, 20)
-		preloadModel()
+		
+		//preloadModel() 预加载
 
 		$(".box-left .item").click(function() {
 			let index = $(this).index()
