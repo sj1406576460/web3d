@@ -157,6 +157,7 @@ const init = () => {
 			mesh.name = item.stlId
 			mesh['addLeft'] = item.left
 			mesh['addRight'] = item.right
+			mesh['isZhuanjiao'] = item.isZhuanjiao
 			mesh['stlId'] = item.stlId
 			mesh.rotation.x = 0 * Math.PI
 			mesh.rotation.y = 0 * Math.PI
@@ -225,6 +226,7 @@ const init = () => {
 			mesh['addLeft'] = item.left
 			mesh['addRight'] = item.right
 			mesh['stlId'] = item.stlId
+			mesh['isZhuanjiao'] = item.isZhuanjiao
 			mesh.translateY(-0.1)
 			mesh.rotation.x = 0 * Math.PI
 			mesh.rotation.y = 0 * Math.PI
@@ -921,8 +923,20 @@ const init = () => {
 					groupY.remove(selectedObject);
 					calcPositionY()
 				}else{
-					groupX.remove(selectedObject);
-					calcPosition()
+					if(groupY.children.length>0){
+						debugger
+						if(selectedObject["isZhuanjiao"]){
+							alert("转角已存在拼接模型,不能删除!若要删除，请先删除转角已拼接模型")
+							return;
+						}else{
+							groupX.remove(selectedObject);
+							calcPosition()
+						}
+					}else{
+						groupX.remove(selectedObject);
+						calcPosition()
+					}
+					
 				}
 				scene.remove(selectedObject);
 				deleteClass(items[0])
