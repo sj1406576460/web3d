@@ -30,7 +30,7 @@ const init = () => {
 
 	// Camera
 	const aspect = initWidth / initHeight;
-	camera = new THREE.PerspectiveCamera(35, aspect,0.01,1000);
+	camera = new THREE.PerspectiveCamera(40, aspect,0.01,1000);
 	/*camera.rotation.y = (90 / 180 ) * Math.PI;*/
 	camera.position.set(0, 0.2, 2);
 
@@ -413,20 +413,27 @@ const init = () => {
 	}
 	
 	function calcPositionY() {
-		let totalWidth = 0
+		let totalX = 0
 		if (groupY.children.length !== 0) {
-			groupY.children.forEach(item => {
-			   totalWidth += item.z
-			})
-			console.log(totalWidth)
+			let groupXLength=0
+			if(groupX.children.length>0){
+				groupXLength=groupX.children.length;
+				groupX.children.forEach(item => {
+				   totalX += item.x
+				})
+			}
+			
 			let initX = zhuanjiaoZ
 			let diffX = 0.015
 			let list = groupY.children;
+			debugger
 			list.forEach((item, index) => {
 				if (index == 0) {
 					item.position.z = initX+diffX
+					item.position.x = totalX/2-groupX.children[groupXLength-1].x
 				} else {
 					item.position.z = initX
+					item.position.x = totalX/2-groupX.children[groupXLength-1].x
 				}
 				initX = initX + item.z
 				groupY.children[index] = item
@@ -930,6 +937,7 @@ const init = () => {
 						}else{
 							groupX.remove(selectedObject);
 							calcPosition()
+							calcPositionY()
 						}
 					}else{
 						groupX.remove(selectedObject);
