@@ -418,7 +418,7 @@ const init = () => {
 			})
 			console.log(totalWidth)
 			let initX = zhuanjiaoZ
-			let diffX = 0.03
+			let diffX = 0.015
 			let list = groupY.children;
 			list.forEach((item, index) => {
 				if (index == 0) {
@@ -737,6 +737,9 @@ const init = () => {
 				mesh.name = item.stlId
 				mesh['addLeft'] = item.left
 				mesh['addRight'] = item.right
+				mesh['rotateY']= item.rotateY
+				mesh['zhuanjiaoLeft'] = item.zhuanjiaoLeft
+				mesh['zhuanjiaoRight'] = item.zhuanjiaoRight
 				mesh['isAddY'] = true
 				mesh['stlId'] = item.stlId
 				mesh.rotation.x = 0 * Math.PI
@@ -765,24 +768,24 @@ const init = () => {
 					}
 				})
 				
-				/*if(!isLastRotateRight){
+				if(!isLastRotateRight){
 					mesh.position.set(totalWidth/2-mesh['x'],-0.1,zhuanjiaoZ+(totalZ-isLastWidth))
 					scene.add(mesh)
 					//splice 参数依次为从哪开始插入的下标，删除项目数，添加到数组的新项目
 					groupY.children.splice(groupY.children.length-1,0,mesh)
 					models.splice(index-1, 0, item)
-					//calcPositionY()
+					calcPositionY()
 				}else{
 					mesh.position.set(totalWidth/2-mesh['x'],-0.1,zhuanjiaoZ+totalZ)
 					scene.add(mesh)
 					groupY.children.push(mesh)
 					models.splice(index, 0, item)
-				}*/
+				}
 				
-				mesh.position.set(totalWidth/2-mesh['x'],-0.1,zhuanjiaoZ+totalZ)
+				/*mesh.position.set(totalWidth/2-mesh['x'],-0.1,zhuanjiaoZ+totalZ)
 				scene.add(mesh)
 				groupY.children.push(mesh)
-				models.splice(index, 0, item)
+				models.splice(index, 0, item)*/
 				
 				$(".box-left .item").eq(index).addClass("disabled")
 				if(item.rotateY && !item.zhuanjiaoRight){
