@@ -2,6 +2,8 @@ let scene, camera, renderer, composer, outlinePass, plusGroup,groupX,groupY;
 var initWidth = 1500
 var initHeight = 608
 var selectedObject = null
+var isExistRotateY=false  //转角是否存在，默认只允许一个转角
+var zhuanjiaoZ=0
 
 const init = () => {
 	//Scene
@@ -166,13 +168,17 @@ const init = () => {
 			mesh['y'] = box.max.y-box.min.y
 			mesh['z'] = box.max.z-box.min.z
 			
+			if(item.isZhuanjiao){
+				zhuanjiaoZ=mesh['z']-0.07
+			}
+			
             scene.add(mesh)
 			// 获取模型对象的父级
 			let parent = mesh.parent;
 			//修改父级的位置、旋转和缩放
 			//parent.position.y-=0.2;
 			if(parent.rotation.x!=Math.PI / 12){
-			  parent.rotation.x= Math.PI / 12; // Math.PI / 6 等于 30度（弧度制）
+			   parent.rotation.x= Math.PI / 12; // Math.PI / 6 等于 30度（弧度制）
 			}
 			
 			let index = groupX.children.findIndex((it) => {
@@ -228,26 +234,23 @@ const init = () => {
 			mesh['x'] = box.max.x-box.min.x
 			mesh['y'] = box.max.y-box.min.y
 			mesh['z'] = box.max.z-box.min.z
-			scene.add(mesh)
 			
+			if(item.isZhuanjiao){
+				zhuanjiaoZ=mesh['z'];
+			}
+			scene.add(mesh)
 			// 获取模型对象的父级
 			let parent = mesh.parent;
 			// 修改父级的位置、旋转和缩放
 			//parent.position.y-=0.2;
 			parent.rotation.x= Math.PI / 12; // Math.PI / 6 等于 30度（弧度制）
-			if(!item["isZhuanjiao"] && (item["zhuanjiaoLeft"] || item["zhuanjiaoRight"])){
-				groupY.children.push(mesh)
-				models.push(item)
-			}else{
-				if (type == 1) {
+			if (type == 1) {
 					groupX.children.push(mesh)
 					models.push(item)
-				} else {
+			} else {
 					groupX.children.unshift(mesh)
 					models.unshift(item)
-				}
 			}
-			
 			calcPosition()
 			console.log(models)
 		});
@@ -406,6 +409,35 @@ const init = () => {
 			$("#removeAllMesh").addClass("control-button-disabled")
 		}
 	}
+	
+	function calcPositionY() {
+		let totalWidth = 0
+		if (groupY.children.length !== 0) {
+			groupY.children.forEach(item => {
+			   totalWidth += item.z
+			})
+			console.log(totalWidth)
+			let initX = zhuanjiaoZ
+			let diffX = 0.03
+			let list = groupY.children;
+			list.forEach((item, index) => {
+				if (index == 0) {
+					item.position.z = initX+diffX
+				} else {
+					item.position.z = initX
+				}
+				initX = initX + item.z
+				groupY.children[index] = item
+				/*if(item.rotateY && !item.zhuanjiaoRight){
+					modelList.forEach((it,i)=>{
+					   $(".box-left .item").eq(i).addClass("disabled");
+					})
+				}*/
+			})
+		} else {
+			$("#removeAllMesh").addClass("control-button-disabled")
+		}
+	}
 
 	var modelList = [{
 			name: "915.stl",
@@ -417,6 +449,7 @@ const init = () => {
 			right: true,
 			isAvailable: true,
 			selectable: false,
+			isZhuanjiao:false,
 			index: 0,
 			rotateX:true,//代表属于X轴拼接的模型
 			rotateY:false,//代表不属于Y轴拼接的模型
@@ -431,6 +464,7 @@ const init = () => {
 			right: true,
 			isAvailable: true,
 			selectable: false,
+			isZhuanjiao:false,
 			index: 1,
 			rotateX:true,//代表属于X轴拼接的模型
 			rotateY:false,//代表不属于Y轴拼接的模型
@@ -443,6 +477,7 @@ const init = () => {
 			h: 100,
 			left: true,
 			right: false,
+			isZhuanjiao:false,
 			isAvailable: true,
 			selectable: false,
 			index: 2,
@@ -463,8 +498,8 @@ const init = () => {
 			isZhuanjiao:true,
 			zhuanjiaoLeft:true,
 			zhuanjiaoRight:true,
-			rotateX:false,//代表可属于X轴拼接的模型
-			rotateY:true,//代表可属于Y轴拼接的模型
+			rotateX:true,//代表可属于X轴拼接的模型
+			rotateY:false,//代表可属于Y轴拼接的模型
 		},
 		{
 			name: "919.stl",
@@ -493,7 +528,6 @@ const init = () => {
 			right: true,
 			isAvailable: false,
 			selectable: false,
-			rotateType:"Y",
 			isZhuanjiao:false,
 			zhuanjiaoLeft:true,
 			zhuanjiaoRight:false,
@@ -507,7 +541,9 @@ const init = () => {
 	var model = null
 	var models = []
 	var addPlusList = []
+	
 	$(function() {
+		
         $("#load-container").hide();
 		$("#load-container").click(function() {
 			return false
@@ -544,8 +580,24 @@ const init = () => {
 			let index = $(this).index()
 			let item = modelList[index]
 			
+			if(item.isZhuanjiao){
+				isExistRotateY=true
+				modelList.map((item,index)=>{
+					if(item.rotateY){
+						item.isAvailable=true
+						$(".box-left .item").eq(index).removeClass("disabled")
+					}
+					return item;
+				})
+			}
 			
-			if (item.isAvailable) {
+			//如果存在转角且模型可用，并且也是Y轴方向可拼接，则添加模型
+			if(isExistRotateY && item.rotateY && item.isAvailable && !item.isZhuanjiao){
+				addModelY(item,index)
+			}
+			
+			
+			if (item.isAvailable && item.rotateX) {
 				$(this).addClass("active").siblings().removeClass("active")
 				if (groupX.children.length == 0) {
                     addModel(item, 1)
@@ -667,7 +719,7 @@ const init = () => {
 		})
 		
 		
-		function addModelY(item){
+		function addModelY(item,index){
 			loader.load(item.stlPath, gltf => {
 				gltf.scene.name = item.stlId
 				gltf.scene.castShadow=true;
@@ -689,23 +741,58 @@ const init = () => {
 				mesh['stlId'] = item.stlId
 				mesh.rotation.x = 0 * Math.PI
 				// Math.PI / 6 等于 30度（弧度制）  90度
-				mesh.rotation.y =  -Math.PI / 2
+				mesh.rotation.y = -Math.PI / 2
 			    mesh.scale.set(0.4, 0.4, 0.4)
 				let box = new THREE.Box3().expandByObject(mesh);
 				console.log("mesh5模型大小" + JSON.stringify(box));
 				let totalWidth=0
+				let isLastRotateRight=true
+				let isLastWidth=0
 				groupX.children.forEach(item => {
 					totalWidth += item.x
 				})
+				
 				mesh['x'] = box.max.x-box.min.x
 				mesh['y'] = box.max.y-box.min.y
 				mesh['z'] = box.max.z-box.min.z
-				mesh.position.set(totalWidth/2-mesh['x'],-0.1,0.3)
+				
+				let totalZ=0
+				groupY.children.forEach(it => {
+					totalZ += Math.abs(it.z)
+					if(it.rotateY && !it.zhuanjiaoRight){
+						isLastRotateRight=false
+						isLastWidth=it.z
+					}
+				})
+				
+				/*if(!isLastRotateRight){
+					mesh.position.set(totalWidth/2-mesh['x'],-0.1,zhuanjiaoZ+(totalZ-isLastWidth))
+					scene.add(mesh)
+					//splice 参数依次为从哪开始插入的下标，删除项目数，添加到数组的新项目
+					groupY.children.splice(groupY.children.length-1,0,mesh)
+					models.splice(index-1, 0, item)
+					//calcPositionY()
+				}else{
+					mesh.position.set(totalWidth/2-mesh['x'],-0.1,zhuanjiaoZ+totalZ)
+					scene.add(mesh)
+					groupY.children.push(mesh)
+					models.splice(index, 0, item)
+				}*/
+				
+				mesh.position.set(totalWidth/2-mesh['x'],-0.1,zhuanjiaoZ+totalZ)
 				scene.add(mesh)
 				groupY.children.push(mesh)
-				console.log(models)
+				models.splice(index, 0, item)
+				
+				$(".box-left .item").eq(index).addClass("disabled")
+				if(item.rotateY && !item.zhuanjiaoRight){
+					modelList.forEach((it,i)=>{
+					   $(".box-left .item").eq(i).addClass("disabled");
+					})
+				}
 			})
 		}
+		
 		
 		
 		$("#addMeshY").click(function() {
@@ -721,6 +808,7 @@ const init = () => {
 				selectable: false,
 				index: 2
 		    }
+			
 			loader.load(item.stlPath, gltf => {
 				gltf.scene.name = item.stlId
 				gltf.scene.castShadow=true;
@@ -811,31 +899,38 @@ const init = () => {
 				scene.add(mesh)
 				groupX.children.push(mesh)
 				console.log(models)
-			});
+			})
 		})
 		
-		
-
 
 		$("#removeMesh").click(function() {
+			
 			if (selectedObject != null) {
 				addPlusList = []
 				plusGroup.children = []
-				let stlId = selectedObject.stlId;//
+				let stlId = selectedObject.stlId;
+				
 				let items = modelList.filter((item) => {
 					return item.stlId == stlId
 				})
-				groupX.remove(selectedObject);
+				
+				if(items[0]["rotateY"]){
+					groupY.remove(selectedObject);
+					calcPositionY()
+				}else{
+					groupX.remove(selectedObject);
+					calcPosition()
+				}
 				scene.remove(selectedObject);
 				deleteClass(items[0])
-				calcPosition()
 			}
 		})
+		
 
 		$("#removeAllMesh").click(function() {
 			selectedObject = null
 			model = null
-			 models.forEach((it)=>{
+			models.forEach((it)=>{
 			     scene.children.forEach((item)=>{
 					if(it.stlId==item.stlId){
 						scene.remove(item)
@@ -843,6 +938,7 @@ const init = () => {
 				})
 			})
 			groupX.children = []
+			groupY.children = []
 			plusGroup.children = []
 			restoreAllModelList()
 		})
@@ -894,7 +990,7 @@ const init = () => {
 		outlinePass.renderToScreen = true;
 		//outlinePass.pulsePeriod = 1 //闪烁
 		outlinePass.usePatternTexture = false //是否使用贴图
-		outlinePass.visibleEdgeColor.set('#22A7F2'); // 高光颜色0xff0000
+		outlinePass.visibleEdgeColor.set('#22A7F2'); // 高光颜色0xff0000 #22A7F2 #55557f
 		outlinePass.hiddenEdgeColor.set('#22A7F2'); // 阴影颜色
 		outlinePass.usePatternTexture = false; //是否使用父级的材质
 		outlinePass.downSampleRatio = 2; // 边框弯曲度
@@ -932,7 +1028,7 @@ const init = () => {
 		//获取与射线相交的对象数组， 其中的元素按照距离排序，越近的越靠前。
 		//+true，是对其后代进行查找，这个在这里必须加，因为模型是由很多部分组成的，后代非常多。
 		//console.log(group)
-		let intersects = rayCaster.intersectObjects(groupX.children, true);
+		let intersects = rayCaster.intersectObjects(groupX.children.concat(groupY.children), true);
 		//返回选中的对象
 		console.log(intersects)
 		return intersects;
