@@ -1,6 +1,6 @@
 let scene, camera, renderer, composer, outlinePass, plusGroup,groupX,groupY;
 var initWidth = 1500
-var initHeight = 608
+var initHeight = 680
 var selectedObject = null
 var isExistRotateY=false  //转角是否存在，默认只允许一个转角
 var zhuanjiaoZ=0
@@ -924,7 +924,6 @@ const init = () => {
 					calcPositionY()
 				}else{
 					if(groupY.children.length>0){
-						debugger
 						if(selectedObject["isZhuanjiao"]){
 							alert("转角已存在拼接模型,不能删除!若要删除，请先删除转角已拼接模型")
 							return;
@@ -936,7 +935,6 @@ const init = () => {
 						groupX.remove(selectedObject);
 						calcPosition()
 					}
-					
 				}
 				scene.remove(selectedObject);
 				deleteClass(items[0])
