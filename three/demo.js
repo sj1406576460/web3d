@@ -30,7 +30,7 @@ const init = () => {
 
 	// Camera
 	const aspect = initWidth / initHeight;
-	camera = new THREE.PerspectiveCamera(40, aspect,0.01,1000);
+	camera = new THREE.PerspectiveCamera(35, aspect,0.01,1000);
 	/*camera.rotation.y = (90 / 180 ) * Math.PI;*/
 	camera.position.set(0, 0.2, 2);
 
@@ -39,9 +39,9 @@ const init = () => {
 	//controls.addEventListener("change", renderer);
 	controls.update()
 	
-	/*var point = new THREE.PointLight('#fff'); //点光源  
+	var point = new THREE.PointLight('#fff'); //点光源  
 	point.position.set(300, 100, 200); //点光源位置  
-	scene.add(point); //点光源添加到场景中*/
+	scene.add(point); //点光源添加到场景中
 
 	// Light //将环境光添加到场景中
 	const ambientLight = new THREE.AmbientLight(0xffffff);
