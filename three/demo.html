@@ -188,6 +188,50 @@
 		    border-style: solid;
 		    border-color: transparent #fff #fff transparent;
 		}
+		
+		.single-delete{
+			position: relative;
+			opacity: 1;
+		}
+		.single-delete:before{
+			    content: '';
+			    position: absolute;
+			    top: -18px;
+			    margin-top: -3px;
+			    right: 16px;
+			    width: 0px;
+			    height: 0px;
+			    border: 8px solid transparent;
+			    border-top-color:rgba(0,0,0,0.8);
+			    transition: opacity 0.2s;
+				opacity: 0
+		}
+		
+		.show .model-msg{
+			 opacity: 1;
+		}
+		
+		.show:before{
+			opacity: 1
+		}
+		
+		.model-msg{
+			position: absolute;
+			top:-80px;
+			left:-140px;
+			width:300px;
+			height:60px;
+			opacity: 0;
+			background:rgba(0,0,0,0.8);
+			font-size: 13px;
+			line-height:22px;
+			color:#fff;
+			border-radius: 10px;
+			padding:8px 20px;
+			box-sizing: border-box;
+			transition: all .2s;
+			
+		}
     </style>
 	<script src="../3d/js/jquery.min.js"></script>
 </head>
@@ -241,7 +285,12 @@
 		   <div id="canvasBox"></div>
 		   <div class="config-button-center">
 			   <!--<div class="control-button control-button-disabled"  id="addMeshLeft"><img src="model/icon-plus.svg"></div>-->
-			   <div class="control-button control-button-disabled"  id="removeMesh"><img src="model/original.svg"></div>
+			   <div class="control-button control-button-disabled single-delete"  id="removeMesh">
+				   <img src="model/original.svg">
+				   <div class="model-msg">Inside piece cannot be deleted while two other pieces are attached.</div>
+			   </div>
+			   <!--转角已存在拼接模型,不能删除! 若要删除，请先删除转角已拼接模型!--->
+			   <!--当附加另外两个片段时，不能删除内部片段-->
 			   <div class="control-button control-button-disabled"  id="removeAllMesh"><img src="model/original-all.svg"></div>
 			   <!--<div class="control-button control-button-disabled"  id="addMeshRight"><img src="model/icon-plus.svg"></div>
 			   <div class="control-button control-button-disabled"  id="addMeshY"><img src="model/icon-plus.svg"></div>

@@ -920,7 +920,7 @@ const init = () => {
 		})
 		
 
-		$("#removeMesh").click(function() {
+		$("#removeMesh").click(function(e) {
 			
 			if (selectedObject != null) {
 				addPlusList = []
@@ -937,7 +937,12 @@ const init = () => {
 				}else{
 					if(groupY.children.length>0){
 						if(selectedObject["isZhuanjiao"]){
-							alert("转角已存在拼接模型,不能删除!若要删除，请先删除转角已拼接模型")
+							$("#removeMesh").addClass("show");
+							setTimeout(function(){
+								$("#removeMesh").removeClass("show");
+							},3000)
+							e.stopPropagation()
+							//alert("转角已存在拼接模型,不能删除!若要删除，请先删除转角已拼接模型")
 							return;
 						}else{
 							groupX.remove(selectedObject);
