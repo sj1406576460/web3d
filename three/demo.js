@@ -407,6 +407,9 @@ const init = () => {
 				groupX.children[index] = item
 			})
 			console.log(groupX.children)
+			if(groupY.children.length>0){
+				calcPositionY();
+			}
 		} else {
 			$("#removeAllMesh").addClass("control-button-disabled")
 		}
@@ -426,14 +429,16 @@ const init = () => {
 			let initX = zhuanjiaoZ
 			let diffX = 0.015
 			let list = groupY.children;
-			debugger
 			list.forEach((item, index) => {
 				if (index == 0) {
 					item.position.z = initX+diffX
-					item.position.x = totalX/2-groupX.children[groupXLength-1].x
 				} else {
 					item.position.z = initX
+				}
+				if(groupX.children.length>1){
 					item.position.x = totalX/2-groupX.children[groupXLength-1].x
+				}else{
+					item.position.x = -0.13
 				}
 				initX = initX + item.z
 				groupY.children[index] = item
