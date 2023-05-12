@@ -68,6 +68,7 @@ const init = () => {
 	// Loader new THREE STLLoader
 	const loader = new THREE.GLTFLoader();
 	plusGroup = new THREE.Group();
+	plusGroupY = new THREE.Group();
 	groupX = new THREE.Group();
 	groupX.children=[]
 	
@@ -105,7 +106,6 @@ const init = () => {
 						sprite.x = item.x
 						sprite.isRight = false
 					}
-
 				}
 			}
 			sprite.geometry.name = plus.stlId
@@ -114,6 +114,29 @@ const init = () => {
 			plusGroup.add(sprite);
 		})
 		console.log(plusGroup)
+	}
+	
+	
+	function addPlusItemsY(plusItems) {
+		plusGroupY.children = []
+		plusItems.forEach((plus) => {
+			let map = new THREE.TextureLoader().load('model/add.png');
+			let spriteMaterial = new THREE.SpriteMaterial({
+				map: map,
+				sizeAttenuation: false
+			});
+			//为精灵贴图，其特点在于图片会始终面向用户
+			let sprite = new THREE.Sprite(spriteMaterial)
+			sprite.scale.set(0.04, 0.04, 0.04)
+			sprite.rotation.x = 0.1 * Math.PI
+			let item = groupY.children.find((it) => {
+				return plus.stlId == it.stlId
+			})
+			sprite.geometry.name = plus.stlId
+			sprite.stId = plus.stlId
+			sprite.name = 'plus-icon'
+			plusGroupY.add(sprite);
+		})
 	}
 
 
@@ -153,6 +176,7 @@ const init = () => {
 					//child.material.color = new THREE.Color(0x7777ff);
 				}
 			});
+			
 			let mesh = geometry.scene
 			mesh.name = item.stlId
 			mesh['addLeft'] = item.left
@@ -247,11 +271,11 @@ const init = () => {
 			//parent.position.y-=0.2;
 			parent.rotation.x= Math.PI / 12; // Math.PI / 6 等于 30度（弧度制）
 			if (type == 1) {
-					groupX.children.push(mesh)
-					models.push(item)
+				groupX.children.push(mesh)
+				models.push(item)
 			} else {
-					groupX.children.unshift(mesh)
-					models.unshift(item)
+				groupX.children.unshift(mesh)
+				models.unshift(item)
 			}
 			calcPosition()
 			console.log(models)
@@ -594,7 +618,6 @@ const init = () => {
 		$(".box-left .item").click(function() {
 			let index = $(this).index()
 			let item = modelList[index]
-			debugger
 			
 			if(item.isZhuanjiao){
 				isExistRotateY=true
@@ -657,7 +680,6 @@ const init = () => {
 
 							if (model.left == true && items[items.length - 1].right == true) {
 								if (model.right) {
-									debugger
 									//组合的最右边位置可以添加
 									addPlusList.push({
 										x: groupX.children[items.length - 1].x,
