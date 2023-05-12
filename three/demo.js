@@ -274,11 +274,11 @@ const init = () => {
 
 	function restoreModelList(item) {
 		modelList.map((it) => {
-			if (it.stlId == item.stlId) {
-				it.isAvailable = true
-			}
 			if (it.left == false && it.right == false) {
 				it.isAvailable = false
+			}
+			if (it.stlId == item.stlId) {
+				it.isAvailable = true
 			}
 		})
 		let itemIndex = modelList.findIndex((i) => {
@@ -308,13 +308,13 @@ const init = () => {
 					it.isAvailable = false
 					$(".box-left .item").eq(it.index).addClass("disabled");
 				} else {
+					it.isAvailable = true
 					$(".box-left .item").eq(it.index).removeClass("disabled");
 				}
 			})
 		}
 		dealModelLeftRight()
 		model = null
-
 	}
 
 
