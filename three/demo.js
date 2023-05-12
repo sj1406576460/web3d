@@ -268,7 +268,7 @@ const init = () => {
 			// 获取模型对象的父级
 			let parent = mesh.parent;
 			// 修改父级的位置、旋转和缩放
-			//parent.position.y-=0.2;
+			// parent.position.y-=0.2;
 			parent.rotation.x= Math.PI / 12; // Math.PI / 6 等于 30度（弧度制）
 			if (type == 1) {
 				groupX.children.push(mesh)
