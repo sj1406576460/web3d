@@ -554,6 +554,7 @@ const init = () => {
 	var addFlag = true
 	var model = null
 	var models = []
+	var modelsY = []
 	var addPlusList = []
 	
 	$(function() {
@@ -593,6 +594,7 @@ const init = () => {
 		$(".box-left .item").click(function() {
 			let index = $(this).index()
 			let item = modelList[index]
+			debugger
 			
 			if(item.isZhuanjiao){
 				isExistRotateY=true
@@ -655,6 +657,7 @@ const init = () => {
 
 							if (model.left == true && items[items.length - 1].right == true) {
 								if (model.right) {
+									debugger
 									//组合的最右边位置可以添加
 									addPlusList.push({
 										x: groupX.children[items.length - 1].x,
@@ -787,13 +790,13 @@ const init = () => {
 					scene.add(mesh)
 					//splice 参数依次为从哪开始插入的下标，删除项目数，添加到数组的新项目
 					groupY.children.splice(groupY.children.length-1,0,mesh)
-					models.splice(index-1, 0, item)
+					modelsY.splice(index-1, 0, item)
 					calcPositionY()
 				}else{
 					mesh.position.set(totalWidth/2-mesh['x'],-0.1,zhuanjiaoZ+totalZ)
 					scene.add(mesh)
 					groupY.children.push(mesh)
-					models.splice(index, 0, item)
+					modelsY.splice(index, 0, item)
 				}
 				
 				/*mesh.position.set(totalWidth/2-mesh['x'],-0.1,zhuanjiaoZ+totalZ)
