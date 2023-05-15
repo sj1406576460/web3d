@@ -1,9 +1,7 @@
-let scene, camera, renderer, composer, outlinePass, plusGroup,groupX,groupY;
+let scene, camera, group, renderer, composer, outlinePass, plusGroup,groupY;
 var initWidth = 1500
-var initHeight = 680
+var initHeight = 608
 var selectedObject = null
-var isExistRotateY=false  //转角是否存在，默认只允许一个转角
-var zhuanjiaoZ=0
 
 const init = () => {
 	//Scene
@@ -39,9 +37,9 @@ const init = () => {
 	//controls.addEventListener("change", renderer);
 	controls.update()
 	
-	var point = new THREE.PointLight('#fff'); //点光源  
-	point.position.set(600, 0, 200); //点光源位置  
-	scene.add(point); //点光源添加到场景中
+	/*var point = new THREE.PointLight('#fff'); //点光源  
+	point.position.set(300, 100, 200); //点光源位置  
+	scene.add(point); //点光源添加到场景中*/
 
 	// Light //将环境光添加到场景中
 	const ambientLight = new THREE.AmbientLight(0xffffff);
@@ -52,12 +50,12 @@ const init = () => {
 	scene.add(light); //将平行光添加到场景中
 
 	const spotLight = new THREE.SpotLight(0xffffff) // 创建聚光灯
-	spotLight.position.set(500, 200, 200)
+	spotLight.position.set(150, 150, 150)
 	spotLight.castShadow = true
 	scene.add(spotLight)
 
 	const spotLight1 = new THREE.SpotLight(0xfffffff) // 创建聚光灯
-	spotLight1.position.set(-500, -200, -200)
+	spotLight1.position.set(-150, -150, -150)
 	spotLight1.castShadow = true
 	scene.add(spotLight1)
 
@@ -68,9 +66,8 @@ const init = () => {
 	// Loader new THREE STLLoader
 	const loader = new THREE.GLTFLoader();
 	plusGroup = new THREE.Group();
-	plusGroupY = new THREE.Group();
-	groupX = new THREE.Group();
-	groupX.children=[]
+	group = new THREE.Group();
+	group.children=[]
 	
 	groupY = new THREE.Group();
 	groupY.children=[]
@@ -88,7 +85,7 @@ const init = () => {
 			let sprite = new THREE.Sprite(spriteMaterial)
 			sprite.scale.set(0.04, 0.04, 0.04)
 			sprite.rotation.x = 0.1 * Math.PI
-			let item = groupX.children.find((it) => {
+			let item = group.children.find((it) => {
 				return plus.stlId == it.stlId
 			})
 			if (item != undefined) {
@@ -106,6 +103,7 @@ const init = () => {
 						sprite.x = item.x
 						sprite.isRight = false
 					}
+
 				}
 			}
 			sprite.geometry.name = plus.stlId
@@ -114,29 +112,6 @@ const init = () => {
 			plusGroup.add(sprite);
 		})
 		console.log(plusGroup)
-	}
-	
-	
-	function addPlusItemsY(plusItems) {
-		plusGroupY.children = []
-		plusItems.forEach((plus) => {
-			let map = new THREE.TextureLoader().load('model/add.png');
-			let spriteMaterial = new THREE.SpriteMaterial({
-				map: map,
-				sizeAttenuation: false
-			});
-			//为精灵贴图，其特点在于图片会始终面向用户
-			let sprite = new THREE.Sprite(spriteMaterial)
-			sprite.scale.set(0.04, 0.04, 0.04)
-			sprite.rotation.x = 0.1 * Math.PI
-			let item = groupY.children.find((it) => {
-				return plus.stlId == it.stlId
-			})
-			sprite.geometry.name = plus.stlId
-			sprite.stId = plus.stlId
-			sprite.name = 'plus-icon'
-			plusGroupY.add(sprite);
-		})
 	}
 
 
@@ -176,12 +151,10 @@ const init = () => {
 					//child.material.color = new THREE.Color(0x7777ff);
 				}
 			});
-			
 			let mesh = geometry.scene
 			mesh.name = item.stlId
 			mesh['addLeft'] = item.left
 			mesh['addRight'] = item.right
-			mesh['isZhuanjiao'] = item.isZhuanjiao
 			mesh['stlId'] = item.stlId
 			mesh.rotation.x = 0 * Math.PI
 			mesh.rotation.y = 0 * Math.PI
@@ -192,34 +165,28 @@ const init = () => {
 			mesh['x'] = box.max.x-box.min.x
 			mesh['y'] = box.max.y-box.min.y
 			mesh['z'] = box.max.z-box.min.z
-			
-			if(item.isZhuanjiao){
-				zhuanjiaoZ=mesh['z']-0.07
-			}
-			
+			//geometry.computeBoundingBox();
+			//let boundingBox = geometry.boundingBox;
+			//var boundingBoxWidth  = boundingBox.max.x - boundingBox.min.x;
+			//mesh5.translateX(1.25); //网格模型mesh平移
+			//mesh['x'] =boundingBoxWidth
             scene.add(mesh)
 			// 获取模型对象的父级
 			let parent = mesh.parent;
 			//修改父级的位置、旋转和缩放
 			//parent.position.y-=0.2;
 			if(parent.rotation.x!=Math.PI / 12){
-			   parent.rotation.x= Math.PI / 12; // Math.PI / 6 等于 30度（弧度制）
+			  parent.rotation.x= Math.PI / 12; // Math.PI / 6 等于 30度（弧度制）
 			}
 			
-			let index = groupX.children.findIndex((it) => {
+			let index = group.children.findIndex((it) => {
 				return it.stlId == stlId
 			})
-			
 			if (isRight) {
 				index = index + 1
 			}
-			
-			if(!item["isZhuanjiao"] && (item["zhuanjiaoLeft"] || item["zhuanjiaoRight"])){
-				groupY.children.splice(index, 0, mesh)
-			}else{
-				groupX.children.splice(index, 0, mesh)
-			}
-			
+
+			group.children.splice(index, 0, mesh)
 			models.splice(index, 0, item)
 			dealModelList(item)
 			calcPosition()
@@ -238,7 +205,7 @@ const init = () => {
 			gltf.scene.traverse(function(child) {
 				if (child.isMesh) {
 					child.frustumCulled = false;
-					//模型阴影
+					 //模型阴影
 					child.castShadow = true;
 					//模型自发光
 					child.material.emissive =  child.material.color;
@@ -250,7 +217,6 @@ const init = () => {
 			mesh['addLeft'] = item.left
 			mesh['addRight'] = item.right
 			mesh['stlId'] = item.stlId
-			mesh['isZhuanjiao'] = item.isZhuanjiao
 			mesh.translateY(-0.1)
 			mesh.rotation.x = 0 * Math.PI
 			mesh.rotation.y = 0 * Math.PI
@@ -260,23 +226,27 @@ const init = () => {
 			mesh['x'] = box.max.x-box.min.x
 			mesh['y'] = box.max.y-box.min.y
 			mesh['z'] = box.max.z-box.min.z
-			
-			if(item.isZhuanjiao){
-				zhuanjiaoZ=mesh['z'];
-			}
 			scene.add(mesh)
+			
 			// 获取模型对象的父级
 			let parent = mesh.parent;
 			// 修改父级的位置、旋转和缩放
-			// parent.position.y-=0.2;
+			//parent.position.y-=0.2;
 			parent.rotation.x= Math.PI / 12; // Math.PI / 6 等于 30度（弧度制）
-			if (type == 1) {
-				groupX.children.push(mesh)
+			
+			if(!item["isZhuanjiao"] && (item["zhuanjiaoLeft"] || item["zhuanjiaoRight"])){
+				groupY.children.push(mesh)
 				models.push(item)
-			} else {
-				groupX.children.unshift(mesh)
-				models.unshift(item)
+			}else{
+				if (type == 1) {
+					group.children.push(mesh)
+					models.push(item)
+				} else {
+					group.children.unshift(mesh)
+					models.unshift(item)
+				}
 			}
+			
 			calcPosition()
 			console.log(models)
 		});
@@ -294,15 +264,14 @@ const init = () => {
 		model = null
 		dealModelLeftRight()
 	}
-	
 
 	function restoreModelList(item) {
 		modelList.map((it) => {
-			if (it.left == false && it.right == false) {
-				it.isAvailable = false
-			}
 			if (it.stlId == item.stlId) {
 				it.isAvailable = true
+			}
+			if (it.left == false && it.right == false) {
+				it.isAvailable = false
 			}
 		})
 		let itemIndex = modelList.findIndex((i) => {
@@ -332,13 +301,13 @@ const init = () => {
 					it.isAvailable = false
 					$(".box-left .item").eq(it.index).addClass("disabled");
 				} else {
-					it.isAvailable = true
 					$(".box-left .item").eq(it.index).removeClass("disabled");
 				}
 			})
 		}
 		dealModelLeftRight()
 		model = null
+
 	}
 
 
@@ -408,16 +377,16 @@ const init = () => {
 
 
 	function calcPosition() {
-		console.log(groupX)
+		console.log(group)
 		let totalWidth = 0
-		if (groupX.children.length !== 0) {
-			groupX.children.forEach(item => {
+		if (group.children.length !== 0) {
+			group.children.forEach(item => {
 			   totalWidth += item.x
 			})
 			console.log(totalWidth)
 			let initX = -totalWidth / 2
 			let diffX = 0.06
-			let list = groupX.children;
+			let list = group.children;
 			let listLength=list.length/2
 			list.forEach((item, index) => {
 				if (index == 0) {
@@ -428,50 +397,9 @@ const init = () => {
 					item.position.x = initX
 				}
 				initX = initX + item.x
-				groupX.children[index] = item
+				group.children[index] = item
 			})
-			console.log(groupX.children)
-			if(groupY.children.length>0){
-				calcPositionY();
-			}
-		} else {
-			$("#removeAllMesh").addClass("control-button-disabled")
-		}
-	}
-	
-	function calcPositionY() {
-		let totalX = 0
-		if (groupY.children.length !== 0) {
-			let groupXLength=0
-			if(groupX.children.length>0){
-				groupXLength=groupX.children.length;
-				groupX.children.forEach(item => {
-				   totalX += item.x
-				})
-			}
-			
-			let initX = zhuanjiaoZ
-			let diffX = 0.015
-			let list = groupY.children;
-			list.forEach((item, index) => {
-				if (index == 0) {
-					item.position.z = initX+diffX
-				} else {
-					item.position.z = initX
-				}
-				if(groupX.children.length>1){
-					item.position.x = totalX/2-groupX.children[groupXLength-1].x
-				}else{
-					item.position.x = -0.13
-				}
-				initX = initX + item.z
-				groupY.children[index] = item
-				/*if(item.rotateY && !item.zhuanjiaoRight){
-					modelList.forEach((it,i)=>{
-					   $(".box-left .item").eq(i).addClass("disabled");
-					})
-				}*/
-			})
+			console.log(group.children)
 		} else {
 			$("#removeAllMesh").addClass("control-button-disabled")
 		}
@@ -479,7 +407,7 @@ const init = () => {
 
 	var modelList = [{
 			name: "915.stl",
-			stlPath:"model/915.glb",//87213/8721316.glb
+			stlPath:"model/915.glb",
 			stlId: 915,
 			w: 100,
 			h: 100,
@@ -487,10 +415,7 @@ const init = () => {
 			right: true,
 			isAvailable: true,
 			selectable: false,
-			isZhuanjiao:false,
-			index: 0,
-			rotateX:true,//代表属于X轴拼接的模型
-			rotateY:false,//代表不属于Y轴拼接的模型
+			index: 0
 		},
 		{
 			name: "916.stl",
@@ -502,10 +427,7 @@ const init = () => {
 			right: true,
 			isAvailable: true,
 			selectable: false,
-			isZhuanjiao:false,
-			index: 1,
-			rotateX:true,//代表属于X轴拼接的模型
-			rotateY:false,//代表不属于Y轴拼接的模型
+			index: 1
 		},
 		{
 			name: "918.stl",
@@ -515,12 +437,9 @@ const init = () => {
 			h: 100,
 			left: true,
 			right: false,
-			isZhuanjiao:false,
 			isAvailable: true,
 			selectable: false,
-			index: 2,
-			rotateX:true,//代表属于X轴拼接的模型
-			rotateY:false,//代表不属于Y轴拼接的模型
+			index: 2
 		},
 		{
 			name: "917.stl 转角",
@@ -536,8 +455,6 @@ const init = () => {
 			isZhuanjiao:true,
 			zhuanjiaoLeft:true,
 			zhuanjiaoRight:true,
-			rotateX:true,//代表可属于X轴拼接的模型
-			rotateY:false,//代表可属于Y轴拼接的模型
 		},
 		{
 			name: "919.stl",
@@ -547,13 +464,11 @@ const init = () => {
 			h: 100,
 			left: true,
 			right: true,
-			isAvailable: false,
+			isAvailable: true,
 			selectable: false,
 			isZhuanjiao:false,
 			zhuanjiaoLeft:true,
 			zhuanjiaoRight:true,
-			rotateX:false,//代表不属于X轴拼接的模型
-			rotateY:true,//代表属于Y轴拼接的模型
 			index: 4
 		},
 		{
@@ -564,26 +479,21 @@ const init = () => {
 			h: 100,
 			left: true,
 			right: true,
-			isAvailable: false,
+			isAvailable: true,
 			selectable: false,
 			isZhuanjiao:false,
 			zhuanjiaoLeft:true,
 			zhuanjiaoRight:false,
-			rotateX:false,//代表不属于X轴拼接的模型
-			rotateY:true,//代表属于Y轴拼接的模型
 			index: 5
-		}
+		},
 	]
 
 	var addFlag = true
 	var model = null
 	var models = []
-	var modelsY = []
 	var addPlusList = []
-	
 	$(function() {
-		
-        $("#load-container").hide();
+       $("#load-container").hide();
 		$("#load-container").click(function() {
 			return false
 		})
@@ -607,38 +517,15 @@ const init = () => {
 			var num = parseInt((range.clientWidth / loadingBox.clientWidth) * 100) + '%'
 			percent.innerHTML = num
 		}, 20)
-		
-		//preloadModel() 预加载
-		modelList.forEach((item,index)=>{
-			if(!item.isAvailable){
-				$(".box-left .item").eq(index).addClass("disabled");
-			}
-		})
+		preloadModel()
 
 		$(".box-left .item").click(function() {
 			let index = $(this).index()
 			let item = modelList[index]
 			
-			if(item.isZhuanjiao){
-				isExistRotateY=true
-				modelList.map((item,index)=>{
-					if(item.rotateY){
-						item.isAvailable=true
-						$(".box-left .item").eq(index).removeClass("disabled")
-					}
-					return item;
-				})
-			}
-			
-			//如果存在转角且模型可用，并且也是Y轴方向可拼接，则添加模型
-			if(isExistRotateY && item.rotateY && item.isAvailable && !item.isZhuanjiao){
-				addModelY(item,index)
-			}
-			
-			
-			if (item.isAvailable && item.rotateX) {
+			if (item.isAvailable) {
 				$(this).addClass("active").siblings().removeClass("active")
-				if (groupX.children.length == 0) {
+				if (group.children.length == 0) {
                     addModel(item, 1)
 					$("#removeAllMesh").removeClass("control-button-disabled")
 				} else {
@@ -652,8 +539,8 @@ const init = () => {
 							if (model.right == true && items[0].left == true) {
 								//组合最左边位置可以添加
 								addPlusList.push({
-									x: groupX.children[0].x,
-									stlId: groupX.children[0].stlId,
+									x: group.children[0].x,
+									stlId: group.children[0].stlId,
 									index: 1
 								})
 							}
@@ -661,8 +548,8 @@ const init = () => {
 							if (model.left == true && items[0].right == true) {
 								//组合的最右边位置可以添加
 								addPlusList.push({
-									x: groupX.children[0].x,
-									stlId: groupX.children[0].stlId,
+									x: group.children[0].x,
+									stlId: group.children[0].stlId,
 									index: 2
 								})
 							}
@@ -672,8 +559,8 @@ const init = () => {
 							if (model.right == true && items[0].left == true) {
 								//组合最左边位置可以添加
 								addPlusList.push({
-									x: groupX.children[0].x,
-									stlId: groupX.children[0].stlId,
+									x: group.children[0].x,
+									stlId: group.children[0].stlId,
 									index: 1
 								})
 							}
@@ -682,16 +569,16 @@ const init = () => {
 								if (model.right) {
 									//组合的最右边位置可以添加
 									addPlusList.push({
-										x: groupX.children[items.length - 1].x,
-										stlId: groupX.children[items.length - 1].stlId,
+										x: group.children[items.length - 1].x,
+										stlId: group.children[items.length - 1].stlId,
 										index: 1,
 										isEnd: 1
 									})
 								} else {
 									//组合的最右边位置可以添加
 									addPlusList.push({
-										x: groupX.children[items.length - 1].x,
-										stlId: groupX.children[items.length - 1].stlId,
+										x: group.children[items.length - 1].x,
+										stlId: group.children[items.length - 1].stlId,
 										index: 1,
 										isEnd: 2
 									})
@@ -702,19 +589,19 @@ const init = () => {
 								//组合的中间位置都可以添加
 								for (i = 1; i < items.length; i++) {
 									let it = addPlusList.find((item) => {
-										return item.stlId == groupX.children[i].stlId
+										return item.stlId == group.children[i].stlId
 									})
 
 									if (it != undefined) {
 										addPlusList.push({
-											x: groupX.children[i].x,
-											stlId: groupX.children[i].stlId,
+											x: group.children[i].x,
+											stlId: group.children[i].stlId,
 											index: 2
 										})
 									} else {
 										addPlusList.push({
-											x: groupX.children[i].x,
-											stlId: groupX.children[i].stlId,
+											x: group.children[i].x,
+											stlId: group.children[i].stlId,
 											index: 1
 										})
 									}
@@ -725,7 +612,6 @@ const init = () => {
 					addPlusItems(addPlusList)
 				}
 			}
-			
 		})
 
 
@@ -758,99 +644,7 @@ const init = () => {
 		})
 		
 		
-		function addModelY(item,index){
-			loader.load(item.stlPath, gltf => {
-				gltf.scene.name = item.stlId
-				gltf.scene.castShadow=true;
-				gltf.scene.traverse(function(child) {
-					if (child.isMesh) {
-						child.frustumCulled = false;
-						 //模型阴影
-						child.castShadow = true;
-						//模型自发光
-						child.material.emissive =  child.material.color;
-						child.material.emissiveMap = child.material.map ;
-					}
-				});
-				let mesh = gltf.scene
-				mesh.name = item.stlId
-				mesh['addLeft'] = item.left
-				mesh['addRight'] = item.right
-				mesh['rotateY']= item.rotateY
-				mesh['zhuanjiaoLeft'] = item.zhuanjiaoLeft
-				mesh['zhuanjiaoRight'] = item.zhuanjiaoRight
-				mesh['isAddY'] = true
-				mesh['stlId'] = item.stlId
-				mesh.rotation.x = 0 * Math.PI
-				// Math.PI / 6 等于 30度（弧度制）  90度
-				mesh.rotation.y = -Math.PI / 2
-			    mesh.scale.set(0.4, 0.4, 0.4)
-				let box = new THREE.Box3().expandByObject(mesh);
-				console.log("mesh5模型大小" + JSON.stringify(box));
-				let totalWidth=0
-				let isLastRotateRight=true
-				let isLastWidth=0
-				groupX.children.forEach(item => {
-					totalWidth += item.x
-				})
-				
-				mesh['x'] = box.max.x-box.min.x
-				mesh['y'] = box.max.y-box.min.y
-				mesh['z'] = box.max.z-box.min.z
-				
-				let totalZ=0
-				groupY.children.forEach(it => {
-					totalZ += Math.abs(it.z)
-					if(it.rotateY && !it.zhuanjiaoRight){
-						isLastRotateRight=false
-						isLastWidth=it.z
-					}
-				})
-				
-				if(!isLastRotateRight){
-					mesh.position.set(totalWidth/2-mesh['x'],-0.1,zhuanjiaoZ+(totalZ-isLastWidth))
-					scene.add(mesh)
-					//splice 参数依次为从哪开始插入的下标，删除项目数，添加到数组的新项目
-					groupY.children.splice(groupY.children.length-1,0,mesh)
-					modelsY.splice(index-1, 0, item)
-					calcPositionY()
-				}else{
-					mesh.position.set(totalWidth/2-mesh['x'],-0.1,zhuanjiaoZ+totalZ)
-					scene.add(mesh)
-					groupY.children.push(mesh)
-					modelsY.splice(index, 0, item)
-				}
-				
-				/*mesh.position.set(totalWidth/2-mesh['x'],-0.1,zhuanjiaoZ+totalZ)
-				scene.add(mesh)
-				groupY.children.push(mesh)
-				models.splice(index, 0, item)*/
-				
-				$(".box-left .item").eq(index).addClass("disabled")
-				if(item.rotateY && !item.zhuanjiaoRight){
-					modelList.forEach((it,i)=>{
-					   $(".box-left .item").eq(i).addClass("disabled");
-					})
-				}
-			})
-		}
-		
-		
-		
-		$("#addMeshY").click(function() {
-			let item={
-				name: "1180816.stl",
-				stlPath: "model/916.glb",
-				stlId: 9162,
-				w: 100,
-				h: 100,
-				left: true,
-				right: true,
-				isAvailable: true,
-				selectable: false,
-				index: 2
-		    }
-			
+		function addModelY(item){
 			loader.load(item.stlPath, gltf => {
 				gltf.scene.name = item.stlId
 				gltf.scene.castShadow=true;
@@ -877,15 +671,68 @@ const init = () => {
 				let box = new THREE.Box3().expandByObject(mesh);
 				console.log("mesh5模型大小" + JSON.stringify(box));
 				let totalWidth=0
-				groupX.children.forEach(item => {
+				group.children.forEach(item => {
 					totalWidth += item.x
 				})
 				mesh['x'] = box.max.x-box.min.x
 				mesh['y'] = box.max.y-box.min.y
 				mesh['z'] = box.max.z-box.min.z
-				mesh.position.set(totalWidth/2-mesh['x'],-0.1,0.306)
+				mesh.position.set(totalWidth/2-mesh['x'],-0.1,0.3)
 				scene.add(mesh)
-				groupX.children.push(mesh)
+				groupY.children.push(mesh)
+				console.log(models)
+			})
+		}
+		
+		
+		$("#addMeshY").click(function() {
+			let item={
+				name: "1180816.stl",
+				stlPath: "model/916.glb",
+				stlId: 9162,
+				w: 100,
+				h: 100,
+				left: true,
+				right: true,
+				isAvailable: true,
+				selectable: false,
+				index: 2
+		    }
+			loader.load(item.stlPath, gltf => {
+				gltf.scene.name = item.stlId
+				gltf.scene.castShadow=true;
+				gltf.scene.traverse(function(child) {
+					if (child.isMesh) {
+						child.frustumCulled = false;
+						 //模型阴影
+						child.castShadow = true;
+						//模型自发光
+						child.material.emissive =  child.material.color;
+						child.material.emissiveMap = child.material.map ;
+					}
+				});
+				let mesh = gltf.scene
+				mesh.name = item.stlId
+				mesh['addLeft'] = item.left
+				mesh['addRight'] = item.right
+				mesh['isAddY'] = true
+				mesh['stlId'] = item.stlId
+				mesh.rotation.x = 0 * Math.PI
+				// Math.PI / 6 等于 30度（弧度制）  90度
+				mesh.rotation.y =  -Math.PI / 2
+			    mesh.scale.set(0.4, 0.4, 0.4)
+				let box = new THREE.Box3().expandByObject(mesh);
+				console.log("mesh5模型大小" + JSON.stringify(box));
+				let totalWidth=0
+				group.children.forEach(item => {
+					totalWidth += item.x
+				})
+				mesh['x'] = box.max.x-box.min.x
+				mesh['y'] = box.max.y-box.min.y
+				mesh['z'] = box.max.z-box.min.z
+				mesh.position.set(totalWidth/2-mesh['x'],-0.1,0.3)
+				scene.add(mesh)
+				group.children.push(mesh)
 				console.log(models)
 			});
 		})
@@ -894,7 +741,7 @@ const init = () => {
 		$("#addMeshY1").click(function() {
 			let item={
 				name: "1180815.stl",
-				stlPath: "model/918.glb",
+				stlPath: "model/917.glb",
 				stlId: 917,
 				w: 100,
 				h: 100,
@@ -924,79 +771,54 @@ const init = () => {
 				mesh['addRight'] = item.right
 				mesh['stlId'] = item.stlId
 				mesh.rotation.x = 0 * Math.PI
-				mesh.rotation.y = -Math.PI / 2
+				mesh.rotation.y =  -Math.PI / 2
 			    mesh.scale.set(0.4, 0.4, 0.4)
 				let box = new THREE.Box3().expandByObject(mesh);
 				console.log("mesh5模型大小" + JSON.stringify(box));
 				let totalWidth=0
-				groupX.children.forEach(item => {
+				group.children.forEach(item => {
 					if(!item.isAddY){
 						totalWidth += item.x
 					}
 				})
 				mesh['x'] = box.max.x-box.min.x
 				mesh['y'] = box.max.y-box.min.y
-				mesh['z'] = box.max.z-box.min.z
-				mesh.position.set(totalWidth/2-mesh['x'],-0.1,0.606)
+				mesh.position.set(totalWidth/2-mesh['x'],-0.1,0.6)
 				scene.add(mesh)
-				groupX.children.push(mesh)
+				group.children.push(mesh)
 				console.log(models)
-			})
+			});
 		})
 		
+		
 
-		$("#removeMesh").click(function(e) {
-			
+
+		$("#removeMesh").click(function() {
 			if (selectedObject != null) {
 				addPlusList = []
 				plusGroup.children = []
-				let stlId = selectedObject.stlId;
-				
+				let stlId = selectedObject.stlId;//
 				let items = modelList.filter((item) => {
 					return item.stlId == stlId
 				})
-				
-				if(items[0]["rotateY"]){
-					groupY.remove(selectedObject);
-					calcPositionY()
-				}else{
-					if(groupY.children.length>0){
-						if(selectedObject["isZhuanjiao"]){
-							$("#removeMesh").addClass("show");
-							setTimeout(function(){
-								$("#removeMesh").removeClass("show");
-							},3000)
-							e.stopPropagation()
-							//alert("转角已存在拼接模型,不能删除!若要删除，请先删除转角已拼接模型")
-							return;
-						}else{
-							groupX.remove(selectedObject);
-							calcPosition()
-							calcPositionY()
-						}
-					}else{
-						groupX.remove(selectedObject);
-						calcPosition()
-					}
-				}
+				group.remove(selectedObject);
 				scene.remove(selectedObject);
 				deleteClass(items[0])
+				calcPosition()
 			}
 		})
-		
 
 		$("#removeAllMesh").click(function() {
 			selectedObject = null
 			model = null
-			models.forEach((it)=>{
+			 models.forEach((it)=>{
 			     scene.children.forEach((item)=>{
 					if(it.stlId==item.stlId){
 						scene.remove(item)
 					}
 				})
 			})
-			groupX.children = []
-			groupY.children = []
+			group.children = []
 			plusGroup.children = []
 			restoreAllModelList()
 		})
@@ -1025,12 +847,12 @@ const init = () => {
 	var box3 = new THREE.Box3()
 	// 计算层级模型group的包围盒
 	// 模型group是加载一个三维模型返回的对象，包含多个网格模型
-	box3.expandByObject(groupX)
+	box3.expandByObject(group)
 	// 计算一个层级模型对应包围盒的几何体中心在世界坐标中的位置
 	var center = new THREE.Vector3()
 	box3.getCenter(center)
 	console.log('查看几何体中心坐标', center);
-	console.log('查看组合体', groupX);
+	console.log('查看组合体', group);
 	/* 重新设置模型的位置，使之居中。
 	group.position.x = group.position.x - center.x
 	group.position.y = group.position.y - center.y
@@ -1048,7 +870,7 @@ const init = () => {
 		outlinePass.renderToScreen = true;
 		//outlinePass.pulsePeriod = 1 //闪烁
 		outlinePass.usePatternTexture = false //是否使用贴图
-		outlinePass.visibleEdgeColor.set('#22A7F2'); // 高光颜色0xff0000 #22A7F2 #55557f
+		outlinePass.visibleEdgeColor.set('#22A7F2'); // 高光颜色0xff0000
 		outlinePass.hiddenEdgeColor.set('#22A7F2'); // 阴影颜色
 		outlinePass.usePatternTexture = false; //是否使用父级的材质
 		outlinePass.downSampleRatio = 2; // 边框弯曲度
@@ -1086,7 +908,7 @@ const init = () => {
 		//获取与射线相交的对象数组， 其中的元素按照距离排序，越近的越靠前。
 		//+true，是对其后代进行查找，这个在这里必须加，因为模型是由很多部分组成的，后代非常多。
 		//console.log(group)
-		let intersects = rayCaster.intersectObjects(groupX.children.concat(groupY.children), true);
+		let intersects = rayCaster.intersectObjects(group.children, true);
 		//返回选中的对象
 		console.log(intersects)
 		return intersects;
