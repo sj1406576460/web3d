@@ -999,7 +999,21 @@ const init = () => {
 							calcPositionY()
 						}
 					}else{
-						groupX.remove(selectedObject);
+						if(selectedObject["isZhuanjiao"]){
+							modelList.map((item,index)=>{
+								if(selectedObject.stlId===item.stlId){
+									  item.isAvailable=true
+								}else{
+									if(item.rotateY && item.isAvailable){
+									  item.isAvailable =false
+									  $(".box-left .item").eq(index).addClass("disabled")
+									}
+								}
+							})
+							groupX.remove(selectedObject);
+						}else{
+							groupX.remove(selectedObject);
+						}
 						calcPosition()
 					}
 				}
