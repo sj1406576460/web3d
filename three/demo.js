@@ -222,6 +222,17 @@ const init = () => {
 			}
 			
 			models.splice(index, 0, item)
+			
+			if(item.isZhuanjiao && item.isAvailable){
+				isExistRotateY=true
+				modelList.map((item,index)=>{
+					if(item.rotateY){
+						item.isAvailable=true
+						$(".box-left .item").eq(index).removeClass("disabled")
+					}
+					return item;
+				})
+			}
 			dealModelList(item)
 			calcPosition()
 		});
@@ -619,8 +630,7 @@ const init = () => {
 		$(".box-left .item").click(function() {
 			let index = $(this).index()
 			let item = modelList[index]
-			
-			if(item.isZhuanjiao){
+			/*if(item.isZhuanjiao && item.isAvailable){
 				isExistRotateY=true
 				modelList.map((item,index)=>{
 					if(item.rotateY){
@@ -629,7 +639,7 @@ const init = () => {
 					}
 					return item;
 				})
-			}
+			}*/
 			
 			//如果存在转角且模型可用，并且也是Y轴方向可拼接，则添加模型
 			if(isExistRotateY && item.rotateY && item.isAvailable && !item.isZhuanjiao){
@@ -760,80 +770,93 @@ const init = () => {
 		
 		
 		function addModelY(item,index){
-			loader.load(item.stlPath, gltf => {
-				gltf.scene.name = item.stlId
-				gltf.scene.castShadow=true;
-				gltf.scene.traverse(function(child) {
-					if (child.isMesh) {
-						child.frustumCulled = false;
-						 //模型阴影
-						child.castShadow = true;
-						//模型自发光
-						child.material.emissive =  child.material.color;
-						child.material.emissiveMap = child.material.map ;
+			if(item.isAvailable){
+				loader.load(item.stlPath, gltf => {
+					gltf.scene.name = item.stlId
+					gltf.scene.castShadow=true;
+					gltf.scene.traverse(function(child) {
+						if (child.isMesh) {
+							child.frustumCulled = false;
+							 //模型阴影
+							child.castShadow = true;
+							//模型自发光
+							child.material.emissive =  child.material.color;
+							child.material.emissiveMap = child.material.map ;
+						}
+					});
+					let mesh = gltf.scene
+					mesh.name = item.stlId
+					mesh['addLeft'] = item.left
+					mesh['addRight'] = item.right
+					mesh['rotateY']= item.rotateY
+					mesh['zhuanjiaoLeft'] = item.zhuanjiaoLeft
+					mesh['zhuanjiaoRight'] = item.zhuanjiaoRight
+					mesh['isAddY'] = true
+					mesh['stlId'] = item.stlId
+					mesh.rotation.x = 0 * Math.PI
+					// Math.PI / 6 等于 30度（弧度制）  90度
+					mesh.rotation.y = -Math.PI / 2
+				    mesh.scale.set(0.4, 0.4, 0.4)
+					let box = new THREE.Box3().expandByObject(mesh);
+					console.log("mesh5模型大小" + JSON.stringify(box));
+					let totalWidth=0
+					let isLastRotateRight=true
+					let isLastWidth=0
+					groupX.children.forEach(item => {
+						totalWidth += item.x
+					})
+					
+					mesh['x'] = box.max.x-box.min.x
+					mesh['y'] = box.max.y-box.min.y
+					mesh['z'] = box.max.z-box.min.z
+					
+					let totalZ=0
+					groupY.children.forEach(it => {
+						totalZ += Math.abs(it.z)
+						if(it.rotateY && !it.zhuanjiaoRight){
+							isLastRotateRight=false
+							isLastWidth=it.z
+						}
+					})
+					
+					if(!isLastRotateRight){
+						mesh.position.set(totalWidth/2-mesh['x'],-0.1,zhuanjiaoZ+(totalZ-isLastWidth))
+						scene.add(mesh)
+						//splice 参数依次为从哪开始插入的下标，删除项目数，添加到数组的新项目
+						groupY.children.splice(groupY.children.length-1,0,mesh)
+						modelsY.splice(index-1, 0, item)
+						calcPositionY()
+					}else{
+						mesh.position.set(totalWidth/2-mesh['x'],-0.1,zhuanjiaoZ+totalZ)
+						scene.add(mesh)
+						groupY.children.push(mesh)
+						modelsY.splice(index, 0, item)
 					}
-				});
-				let mesh = gltf.scene
-				mesh.name = item.stlId
-				mesh['addLeft'] = item.left
-				mesh['addRight'] = item.right
-				mesh['rotateY']= item.rotateY
-				mesh['zhuanjiaoLeft'] = item.zhuanjiaoLeft
-				mesh['zhuanjiaoRight'] = item.zhuanjiaoRight
-				mesh['isAddY'] = true
-				mesh['stlId'] = item.stlId
-				mesh.rotation.x = 0 * Math.PI
-				// Math.PI / 6 等于 30度（弧度制）  90度
-				mesh.rotation.y = -Math.PI / 2
-			    mesh.scale.set(0.4, 0.4, 0.4)
-				let box = new THREE.Box3().expandByObject(mesh);
-				console.log("mesh5模型大小" + JSON.stringify(box));
-				let totalWidth=0
-				let isLastRotateRight=true
-				let isLastWidth=0
-				groupX.children.forEach(item => {
-					totalWidth += item.x
-				})
-				
-				mesh['x'] = box.max.x-box.min.x
-				mesh['y'] = box.max.y-box.min.y
-				mesh['z'] = box.max.z-box.min.z
-				
-				let totalZ=0
-				groupY.children.forEach(it => {
-					totalZ += Math.abs(it.z)
-					if(it.rotateY && !it.zhuanjiaoRight){
-						isLastRotateRight=false
-						isLastWidth=it.z
-					}
-				})
-				
-				if(!isLastRotateRight){
-					mesh.position.set(totalWidth/2-mesh['x'],-0.1,zhuanjiaoZ+(totalZ-isLastWidth))
-					scene.add(mesh)
-					//splice 参数依次为从哪开始插入的下标，删除项目数，添加到数组的新项目
-					groupY.children.splice(groupY.children.length-1,0,mesh)
-					modelsY.splice(index-1, 0, item)
-					calcPositionY()
-				}else{
-					mesh.position.set(totalWidth/2-mesh['x'],-0.1,zhuanjiaoZ+totalZ)
+					
+					/*mesh.position.set(totalWidth/2-mesh['x'],-0.1,zhuanjiaoZ+totalZ)
 					scene.add(mesh)
 					groupY.children.push(mesh)
-					modelsY.splice(index, 0, item)
-				}
-				
-				/*mesh.position.set(totalWidth/2-mesh['x'],-0.1,zhuanjiaoZ+totalZ)
-				scene.add(mesh)
-				groupY.children.push(mesh)
-				models.splice(index, 0, item)*/
-				
-				$(".box-left .item").eq(index).addClass("disabled")
-				if(item.rotateY && !item.zhuanjiaoRight){
-					modelList.forEach((it,i)=>{
-					   $(".box-left .item").eq(i).addClass("disabled");
-					})
-				}
-			})
+					models.splice(index, 0, item)*/
+					
+					$(".box-left .item").eq(index).addClass("disabled")
+					if(item.rotateY && !item.zhuanjiaoRight){
+						modelList.map((it,i)=>{
+						   if(item.index==i){
+							  it.isAvailable=false
+							  $(".box-left .item").eq(i).addClass("disabled"); 
+						   }
+						})
+					}else{
+						modelList.map((it,i)=>{
+						   if(item.index==i){
+							  it.isAvailable=false
+							  $(".box-left .item").eq(i).addClass("disabled"); 
+						   }
+						})
+					}
+				})
+			}
+			
 		}
 		
 		
