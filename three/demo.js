@@ -172,7 +172,8 @@ const init = () => {
 				if (child.isMesh) {
 					child.material.emissive = child.material.color;
 					child.material.emissiveMap = child.material.map;
-					//child.material.color = new THREE.Color('#544E48');//0x7777ff 
+					//child.material.color = new THREE.Color('#815155')
+					//child.material.color = new THREE.Color('#515155');//0x7777ff 
 					//child.material.color = new THREE.Color(0x7777ff);
 				}
 			});
