@@ -134,14 +134,23 @@ const init = () => {
 				guideLineContainer = new THREE.Object3D(); // 创建容器
 	
 				var material = new THREE.MeshBasicMaterial({ color: 0XC0E9F3, transparent: true, opacity: 0.5 });
-				var geometry = new THREE.BoxGeometry(
-					0.01, 
-					0.35, 0.35); // 创建立方体几何对象
+				var geometry = null
+				let group_item = groupX.children[groupX.children.length-1]
+				if(groupY.children.length>0){
+					//geometry = new THREE.BoxGeometry(0.01, item.y, item.z);
+					geometry = new THREE.BoxGeometry(0.01, group_item.y, group_item.z); // 创建立方体几何对象
+				}else{
+					geometry = new THREE.BoxGeometry(0.01, group_item.y, group_item.z);
+				}
 				guideLineMeshY = new THREE.Mesh(geometry, material);// 创建立方体网格模型
 				guideLineContainer.add(guideLineMeshY); // 将立方体添加到容器中
 	
 				guideLineMeshY.rotation.y = Math.PI/2 
-		        guideLineContainer.position.set(0.16,0.16,0.5)
+				if(groupY.children.length>0){
+					guideLineContainer.position.set(0.16,0.08,0.5)
+				}else{
+					guideLineContainer.position.set(0.16,0.08,0.2)
+				}
 				scene.add(guideLineContainer); // 将容器添加到场景中
 				guideLineContainerList.push(guideLineContainer)	
 			}
