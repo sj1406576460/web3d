@@ -28,9 +28,8 @@ const init = () => {
 	// 把渲染器的渲染结果canvas对象插入到'pos'对应的div元素中
 	document.getElementById("canvasBox").appendChild(renderer.domElement);
 
-
-	// Camera
-	const aspect = initWidth / initHeight ;
+	// Camera initWidth / initHeight
+	const aspect = initWidth / initHeight;
 	camera = new THREE.PerspectiveCamera(40, aspect,0.01,1000);
 	/*camera.rotation.y = (90 / 180 ) * Math.PI;*/
 	camera.position.set(0, 0.2, 2);
@@ -66,7 +65,7 @@ const init = () => {
 	/*var axes = new THREE.AxesHelper(100, 20, 20); //红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴
 	scene.add(axes);*/
 
-	// Loader new THREE STLLoader
+	//Loader new THREE STLLoader
 	const loader = new THREE.GLTFLoader();
 	plusGroup = new THREE.Group();
 	plusGroupY = new THREE.Group();
@@ -92,9 +91,7 @@ const init = () => {
 				guideLineContainer = new THREE.Object3D(); // 创建容器
 	
 				var material = new THREE.MeshBasicMaterial({ color: 0XC0E9F3, transparent: true, opacity: 0.5 });
-				var geometry = new THREE.BoxGeometry(
-					item.x, 
-					item.y, 0.01); // 创建立方体几何对象
+				var geometry = new THREE.BoxGeometry(item.x, item.y, 0.02); // 创建立方体几何对象
 				guideLineMesh = new THREE.Mesh(geometry, material);// 创建立方体网格模型
 		
 				guideLineContainer.add(guideLineMesh); // 将立方体添加到容器中
@@ -115,7 +112,6 @@ const init = () => {
 				guideLineContainerList.push(guideLineContainer)	
 			}
 		})
-	
 	}
 	
 	let guideLineMeshY = null
@@ -160,7 +156,6 @@ const init = () => {
 				guideLineContainerList.push(guideLineContainer)	
 			}
 		})
-	
 	}
 
 	function addPlusItems(plusItems) {
@@ -178,9 +173,11 @@ const init = () => {
 			let sprite = new THREE.Sprite(spriteMaterial)
 			sprite.scale.set(0.06, 0.06, 0.06)
 			sprite.rotation.x = 0.1 * Math.PI
+			
 			let item = groupX.children.find((it) => {
 				return plus.stlId == it.stlId
 			})
+			
 			if (item != undefined) {
 				if (plus['index'] == 2) {
 					sprite.position.set(item.position.x + item.x/2, item.position.y + item.y + 0.06, 0.2)
@@ -192,7 +189,7 @@ const init = () => {
 						sprite.x = item.x
 						sprite.isRight = true
 					} else {
-						sprite.position.set(item.position.x + item.x/2, item.position.y + item.y + 0.06, 0.2)
+						sprite.position.set(item.position.x-item.x/2, item.position.y + item.y + 0.06, 0.2)
 						sprite.x = item.x
 						sprite.isRight = false
 					}
@@ -203,7 +200,6 @@ const init = () => {
 			sprite.name = 'plus-icon'
 			plusGroup.add(sprite);
 		})
-		console.log(plusGroup)
 	}
 	
 	
@@ -368,11 +364,11 @@ const init = () => {
 				if (child.isMesh) {
 					child.material.emissive = child.material.color;
 					child.material.emissiveMap = child.material.map;
-					//child.material.color = new THREE.Color('#815155')
+					//child.material.color = new THREE.Color('#5555ff')
 					//child.material.color = new THREE.Color('#515155');//0x7777ff 
 					//child.material.color = new THREE.Color(0x7777ff);
 				}
-			});
+			})
 			
 			let mesh = geometry.scene
 			mesh.name = item.stlId
@@ -879,7 +875,8 @@ const init = () => {
 								addPlusList.push({
 									x: groupX.children[0].x,
 									stlId: groupX.children[0].stlId,
-									index: 1
+									index: 1,
+									isOnlyLeft:true
 								})
 							}
 
