@@ -146,10 +146,15 @@ const init = () => {
 				guideLineContainer.add(guideLineMeshY); // 将立方体添加到容器中
 	
 				guideLineMeshY.rotation.y = Math.PI/2 
+				let groupx_item = groupX.children[groupX.children.length-1]
 				if(groupY.children.length>0){
-					guideLineContainer.position.set(0.16,0.08,0.5)
+					let yz=groupx_item.z/2;
+					groupY.children.forEach((item)=>{
+						yz+=item.z
+					})
+					guideLineContainer.position.set(0.16,0.08,yz)
 				}else{
-					guideLineContainer.position.set(0.16,0.08,0.2)
+					guideLineContainer.position.set(0.16,0.08,groupx_item.z/2)
 				}
 				scene.add(guideLineContainer); // 将容器添加到场景中
 				guideLineContainerList.push(guideLineContainer)	
