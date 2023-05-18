@@ -44,8 +44,19 @@ const init = () => {
 	scene.add(point); //点光源添加到场景中
 
 	// Light //将环境光添加到场景中
-	const ambientLight = new THREE.AmbientLight(0xffffff);
-	scene.add(ambientLight);
+	/*const ambientLight = new THREE.AmbientLight(0xffffff);
+	scene.add(ambientLight);*/
+	
+	let hslight = new THREE.HemisphereLight(0xbbbbff, 0x444422, 1.5);
+	hslight.castShadow = true;
+	scene.add(hslight);
+	 /*let hslight = new THREE.HemisphereLight( 0xbbbbff, 0x444422, 1.5 );
+	 hslight.position.set( 500, 200, 200);
+	 scene.add(hslight);
+	 
+	 let hslight2 = new THREE.HemisphereLight( 0xbbbbff, 0x444422, 1.5 );
+	 hslight2.position.set( -500, 200, 200);
+	 scene.add(hslight2);*/
 	
 	
 	var light = new THREE.DirectionalLight(0xffffff);
@@ -60,6 +71,35 @@ const init = () => {
 	spotLight1.position.set(-500, -200, -200)
 	spotLight1.castShadow = true
 	scene.add(spotLight1)
+	
+	
+	const material = new THREE.LineBasicMaterial({
+		color: 0x5500ff,
+		linewidth: 3,
+		linecap: 'round', //ignored by WebGLRenderer
+		linejoin:  'round' //ignored by WebGLRenderer
+	});
+	
+	/**const points = [];
+	points.push( new THREE.Vector3( 0.1, -0.1, 0.2 ));
+	points.push( new THREE.Vector3( -0.3,-0.1, 0.2));
+	const geometry = new THREE.BufferGeometry().setFromPoints( points );
+	const line = new THREE.Line( geometry, material );
+	scene.add( line );
+	
+	const points2 = [];
+	points2.push( new THREE.Vector3( 0.1,0.3, 0.2 ));
+	points2.push( new THREE.Vector3( 0.1,-0.1, 0.2));
+	const geometry2 = new THREE.BufferGeometry().setFromPoints( points2 );
+	const line2 = new THREE.Line( geometry2, material );
+	scene.add( line2 );
+	
+	const points3 = [];
+	points3.push( new THREE.Vector3( 0.1,-0.1, -0.2));
+	points3.push( new THREE.Vector3( 0.1,-0.1, 0.2));
+	const geometry3 = new THREE.BufferGeometry().setFromPoints( points3 );
+	const line3 = new THREE.Line( geometry3, material );
+	scene.add( line3 );**/
 
 	//加辅助坐标
 	/*var axes = new THREE.AxesHelper(100, 20, 20); //红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴
@@ -381,6 +421,8 @@ const init = () => {
 			mesh.rotation.z = 0 * Math.PI
 			mesh.translateY(-0.1) 
 			mesh.scale.set(0.4, 0.4, 0.4)
+			mesh.castShadow = true;
+			mesh.receiveShadow = true;
 			let box = new THREE.Box3().expandByObject(mesh);
 			mesh['x'] = box.max.x-box.min.x
 			mesh['y'] = box.max.y-box.min.y
@@ -459,6 +501,7 @@ const init = () => {
 			mesh.rotation.x = 0 * Math.PI
 			mesh.rotation.y = 0 * Math.PI
 		    mesh.scale.set(0.4, 0.4, 0.4)
+			mesh.castShadow = mesh.receiveShadow = true;
 			let box = new THREE.Box3().expandByObject(mesh);
 			console.log("mesh5模型大小" + JSON.stringify(box));
 			mesh['x'] = box.max.x-box.min.x
@@ -1411,6 +1454,7 @@ const animate = () => {
 	scene.add(plusGroup);
 	scene.add(plusGroupY);
 	//debugger
+	renderer.gammaOutput = true;
 	renderer.render(scene, camera);
 	//scene.updateMatrixWorld(true);
 	//camera.updateMatrixWorld(true);
