@@ -50,7 +50,6 @@ const init = () => {
 	
 	let hslight = new THREE.HemisphereLight(0xbbbbff, 0x444422, 1.5);
 	//hslight.castShadow = true;   //warn THREE.WebGLShadowMap:", c, "has no shadow.
-	hslight.position.set(100, 100, 100);
 	scene.add(hslight);
 	
 	
