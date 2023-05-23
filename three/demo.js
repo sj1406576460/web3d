@@ -25,7 +25,7 @@ const init = () => {
 	renderer.setSize(initWidth, initHeight);
 	// 把渲染器的渲染结果canvas对象插入到body
 	//document.body.appendChild(renderer.domElement);
-	// 把渲染器的渲染结果canvas对象插入到'pos'对应的div元素中
+	// 把渲染器的渲染结果canvas对象插入到'nb+pos'对应的div元素中
 	document.getElementById("canvasBox").appendChild(renderer.domElement);
 
 	// Camera initWidth / initHeight
@@ -50,6 +50,7 @@ const init = () => {
 	
 	let hslight = new THREE.HemisphereLight(0xbbbbff, 0x444422, 1.5);
 	//hslight.castShadow = true;   //warn THREE.WebGLShadowMap:", c, "has no shadow.
+	hslight.position.set(100, 100, 100);
 	scene.add(hslight);
 	
 	
