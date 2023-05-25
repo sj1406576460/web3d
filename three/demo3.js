@@ -40,7 +40,7 @@ const init = () => {
 	controls.update()
 	
 	var point = new THREE.PointLight('#fff'); //点光源  
-	point.position.set(600, 0, 200); //点光源位置  
+	point.position.set(600, 200, 200); //点光源位置  
 	scene.add(point); //点光源添加到场景中
 	scene.receiveShadow = true;
 
@@ -59,7 +59,7 @@ const init = () => {
 	scene.add(light); //将平行光添加到场景中
 
 	const spotLight = new THREE.SpotLight(0xffffff) // 创建聚光灯
-	spotLight.position.set(500, 200, 200)
+	spotLight.position.set(200, 0, 200)
 	spotLight.castShadow = true
 	spotLight.shadow.normalBias = 1e-2;
 	spotLight.shadow.bias = - 1e-3;
@@ -339,7 +339,7 @@ const init = () => {
 					modelsY.splice(index-1, 0, item)
 					calcPositionY()
 				}else{
-					mesh.position.set(totalWidth/2-mesh['x'],-0.1,zhuanjiaoZ+totalZ)
+					mesh.position.set(totalWidth/2-mesh['x']/2+0.006,-0.1,0.265)
 					scene.add(mesh)
 					groupY.children.push(mesh)
 					modelsY.splice(index, 0, item)
@@ -459,7 +459,6 @@ const init = () => {
 			}
 			
 			models.splice(index, 0, item)
-			
 			if(item.isZhuanjiao && item.isAvailable){
 				isExistRotateY=true
 				modelList.map((item,index)=>{
@@ -510,6 +509,7 @@ const init = () => {
 			mesh['x'] = box.max.x-box.min.x
 			mesh['y'] = box.max.y-box.min.y
 			mesh['z'] = box.max.z-box.min.z
+			debugger
 			
 			if(item.isZhuanjiao){
 				zhuanjiaoZ=mesh['z'];
@@ -725,7 +725,7 @@ const init = () => {
 
 	var modelList = [{
 			name: "915.stl",
-			stlPath:"model/915.glb",//87213/8721316.glb
+			stlPath:"model/87213/8721325.glb",//87213/8721316.glb
 			stlId: 915,
 			w: 100,
 			h: 100,
@@ -740,7 +740,7 @@ const init = () => {
 		},
 		{
 			name: "916.stl",
-			stlPath: "model/916.glb",
+			stlPath: "model/87213/8721366.glb",
 			stlId: 916,
 			w: 100,
 			h: 100,
@@ -755,7 +755,7 @@ const init = () => {
 		},
 		{
 			name: "918.stl",
-			stlPath: "model/918.glb",
+			stlPath: "model/87213/8721367.glb",
 			stlId: 918,
 			w: 100,
 			h: 100,
@@ -770,7 +770,7 @@ const init = () => {
 		},
 		{
 			name: "917.stl 转角",
-			stlPath: "model/917.glb",
+			stlPath: "model/87213/8721366.glb",
 			stlId: 917,
 			w: 100,
 			h: 100,
@@ -783,17 +783,17 @@ const init = () => {
 			zhuanjiaoLeft:true,
 			zhuanjiaoRight:true,
 			rotateX:true,//代表可属于X轴拼接的模型
-			rotateY:false,//代表可属于Y轴拼接的模型
+			rotateY:true,//代表可属于Y轴拼接的模型
 		},
 		{
 			name: "919.stl",
-			stlPath: "model/916.glb",
+			stlPath: "model/87213/8721317.glb",
 			stlId: 919,
 			w: 100,
 			h: 100,
 			left: true,
 			right: true,
-			isAvailable: false,
+			isAvailable: true,
 			selectable: false,
 			isZhuanjiao:false,
 			zhuanjiaoLeft:true,
@@ -865,7 +865,7 @@ const init = () => {
 		$(".box-left .item").click(function() {
 			let index = $(this).index()
 			let item = modelList[index]
-			/*if(item.isZhuanjiao && item.isAvailable){
+			if(item.isZhuanjiao && item.isAvailable){
 				isExistRotateY=true
 				modelList.map((item,index)=>{
 					if(item.rotateY){
@@ -874,8 +874,7 @@ const init = () => {
 					}
 					return item;
 				})
-			}*/
-			
+			}
 			//如果存在转角且模型可用，并且也是Y轴方向可拼接，则添加模型
 			if(isExistRotateY && item.rotateY && item.isAvailable && !item.isZhuanjiao){
 				addPlusListY = [];
@@ -1142,6 +1141,7 @@ const init = () => {
 				let items = modelList.filter((item) => {
 					return item.stlId == stlId
 				})
+				debugger
 				
 				if(items[0]["rotateY"]){
 					groupY.remove(selectedObject);
@@ -1355,8 +1355,8 @@ const init = () => {
 		//instance坐标是对象，右边是类，判断对象是不是属于这个类的
 		if (intersects.length !== 0) {
 			console.log(intersects[0].object.geometry.name);
-			selectedObject = intersects[0].object.parent.parent
-			outlineOperate([intersects[0].object.parent.parent])
+			selectedObject = intersects[0].object.parent;
+			outlineOperate([intersects[0].object.parent])
 			//group.remove(mesh5) 可以实现模型删除 remove(intersects[0].object)
 			for (var i = 0; i < intersects.length; i++) {
 				if (intersects[i].object.geometry.name === 'stl003') {
