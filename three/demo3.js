@@ -13,15 +13,15 @@ const init = () => {
 
 	//Renderer
 	renderer = new THREE.WebGLRenderer({
-		antialias: true,
-		alpha: true
+		alpha:true,//渲染器透明
+		antialias:true,//抗锯齿
+	    precision:'highp',//着色器开启高精度
 	});
 	renderer.shadowMap.enabled = true // 显示阴影
 	renderer.shadowMap.type = THREE.PCFSoftShadowMap
 	//renderer.setClearColor(0x000000, 1) // 设置背景颜色
 	renderer.outputEncoding = THREE.sRGBEncoding;
-	renderer.precision='mediump'
-	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(initWidth, initHeight);
 	// 把渲染器的渲染结果canvas对象插入到body
 	//document.body.appendChild(renderer.domElement);
@@ -59,17 +59,15 @@ const init = () => {
 	scene.add(light); //将平行光添加到场景中
 
 	const spotLight = new THREE.SpotLight(0xffffff) // 创建聚光灯
-	spotLight.position.set(200, 0, 200)
+	spotLight.position.set(0,0,0)
 	spotLight.castShadow = true
-	spotLight.shadow.normalBias = 1e-2;
-	spotLight.shadow.bias = - 1e-3;
+	//spotLight.shadow.normalBias = 1e-2;
+	//spotLight.shadow.bias = - 1e-3;
 	scene.add(spotLight)
 
 	const spotLight1 = new THREE.SpotLight(0xfffffff) // 创建聚光灯
-	spotLight1.position.set(-500, -200, -200)
+	spotLight1.position.set(-500, -500, -500)
 	spotLight1.castShadow = true
-	spotLight1.shadow.normalBias = 1e-2;
-	spotLight1.shadow.bias = - 1e-3;
 	scene.add(spotLight1)
 	
 	
@@ -188,9 +186,9 @@ const init = () => {
 					groupY.children.forEach((item)=>{
 						yz+=item.z
 					})
-					guideLineContainer.position.set(0.16,0.08,yz)
+					guideLineContainer.position.set(0.36,0.18,yz)
 				}else{
-					guideLineContainer.position.set(0.16,0.08,groupx_item.z/2)
+					guideLineContainer.position.set(0.36,0.18,-groupx_item.z/2)
 				}
 				scene.add(guideLineContainer); // 将容器添加到场景中
 				guideLineContainerList.push(guideLineContainer)	
@@ -259,9 +257,9 @@ const init = () => {
 			let initItem=groupX.children[groupX.children.length-1]
 			//这里还得修改判断
 			if(groupY.children.length>0){
-				sprite.position.set(initItem.x/2,0.33, 0.5)
+				sprite.position.set(initItem.x/2,0.5, 0.5)
 			}else{
-				sprite.position.set(initItem.x/2,0.33, 0.2)
+				sprite.position.set(0.2,0.5, 0.2)
 			}
 			sprite.stId = plus.stlId
 			sprite.name = 'plus-icon'
@@ -309,7 +307,7 @@ const init = () => {
 				mesh.rotation.x = 0 * Math.PI
 				// Math.PI / 6 等于 30度（弧度制）  90度
 				mesh.rotation.y = -Math.PI / 2
-			    mesh.scale.set(0.4, 0.4, 0.4)
+			    mesh.scale.set(0.6, 0.6, 0.6)
 				let box = new THREE.Box3().expandByObject(mesh);
 				let totalWidth=0
 				let isLastRotateRight=true
@@ -339,7 +337,7 @@ const init = () => {
 					modelsY.splice(index-1, 0, item)
 					calcPositionY()
 				}else{
-					mesh.position.set(totalWidth/2-mesh['x']/2+0.006,-0.1,0.265)
+					mesh.position.set(totalWidth/2-mesh['x']/2-0.025,-0.1,0.395)
 					scene.add(mesh)
 					groupY.children.push(mesh)
 					modelsY.splice(index, 0, item)
@@ -410,7 +408,7 @@ const init = () => {
 					//child.material.color = new THREE.Color('#515155');//0x7777ff 
 					//child.material.color = new THREE.Color(0x7777ff);
 					child.frustumCulled = false;
-					child.material.side = THREE.DoubleSide;
+					//child.material.side = THREE.DoubleSide;
 				}
 			})
 			
@@ -424,7 +422,7 @@ const init = () => {
 			mesh.rotation.y = 0 * Math.PI
 			mesh.rotation.z = 0 * Math.PI
 			mesh.translateY(-0.1) 
-			mesh.scale.set(0.4, 0.4, 0.4)
+			mesh.scale.set(0.6, 0.6, 0.6)
 			
 			let box = new THREE.Box3().expandByObject(mesh);
 			mesh['x'] = box.max.x-box.min.x
@@ -503,13 +501,12 @@ const init = () => {
 			mesh.translateY(-0.1)
 			mesh.rotation.x = 0 * Math.PI
 			mesh.rotation.y = 0 * Math.PI
-		    mesh.scale.set(0.4, 0.4, 0.4)
+		    mesh.scale.set(0.6, 0.6, 0.6)
 			mesh.castShadow = mesh.receiveShadow = true;
 			let box = new THREE.Box3().expandByObject(mesh);
 			mesh['x'] = box.max.x-box.min.x
 			mesh['y'] = box.max.y-box.min.y
 			mesh['z'] = box.max.z-box.min.z
-			debugger
 			
 			if(item.isZhuanjiao){
 				zhuanjiaoZ=mesh['z'];
@@ -1021,114 +1018,6 @@ const init = () => {
 			}
 		})
 		
-		
-		
-		
-		
-		
-		$("#addMeshY").click(function() {
-			
-			let item={
-				name: "1180816.stl",
-				stlPath: "model/916.glb",
-				stlId: 9162,
-				w: 100,
-				h: 100,
-				left: true,
-				right: true,
-				isAvailable: true,
-				selectable: false,
-				index: 2
-		    }
-			
-			loader.load(item.stlPath, gltf => {
-				gltf.scene.name = item.stlId
-				gltf.scene.castShadow=true;
-				gltf.scene.traverse(function(child) {
-					if (child.isMesh) {
-						child.frustumCulled = false;
-						 //模型阴影
-						child.castShadow = true;
-						//模型自发光
-						child.material.emissive =  child.material.color;
-						child.material.emissiveMap = child.material.map ;
-					}
-				});
-				let mesh = gltf.scene
-				mesh.name = item.stlId
-				mesh['addLeft'] = item.left
-				mesh['addRight'] = item.right
-				mesh['isAddY'] = true
-				mesh['stlId'] = item.stlId
-				mesh.rotation.x = 0 * Math.PI
-				// Math.PI / 6 等于 30度（弧度制）  90度
-				mesh.rotation.y =  -Math.PI / 2
-			    mesh.scale.set(0.4, 0.4, 0.4)
-				let box = new THREE.Box3().expandByObject(mesh);
-				let totalWidth=0
-				groupX.children.forEach(item => {
-					totalWidth += item.x
-				})
-				mesh['x'] = box.max.x-box.min.x
-				mesh['y'] = box.max.y-box.min.y
-				mesh['z'] = box.max.z-box.min.z
-				mesh.position.set(totalWidth/2-mesh['x'],-0.1,0.306)
-				scene.add(mesh)
-				groupX.children.push(mesh)
-			});
-		})
-		
-		
-		$("#addMeshY1").click(function() {
-			let item={
-				name: "1180815.stl",
-				stlPath: "model/918.glb",
-				stlId: 917,
-				w: 100,
-				h: 100,
-				left: true,
-				right: false,
-				isAvailable: true,
-				selectable: false,
-				index: 3
-			}
-			
-			loader.load(item.stlPath, gltf => {
-				gltf.scene.name = item.stlId
-				gltf.scene.castShadow=true;
-				gltf.scene.traverse(function(child) {
-					if (child.isMesh) {
-						child.frustumCulled = false;
-						 //模型阴影
-						child.castShadow = true;
-						//模型自发光
-						child.material.emissive =  child.material.color;
-						child.material.emissiveMap = child.material.map ;
-					}
-				});
-				let mesh = gltf.scene
-				mesh.name = item.stlId
-				mesh['addLeft'] = item.left
-				mesh['addRight'] = item.right
-				mesh['stlId'] = item.stlId
-				mesh.rotation.x = 0 * Math.PI
-				mesh.rotation.y = -Math.PI / 2
-			    mesh.scale.set(0.4, 0.4, 0.4)
-				let box = new THREE.Box3().expandByObject(mesh);
-				let totalWidth=0
-				groupX.children.forEach(item => {
-					if(!item.isAddY){
-						totalWidth += item.x
-					}
-				})
-				mesh['x'] = box.max.x-box.min.x
-				mesh['y'] = box.max.y-box.min.y
-				mesh['z'] = box.max.z-box.min.z
-				mesh.position.set(totalWidth/2-mesh['x'],-0.1,0.606)
-				scene.add(mesh)
-				groupX.children.push(mesh)
-			})
-		})
 		
 
 		$("#removeMesh").click(function(e) {

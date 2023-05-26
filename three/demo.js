@@ -1,7 +1,7 @@
 let scene, camera, renderer, composer, outlinePass, plusGroup,groupX,groupY,guideLineContainer;
 let guideLineContainerList = [];
 var initWidth = 1500
-var initHeight = 600  //场景canvas高度
+var initHeight = 640  //场景canvas高度
 var selectedObject = null
 var isExistRotateY=false  //转角是否存在，默认只允许一个转角
 var zhuanjiaoZ=0
@@ -13,14 +13,15 @@ const init = () => {
 
 	//Renderer
 	renderer = new THREE.WebGLRenderer({
-		antialias: true,
-		alpha: true
+		alpha:true,//渲染器透明
+		antialias:true,//抗锯齿
+		precision:'highp',//着色器开启高精度
 	});
 	renderer.shadowMap.enabled = true // 显示阴影
 	renderer.shadowMap.type = THREE.PCFSoftShadowMap
 	//renderer.setClearColor(0x000000, 1) // 设置背景颜色
 	renderer.outputEncoding = THREE.sRGBEncoding;
-	renderer.precision='mediump'
+	//renderer.precision='mediump'
 	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 	renderer.setSize(initWidth, initHeight);
 	// 把渲染器的渲染结果canvas对象插入到body
