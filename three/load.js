@@ -41,7 +41,7 @@ const init = () => {
 	controls.update()
 	
 	var point = new THREE.PointLight('#000'); //点光源  
-	point.position.set(50, 20, 20); //点光源位置  
+	point.position.set(50, 20, 10); //点光源位置  
 	scene.add(point); //点光源添加到场景中
 	scene.receiveShadow = true;
 
@@ -63,14 +63,14 @@ const init = () => {
      //将平行光添加到场景中*/
 
 	const spotLight = new THREE.SpotLight(0xffffff) // 创建聚光灯
-	spotLight.position.set(50, 20, 20)
+	spotLight.position.set(50, 20, 10)
 	spotLight.castShadow = true
 	spotLight.shadow.normalBias = 1e-2;
 	spotLight.shadow.bias = - 1e-3;
 	scene.add(spotLight)
 
 	const spotLight1 = new THREE.SpotLight(0xfffffff) // 创建聚光灯
-	spotLight1.position.set(-50, -20, -20)
+	spotLight1.position.set(-50, -20, -10)
 	spotLight1.castShadow = true
 	scene.add(spotLight1)
 	
