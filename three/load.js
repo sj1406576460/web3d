@@ -40,8 +40,8 @@ const init = () => {
 	//controls.addEventListener("change", renderer);
 	controls.update()
 	
-	var point = new THREE.PointLight('#fff'); //点光源  
-	point.position.set(600, 0, 200); //点光源位置  
+	var point = new THREE.PointLight('#000'); //点光源  
+	point.position.set(50, 20, 20); //点光源位置  
 	scene.add(point); //点光源添加到场景中
 	scene.receiveShadow = true;
 
@@ -50,29 +50,29 @@ const init = () => {
 	scene.add(ambientLight);*/
 	
 	let hslight = new THREE.HemisphereLight(0xbbbbff, 0x444422, 1.5);
-	//hslight.castShadow = true;   //warn THREE.WebGLShadowMap:", c, "has no shadow.
+	hslight.castShadow = true;   //warn THREE.WebGLShadowMap:", c, "has no shadow.
 	scene.add(hslight);
 	
+	/*let ambientLight = new THREE.AmbientLight (0x888888);
+	scene.add (ambientLight)
 	
-	var light = new THREE.DirectionalLight(0xffffff);
-	//light.position.set(100, 60, 50);
-	light.castShadow = true
-	scene.add(light); //将平行光添加到场景中
+	let light = new THREE.DirectionalLight (0x888888);
+	light.position.set (0.0, 0.0, 1.0);
+	scene.add (light);
+	
+     //将平行光添加到场景中*/
 
-	/*const spotLight = new THREE.SpotLight(0xffffff) // 创建聚光灯
-	spotLight.position.set(500, 200, 200)
+	const spotLight = new THREE.SpotLight(0xffffff) // 创建聚光灯
+	spotLight.position.set(50, 20, 20)
 	spotLight.castShadow = true
 	spotLight.shadow.normalBias = 1e-2;
 	spotLight.shadow.bias = - 1e-3;
 	scene.add(spotLight)
 
 	const spotLight1 = new THREE.SpotLight(0xfffffff) // 创建聚光灯
-	spotLight1.position.set(-500, -200, -200)
+	spotLight1.position.set(-50, -20, -20)
 	spotLight1.castShadow = true
-	spotLight1.shadow.normalBias = 1e-2;
-	spotLight1.shadow.bias = - 1e-3;
-	scene.add(spotLight1)*/
-	
+	scene.add(spotLight1)
 	
 	const material = new THREE.LineBasicMaterial({
 		color: 0x5500ff,
@@ -148,7 +148,6 @@ const init = () => {
 						guideLineContainer.position.set(item.position.x - item.x/2, item.position.y + item.y/2, item.position.z)
 					}	
 				}
-	
 				scene.add(guideLineContainer); // 将容器添加到场景中
 				guideLineContainerList.push(guideLineContainer)	
 			}
@@ -295,8 +294,8 @@ const init = () => {
 						child.castShadow = true;
 						//模型自发光
 						//child.material.emissive =  child.material.color;
-						child.material.color = new THREE.Color('#202C2E');
-						child.material.emissiveMap = child.material.map;
+						child.material.color = new THREE.Color('#2E3135');
+						//child.material.emissiveMap = child.material.map;
 					}
 				});
 				let mesh = gltf.scene
@@ -407,9 +406,8 @@ const init = () => {
 					//child.material.emissiveMap = child.material.map;
 					child.material.castShadow = true;
 					
-					//child.material.emissive =  child.material.color;
-					child.material.color = new THREE.Color('#202C2E');
-					child.material.emissiveMap = child.material.map;
+					child.material.color = new THREE.Color('#2E3135');
+					//child.material.emissiveMap = child.material.map;
 					child.material.side = THREE.DoubleSide;
 				}
 			})
@@ -492,7 +490,7 @@ const init = () => {
 					//模型自发光
 					//child.material.emissive =  child.material.color;
 					//child.material.emissiveMap = child.material.map;
-					child.material.color = new THREE.Color('#202C2E');
+				    child.material.color = new THREE.Color('#2E3135');
 					//child.material.wireframe = true 整体轮廓图
 				}
 			});
@@ -1025,9 +1023,6 @@ const init = () => {
 		
 		
 		
-		
-		
-		
 		$("#addMeshY").click(function() {
 			
 			let item={
@@ -1052,8 +1047,8 @@ const init = () => {
 						 //模型阴影
 						child.castShadow = true;
 						//模型自发光
-						child.material.emissiveMap = child.material.map;
-						child.material.color = new THREE.Color('#202C2E');
+						//child.material.emissiveMap = child.material.map;
+						child.material.color = new THREE.Color('#2E3135');
 					}
 				});
 				let mesh = gltf.scene
@@ -1104,8 +1099,8 @@ const init = () => {
 						 //模型阴影
 						child.castShadow = true;
 						//模型自发光
-						child.material.emissiveMap = child.material.map;
-						child.material.color = new THREE.Color('#202C2E');
+						//child.material.emissiveMap = child.material.map;
+						//child.material.color = new THREE.Color('#202C2E');
 					}
 				});
 				let mesh = gltf.scene
@@ -1236,7 +1231,6 @@ const init = () => {
 	group.position.x = group.position.x - center.x
 	group.position.y = group.position.y - center.y
 	group.position.z = group.position.z - center.z*/
-
 	animate();
 
 	//获取与射线相交的对象数组
@@ -1318,6 +1312,31 @@ const init = () => {
 		//返回选中的对象
 		// console.log(intersects)
 		return intersects;
+	}
+	
+	function outlineOperate(selectedObjects) {
+		composer = new THREE.EffectComposer(renderer);
+		const renderPass = new THREE.RenderPass(scene, camera);
+		composer.addPass(renderPass);
+		outlinePass = new THREE.OutlinePass(new THREE.Vector2(initWidth, initHeight), scene, camera,
+			selectedObjects);
+		outlinePass.edgeStrength = 6; //边缘强度
+		outlinePass.edgeGlow = 0; //缓缓接近
+		outlinePass.edgeThickness = 2; //边缘厚度
+		outlinePass.renderToScreen = true;
+		//outlinePass.pulsePeriod = 1 //闪烁
+		outlinePass.usePatternTexture = false //是否使用贴图
+		outlinePass.visibleEdgeColor.set('#22A7F2'); // 高光颜色0xff0000 #22A7F2 #55557f
+		outlinePass.hiddenEdgeColor.set('#22A7F2'); // 阴影颜色
+		outlinePass.usePatternTexture = false; //是否使用父级的材质
+		outlinePass.downSampleRatio = 2; // 边框弯曲度
+	
+		effectFXAA = new THREE.ShaderPass(THREE.FXAAShader);
+		effectFXAA.uniforms['resolution'].value.set(1 / initWidth, 1 / initHeight);
+		composer.addPass(effectFXAA);
+	
+		//outlinePass.clear = true;
+		composer.addPass(outlinePass)
 	}
 
 	//鼠标双击触发的方法
