@@ -3,7 +3,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-    <title>Babylon.js sample code</title>
+    <title>cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.js sample code</title>
 
     <!-- Babylon.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
@@ -40,7 +40,7 @@
 
       #canvasZone {
         width: 100%;
-        height: 100%;
+        height: 90%;
       }
     </style>
   </head>
@@ -107,19 +107,19 @@
           './model/915.glb',
           scene,
           function (newMeshes) {
-            scene.createDefaultCamera(true, true, true)
+            //scene.createDefaultCamera(true, true, true)
             console.log('🚀 ~ file: index.html:58 ~ newMeshes:', newMeshes)
             let modelMesh = newMeshes.meshes[1]
-			modelMesh.position.x =0
+			modelMesh.position.x =-0.3
             // 获取模型的变换节点
             // var transformNode = modelMesh.parent;
 
             // // 创建旋转矩阵
             // var rotationMatrix = BABYLON.Matrix.RotationYawPitchRoll(-1.5, 0, 0.8);
 
-            // // 应用旋转矩阵到变换节点
-            // transformNode.setPreTransformMatrix(rotationMatrix);
-
+				// // 应用旋转矩阵到变换节点
+				// transformNode.setPreTransformMatrix(rotationMatrix);
+		
             // var outline = new BABYLON.HighlightLayer('outline', scene)
             //modelMesh.outlineWidth = 0.02
             //modelMesh.renderOutline = true
@@ -135,10 +135,9 @@
 		  './model/916.glb',
 		  scene,
 		  function (newMeshes) {
-		    scene.createDefaultCamera(true, true, true)
 		    console.log('🚀 ~ file: index.html:58 ~ newMeshes:', newMeshes)
 		    let modelMesh = newMeshes.meshes[1]
-			modelMesh.position.x =0.8
+			modelMesh.position.x =0.3
 		    //modelMesh.outlineWidth = 0.02
 		    //modelMesh.renderOutline = true
 		    //modelMesh.outlineColor = BABYLON.Color3.White();
@@ -147,15 +146,14 @@
 		  }
 		)
 		
-		/*BABYLON.SceneLoader.Append(
+		BABYLON.SceneLoader.Append(
 		  '',
 		  './model/918.glb',
 		  scene,
 		  function (newMeshes) {
-		    scene.createDefaultCamera(true, true, true)
 		    console.log('🚀 ~ file: index.html:58 ~ newMeshes:', newMeshes)
-		    let modelMesh = newMeshes.meshes[1]
-			modelMesh.position.x=1
+			debugger
+		    newMeshes.meshes[1].position.x=0.8
 		    //modelMesh.outlineWidth = 0.02
 		    //modelMesh.renderOutline = true
 		    //modelMesh.outlineColor = BABYLON.Color3.White();
@@ -163,9 +161,9 @@
 		    // outline.addMesh(modelMesh, BABYLON.Color3.Black())
 		
 		  }
-		)*/
+		)
 		
-
+        console.log("s'c'ne'cr",scene);
         return scene
       }
 	  
