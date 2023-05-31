@@ -402,7 +402,6 @@ const init = () => {
 			geometry.scene.name = item.stlId
 			geometry.scene.traverse(function(child) {
 				child.updateMatrixWorld(true);
-				child.geometry.applyMatrix4(child.matrixWorld);
 				if (child.isMesh) {
 					//child.material.emissive = child.material.color;
 					//child.material.emissiveMap = child.material.map;
@@ -486,7 +485,6 @@ const init = () => {
 			gltf.scene.castShadow=true;
 			gltf.scene.traverse(function(child) {
 				child.updateMatrixWorld(true);
-				child.geometry.applyMatrix4(child.matrixWorld);
 				if (child.isMesh) {
 					//child.frustumCulled = false;
 					///模型阴影

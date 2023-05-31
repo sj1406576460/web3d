@@ -104,10 +104,10 @@
 
         BABYLON.SceneLoader.Append(
           '',
-          './model/915.glb',
+          '915.glb',
           scene,
           function (newMeshes) {
-            //scene.createDefaultCamera(true, true, true)
+            scene.createDefaultCamera(true, true, true)
             console.log('🚀 ~ file: index.html:58 ~ newMeshes:', newMeshes)
             let modelMesh = newMeshes.meshes[1]
 			modelMesh.position.x =-0.3
@@ -132,27 +132,29 @@
 		
 		BABYLON.SceneLoader.Append(
 		  '',
-		  './model/916.glb',
+		  '916.glb',
 		  scene,
 		  function (newMeshes) {
 		    console.log('🚀 ~ file: index.html:58 ~ newMeshes:', newMeshes)
-		    let modelMesh = newMeshes.meshes[1]
-			modelMesh.position.x =0.3
+			scene.createDefaultCamera(true, true, true)
+		    newMeshes.meshes[1].position.x=0.8
 		    //modelMesh.outlineWidth = 0.02
 		    //modelMesh.renderOutline = true
 		    //modelMesh.outlineColor = BABYLON.Color3.White();
+		
 		    // outline.addMesh(modelMesh, BABYLON.Color3.Black())
 		
 		  }
 		)
 		
+		
 		BABYLON.SceneLoader.Append(
 		  '',
-		  './model/918.glb',
+		  '918.glb',
 		  scene,
 		  function (newMeshes) {
 		    console.log('🚀 ~ file: index.html:58 ~ newMeshes:', newMeshes)
-			debugger
+			scene.createDefaultCamera(true, true, true)
 		    newMeshes.meshes[1].position.x=0.8
 		    //modelMesh.outlineWidth = 0.02
 		    //modelMesh.renderOutline = true
