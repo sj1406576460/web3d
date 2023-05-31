@@ -1194,9 +1194,17 @@ const init = () => {
 					}
 				})
 			})
+			modelsY.forEach((it)=>{
+			     scene.children.forEach((item)=>{
+					if(it.stlId==item.stlId){
+						scene.remove(item)
+					}
+				})
+			})
 			groupX.children = []
 			groupY.children = []
 			plusGroup.children = []
+			plusGroupY.children = []
 			restoreAllModelList()
 		})
 	})
