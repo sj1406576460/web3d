@@ -993,7 +993,6 @@ const init = () => {
 			
 		})
 
-
 		$("#addMeshLeft").click(function() {
 			let items = models;
 			let len = items.length
