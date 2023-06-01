@@ -1,43 +1,35 @@
 let scene, camera, renderer, composer, outlinePass, plusGroup,groupX,groupY,guideLineContainer;
 let guideLineContainerList = [];
+var initWidth = document.getElementById('canvasBox').getBoundingClientRect().width
+var initHeight = document.getElementById('canvasBox').getBoundingClientRect().height
 var selectedObject = null
 var isExistRotateY=false  //转角是否存在，默认只允许一个转角
 var zhuanjiaoZ=0
-
-let canvas=document.getElementById("canvasBox");
-let initWidth = canvas.clientWidth;
-let initHeight = canvas.clientHeight;
-if (window.devicePixelRatio) {
-    initWidth /= window.devicePixelRatio;
-    initHeight /= window.devicePixelRatio;
-}
 
 const init = () => {
 	//Scene
 	scene = new THREE.Scene();
 	//scene.background = new THREE.Color('#000'); //A88E77
-
 	//Renderer
 	renderer = new THREE.WebGLRenderer({
-		alpha:true,//渲染器透明
-		antialias:true,//抗锯齿
-		precision:'highp',//着色器开启高精度
+		antialias: true,
+		alpha: true
 	});
 	renderer.shadowMap.enabled = true // 显示阴影
 	renderer.shadowMap.type = THREE.PCFSoftShadowMap
 	//renderer.setClearColor(0x000000, 1) // 设置背景颜色
 	renderer.outputEncoding = THREE.sRGBEncoding;
-	//renderer.precision='mediump'
+	renderer.precision='mediump'
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(initWidth, initHeight);
 	// 把渲染器的渲染结果canvas对象插入到body
 	//document.body.appendChild(renderer.domElement);
-	// 把渲染器的渲染结果canvas对象插入到'nb+pos'对应的div元素中
+	// 把渲染器的渲染结果canvas对象插入到'pos'对应的div元素中
 	document.getElementById("canvasBox").appendChild(renderer.domElement);
 
 	// Camera initWidth / initHeight
 	const aspect = initWidth / initHeight;
-	camera = new THREE.PerspectiveCamera(35, aspect,0.01,1000);
+	camera = new THREE.PerspectiveCamera(40, aspect,0.01,1000);
 	/*camera.rotation.y = (90 / 180 ) * Math.PI;*/
 	camera.position.set(0, 0.2, 2);
 
@@ -49,34 +41,34 @@ const init = () => {
 	var point = new THREE.PointLight('#fff'); //点光源  
 	point.position.set(600, 0, 200); //点光源位置  
 	scene.add(point); //点光源添加到场景中
-	scene.receiveShadow = true;
 
 	// Light //将环境光添加到场景中
 	/*const ambientLight = new THREE.AmbientLight(0xffffff);
 	scene.add(ambientLight);*/
 	
 	let hslight = new THREE.HemisphereLight(0xbbbbff, 0x444422, 1.5);
-	//hslight.castShadow = true;   //warn THREE.WebGLShadowMap:", c, "has no shadow.
+	//hslight.castShadow = true;
 	scene.add(hslight);
+	 /*let hslight = new THREE.HemisphereLight( 0xbbbbff, 0x444422, 1.5 );
+	 hslight.position.set( 500, 200, 200);
+	 scene.add(hslight);
+	 
+	 let hslight2 = new THREE.HemisphereLight( 0xbbbbff, 0x444422, 1.5 );
+	 hslight2.position.set( -500, 200, 200);
+	 scene.add(hslight2);*/
 	
 	
 	var light = new THREE.DirectionalLight(0xffffff);
-	//light.position.set(100, 60, 50);
-	//light.castShadow = true
 	scene.add(light); //将平行光添加到场景中
 
 	const spotLight = new THREE.SpotLight(0xffffff) // 创建聚光灯
 	spotLight.position.set(500, 200, 200)
-	//spotLight.castShadow = true
-	//spotLight.shadow.normalBias = 1e-2;
-	//spotLight.shadow.bias = - 1e-3;
+	spotLight.castShadow = true
 	scene.add(spotLight)
 
 	const spotLight1 = new THREE.SpotLight(0xfffffff) // 创建聚光灯
 	spotLight1.position.set(-500, -200, -200)
-	//spotLight1.castShadow = true
-	//spotLight1.shadow.normalBias = 1e-2;
-	//spotLight1.shadow.bias = - 1e-3;
+	spotLight1.castShadow = true
 	scene.add(spotLight1)
 	
 	
@@ -298,7 +290,7 @@ const init = () => {
 					if (child.isMesh) {
 						child.frustumCulled = false;
 						 //模型阴影
-						//child.castShadow = true;
+						child.castShadow = true;
 						//模型自发光
 						//child.material.emissive =  child.material.color;
 						//child.material.emissiveMap = child.material.map ;
@@ -318,6 +310,7 @@ const init = () => {
 				mesh.rotation.y = -Math.PI / 2
 			    mesh.scale.set(0.4, 0.4, 0.4)
 				let box = new THREE.Box3().expandByObject(mesh);
+				console.log("mesh5模型大小" + JSON.stringify(box));
 				let totalWidth=0
 				let isLastRotateRight=true
 				let isLastWidth=0
@@ -392,10 +385,9 @@ const init = () => {
 
 	function preloadModel() {
 		modelList.forEach((item) => {
-			if (item.left == false && item.right == false) {
-				$(".box-left .item").eq(item.index).addClass("disabled");
-				modelList[item.index].isAvailable = false
-			}
+			loader.load(item.stlPath, geometry => {
+				
+			})
 		})
 	}
 
@@ -410,14 +402,9 @@ const init = () => {
 				if (child.isMesh) {
 					//child.material.emissive = child.material.color;
 					//child.material.emissiveMap = child.material.map;
-					//child.material.castShadow = true;
-					//child.material.receiveShadow = true;
-					//child.material.color = new THREE.Color('#5555ff')
 					//child.material.color = new THREE.Color('#5555ff')
 					//child.material.color = new THREE.Color('#515155');//0x7777ff 
 					//child.material.color = new THREE.Color(0x7777ff);
-					//child.frustumCulled = false;
-					//child.material.side = THREE.DoubleSide;
 				}
 			})
 			
@@ -432,7 +419,7 @@ const init = () => {
 			mesh.rotation.z = 0 * Math.PI
 			mesh.translateY(-0.1) 
 			mesh.scale.set(0.4, 0.4, 0.4)
-			
+			mesh.castShadow = mesh.receiveShadow = true;
 			let box = new THREE.Box3().expandByObject(mesh);
 			mesh['x'] = box.max.x-box.min.x
 			mesh['y'] = box.max.y-box.min.y
@@ -493,17 +480,17 @@ const init = () => {
 			gltf.scene.castShadow=true;
 			gltf.scene.traverse(function(child) {
 				if (child.isMesh) {
-					//child.frustumCulled = false;
+					child.frustumCulled = false;
 					//模型阴影
 					//child.castShadow = true;
 					//模型自发光
 					//child.material.emissive =  child.material.color;
-					//child.material.emissiveMap = child.material.map;
-					//child.material.wireframe = true 整体轮廓图
+					//child.material.emissiveMap = child.material.map ;
 				}
 			});
 			let mesh = gltf.scene
 			mesh.name = item.stlId
+			mesh.renderOrder = 1;
 			mesh['addLeft'] = item.left
 			mesh['addRight'] = item.right
 			mesh['stlId'] = item.stlId
@@ -514,6 +501,7 @@ const init = () => {
 		    mesh.scale.set(0.4, 0.4, 0.4)
 			mesh.castShadow = mesh.receiveShadow = true;
 			let box = new THREE.Box3().expandByObject(mesh);
+			console.log("mesh5模型大小" + JSON.stringify(box));
 			mesh['x'] = box.max.x-box.min.x
 			mesh['y'] = box.max.y-box.min.y
 			mesh['z'] = box.max.z-box.min.z
@@ -535,6 +523,7 @@ const init = () => {
 				models.unshift(item)
 			}
 			calcPosition()
+			console.log(models)
 		});
 	}
 
@@ -664,11 +653,13 @@ const init = () => {
 
 
 	function calcPosition() {
+		console.log(groupX)
 		let totalWidth = 0
 		if (groupX.children.length !== 0) {
 			groupX.children.forEach(item => {
 			   totalWidth += item.x
 			})
+			console.log(totalWidth)
 			let initX = -totalWidth / 2
 			let diffX = 0.06
 			let list = groupX.children;
@@ -684,6 +675,7 @@ const init = () => {
 				initX = initX + item.x
 				groupX.children[index] = item
 			})
+			console.log(groupX.children)
 			if(groupY.children.length>0){
 				calcPositionY();
 			}
@@ -837,7 +829,7 @@ const init = () => {
 	
 	$(function() {
 		
-        $("#load-container").hide();
+        //$("#load-container").hide();
 		$("#load-container").click(function() {
 			return false
 		})
@@ -862,7 +854,7 @@ const init = () => {
 			percent.innerHTML = num
 		}, 20)
 		
-		//preloadModel() 预加载
+		preloadModel() //预加载
 		modelList.forEach((item,index)=>{
 			if(!item.isAvailable){
 				$(".box-left .item").eq(index).addClass("disabled");
@@ -1056,8 +1048,8 @@ const init = () => {
 					if (child.isMesh) {
 						child.frustumCulled = false;
 						 //模型阴影
-						child.castShadow = true;
-						//模型自发光
+						//child.castShadow = true;
+						////模型自发光
 						//child.material.emissive =  child.material.color;
 						//child.material.emissiveMap = child.material.map ;
 					}
@@ -1073,6 +1065,7 @@ const init = () => {
 				mesh.rotation.y =  -Math.PI / 2
 			    mesh.scale.set(0.4, 0.4, 0.4)
 				let box = new THREE.Box3().expandByObject(mesh);
+				console.log("mesh5模型大小" + JSON.stringify(box));
 				let totalWidth=0
 				groupX.children.forEach(item => {
 					totalWidth += item.x
@@ -1083,6 +1076,7 @@ const init = () => {
 				mesh.position.set(totalWidth/2-mesh['x'],-0.1,0.306)
 				scene.add(mesh)
 				groupX.children.push(mesh)
+				console.log(models)
 			});
 		})
 		
@@ -1123,6 +1117,7 @@ const init = () => {
 				mesh.rotation.y = -Math.PI / 2
 			    mesh.scale.set(0.4, 0.4, 0.4)
 				let box = new THREE.Box3().expandByObject(mesh);
+				console.log("mesh5模型大小" + JSON.stringify(box));
 				let totalWidth=0
 				groupX.children.forEach(item => {
 					if(!item.isAddY){
@@ -1135,6 +1130,7 @@ const init = () => {
 				mesh.position.set(totalWidth/2-mesh['x'],-0.1,0.606)
 				scene.add(mesh)
 				groupX.children.push(mesh)
+				console.log(models)
 			})
 		})
 		
@@ -1201,15 +1197,17 @@ const init = () => {
 					if(it.stlId==item.stlId){
 						scene.remove(item)
 					}
-				})
+				})		
 			})
+			
 			modelsY.forEach((it)=>{
 			     scene.children.forEach((item)=>{
 					if(it.stlId==item.stlId){
 						scene.remove(item)
 					}
-				})
+				})		
 			})
+			
 			groupX.children = []
 			groupY.children = []
 			plusGroup.children = []
@@ -1246,6 +1244,7 @@ const init = () => {
 	var center = new THREE.Vector3()
 	box3.getCenter(center)
 	console.log('查看几何体中心坐标', center);
+	console.log('查看组合体', groupX);
 	/* 重新设置模型的位置，使之居中。
 	group.position.x = group.position.x - center.x
 	group.position.y = group.position.y - center.y
@@ -1291,8 +1290,8 @@ const init = () => {
 		//mouse.x = (event.offsetX / window.innerWidth) * 2 - 1;
 		//mouse.y = -(event.offsetY / window.innerHeight) * 2 + 1;
 		//通过鼠标点击位置，计算出raycaster所需点的位置，以屏幕为中心点，范围-1到1
-		let x = (event.offsetX / (box.offsetWidth/= window.devicePixelRatio)) * 2 - 1;
-		let y = -(event.offsetY /(box.offsetHeight/= window.devicePixelRatio)) * 2 + 1; //这里为什么是-号，没有就无法点中
+		let x = (event.offsetX / box.offsetWidth) * 2 - 1;
+		let y = -(event.offsetY / box.offsetHeight) * 2 + 1; //这里为什么是-号，没有就无法点中
         let mouse = new THREE.Vector3(x,y,1);
 		//通过鼠标点击的位置(二维坐标)和当前相机的矩阵计算出射线位置
 		rayCaster.setFromCamera(mouse, camera);
@@ -1302,6 +1301,7 @@ const init = () => {
 		//console.log(group)
 		let intersects = rayCaster.intersectObjects(groupX.children.concat(groupY.children), true);
 		//返回选中的对象
+		console.log(intersects)
 		return intersects;
 	}
 	
@@ -1316,8 +1316,8 @@ const init = () => {
 		//mouse.x = (event.offsetX / window.innerWidth) * 2 - 1;
 		//mouse.y = -(event.offsetY / window.innerHeight) * 2 + 1;
 		//通过鼠标点击位置，计算出raycaster所需点的位置，以屏幕为中心点，范围-1到1
-		mouse.x = (event.offsetX / (box.offsetWidth/= window.devicePixelRatio)) * 2 - 1;
-		mouse.y = -(event.offsetY / (box.offsetHeight/= window.devicePixelRatio)) * 2 + 1; //这里为什么是-号，没有就无法点中
+		mouse.x = (event.offsetX / box.offsetWidth) * 2 - 1;
+		mouse.y = -(event.offsetY / box.offsetHeight) * 2 + 1; //这里为什么是-号，没有就无法点中
 		//通过鼠标点击的位置(二维坐标)和当前相机的矩阵计算出射线位置
 		rayCaster.setFromCamera(mouse, camera);
 		 
@@ -1338,8 +1338,8 @@ const init = () => {
 		//mouse.x = (event.offsetX / window.innerWidth) * 2 - 1;
 		//mouse.y = -(event.offsetY / window.innerHeight) * 2 + 1;
 		//通过鼠标点击位置，计算出raycaster所需点的位置，以屏幕为中心点，范围-1到1
-		mouse.x = (event.offsetX /(box.offsetWidth/= window.devicePixelRatio)) * 2 - 1;
-		mouse.y = -(event.offsetY / (box.offsetHeight/= window.devicePixelRatio)) * 2 + 1; //这里为什么是-号，没有就无法点中
+		mouse.x = (event.offsetX / box.offsetWidth) * 2 - 1;
+		mouse.y = -(event.offsetY / box.offsetHeight) * 2 + 1; //这里为什么是-号，没有就无法点中
         //mouse.x = ((event.clientX - document.getElementById("canvasBox").getBoundingClientRect().left) / document.getElementById("canvasBox").offsetWidth) * 2 - 1;
         //mouse.y = -((event.clientY - document.getElementById("canvasBox").getBoundingClientRect().top) / document.getElementById("canvasBox").offsetHeight) * 2 + 1;
 		//通过鼠标点击的位置(二维坐标)和当前相机的矩阵计算出射线位置
@@ -1421,6 +1421,7 @@ const init = () => {
 		let intersects = getIntersects(event);
 		let plusIntersects = getPlusIntersects(event);
 		let plusYIntersects = getPlusYIntersects(event);
+		console.log(intersects);
 		//获取选中最近的Mesh对象
 		//instance坐标是对象，右边是类，判断对象是不是属于这个类的
 		if (intersects.length !== 0) {
