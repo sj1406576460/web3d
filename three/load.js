@@ -40,7 +40,7 @@ const init = () => {
 	//controls.addEventListener("change", renderer);
 	controls.update()
 	
-	var point = new THREE.PointLight('#000'); //点光源  
+	var point = new THREE.PointLight('#fff'); //点光源  
 	point.position.set(50, 20, 10); //点光源位置  
 	scene.add(point); //点光源添加到场景中
 	scene.receiveShadow = true;
@@ -49,7 +49,7 @@ const init = () => {
 	/*const ambientLight = new THREE.AmbientLight(0xffffff);
 	scene.add(ambientLight);*/
 	
-	let hslight = new THREE.HemisphereLight(0xbbbbff, 0x444422, 1.5);
+	let hslight = new THREE.HemisphereLight(0xffffff, 0x444422, 1.5);
 	hslight.castShadow = true;   //warn THREE.WebGLShadowMap:", c, "has no shadow.
 	scene.add(hslight);
 	
@@ -62,17 +62,17 @@ const init = () => {
 	
      //将平行光添加到场景中*/
 
-	const spotLight = new THREE.SpotLight(0xffffff) // 创建聚光灯
+	/*const spotLight = new THREE.SpotLight(0xffffff) // 创建聚光灯
 	spotLight.position.set(50, 20, 10)
 	spotLight.castShadow = true
-	spotLight.shadow.normalBias = 1e-2;
-	spotLight.shadow.bias = - 1e-3;
+	//spotLight.shadow.normalBias = 1e-2;
+	//spotLight.shadow.bias = - 1e-3;
 	scene.add(spotLight)
 
 	const spotLight1 = new THREE.SpotLight(0xfffffff) // 创建聚光灯
 	spotLight1.position.set(-50, -20, -10)
 	spotLight1.castShadow = true
-	scene.add(spotLight1)
+	scene.add(spotLight1)*/
 	
 	const material = new THREE.LineBasicMaterial({
 		color: 0x5500ff,
@@ -401,15 +401,14 @@ const init = () => {
 		loader.load(item.stlPath, geometry => {
 			geometry.scene.name = item.stlId
 			geometry.scene.traverse(function(child) {
-				child.updateMatrixWorld(true);
+				//child.updateMatrixWorld(true);
 				if (child.isMesh) {
 					//child.material.emissive = child.material.color;
-					//child.material.emissiveMap = child.material.map;
-					child.material.castShadow = true;
-					
+					child.material.emissiveMap = child.material.map;
+					//child.material.castShadow = true;
 					child.material.color = new THREE.Color('#2E3135');
 					//child.material.emissiveMap = child.material.map;
-					child.material.side = THREE.DoubleSide;
+					//child.material.side = THREE.DoubleSide;
 				}
 			})
 			
@@ -491,7 +490,7 @@ const init = () => {
 					//child.castShadow = true;
 					//模型自发光
 					//child.material.emissive =  child.material.color;
-					//child.material.emissiveMap = child.material.map;
+					child.material.emissiveMap = child.material.map;
 				    child.material.color = new THREE.Color('#2E3135');
 					//child.material.wireframe = true 整体轮廓图
 				}
@@ -1345,7 +1344,7 @@ const init = () => {
 		effectFXAA.uniforms['resolution'].value.set(1 / initWidth, 1 / initHeight);
 		composer.addPass(effectFXAA);
 	
-		//outlinePass.clear = true;
+		outlinePass.clear = true;
 		composer.addPass(outlinePass)
 	}
 
@@ -1361,13 +1360,13 @@ const init = () => {
 		if (intersects.length !== 0) {
 			console.log(intersects[0].object.geometry.name);
 			selectedObject = intersects[0].object.parent.parent
-			//outlineOperate([intersects[0].object.parent.parent])
+		    //outlineOperate([intersects[0].object.parent.parent])
 			//group.remove(mesh5) 可以实现模型删除 remove(intersects[0].object)
 			for (var i = 0; i < intersects.length; i++) {
 				if (intersects[i].object.geometry.name === 'stl003') {
 					//intersects[i].object.material.color.set(0xff0000); //变为红色
 				} else {
-
+                   //intersects[i].object.material.color.set(0xffffff);
 				}
 			}
 			$("#removeMesh").removeClass("control-button-disabled")
