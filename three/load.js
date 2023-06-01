@@ -1325,7 +1325,7 @@ const init = () => {
 	function outlineOperate(selectedObjects) {
 		composer = new THREE.EffectComposer(renderer);
 		const renderPass = new THREE.RenderPass(scene, camera);
-		composer.addPass(renderPass);
+		
 		outlinePass = new THREE.OutlinePass(new THREE.Vector2(initWidth, initHeight), scene, camera,
 			selectedObjects);
 		outlinePass.edgeStrength = 6; //边缘强度
@@ -1338,13 +1338,16 @@ const init = () => {
 		outlinePass.hiddenEdgeColor.set('#22A7F2'); // 阴影颜色
 		outlinePass.usePatternTexture = false; //是否使用父级的材质
 		outlinePass.downSampleRatio = 2; // 边框弯曲度
+		outlinePass.clear = true;
+		composer.addPass(renderPass);
+		composer.addPass(outlinePass)
 	
 		effectFXAA = new THREE.ShaderPass(THREE.FXAAShader);
 		effectFXAA.uniforms['resolution'].value.set(1 / initWidth, 1 / initHeight);
 		composer.addPass(effectFXAA);
 	
-		outlinePass.clear = true;
-		composer.addPass(outlinePass)
+		
+		
 	}
 
 	//鼠标双击触发的方法
