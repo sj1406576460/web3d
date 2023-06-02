@@ -35,8 +35,8 @@
 			}
 
 			this.fsQuad.material = this.material;
+			readBuffer.texture.encoding = renderer.outputEncoding;
 			if ( this.renderToScreen ) {
-
 				renderer.setRenderTarget( null );
 				this.fsQuad.render( renderer );
 

@@ -20,7 +20,8 @@ const init = () => {
 	renderer.shadowMap.enabled = true // 显示阴影
 	renderer.shadowMap.type = THREE.PCFSoftShadowMap
 	//renderer.setClearColor(0x000000, 1) // 设置背景颜色
-	renderer.outputEncoding = THREE.sRGBEncoding;
+	//renderer.outputEncoding = THREE.sRGBEncoding;
+	renderer.physicallyCorrectLights = false;
 	//renderer.precision='mediump'
 	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 	renderer.setSize(initWidth, initHeight);
@@ -62,17 +63,17 @@ const init = () => {
 	
      //将平行光添加到场景中*/
 
-	/*const spotLight = new THREE.SpotLight(0xffffff) // 创建聚光灯
-	spotLight.position.set(50, 20, 10)
+	const spotLight = new THREE.SpotLight(0xffffff) // 创建聚光灯
+	spotLight.position.set(500, 200, 100)
 	spotLight.castShadow = true
 	//spotLight.shadow.normalBias = 1e-2;
 	//spotLight.shadow.bias = - 1e-3;
 	scene.add(spotLight)
 
 	const spotLight1 = new THREE.SpotLight(0xfffffff) // 创建聚光灯
-	spotLight1.position.set(-50, -20, -10)
+	spotLight1.position.set(-500, -200, -100)
 	spotLight1.castShadow = true
-	scene.add(spotLight1)*/
+	scene.add(spotLight1)
 	
 	const material = new THREE.LineBasicMaterial({
 		color: 0x5500ff,
@@ -296,6 +297,7 @@ const init = () => {
 						//child.material.emissive =  child.material.color;
 						child.material.color = new THREE.Color('#2E3135');
 						//child.material.emissiveMap = child.material.map;
+						
 					}
 				});
 				let mesh = gltf.scene
@@ -406,7 +408,7 @@ const init = () => {
 					//child.material.emissive = child.material.color;
 					child.material.emissiveMap = child.material.map;
 					//child.material.castShadow = true;
-					child.material.color = new THREE.Color('#2E3135');
+					//child.material.color = new THREE.Color('#2E3135');
 					//child.material.emissiveMap = child.material.map;
 					//child.material.side = THREE.DoubleSide;
 				}
@@ -491,7 +493,7 @@ const init = () => {
 					//模型自发光
 					//child.material.emissive =  child.material.color;
 					child.material.emissiveMap = child.material.map;
-				    child.material.color = new THREE.Color('#2E3135');
+				    //child.material.color = new THREE.Color('#2E3135');
 					//child.material.wireframe = true 整体轮廓图
 				}
 			});
@@ -1324,7 +1326,10 @@ const init = () => {
 	
 	function outlineOperate(selectedObjects) {
 		composer = new THREE.EffectComposer(renderer);
+		//composer.readBuffer.texture.encoding = THREE.sRGBEncoding;
+		//composer.writeBuffer.texture.encoding = THREE.sRGBEncoding;
 		const renderPass = new THREE.RenderPass(scene, camera);
+		composer.addPass(renderPass);
 		
 		outlinePass = new THREE.OutlinePass(new THREE.Vector2(initWidth, initHeight), scene, camera,
 			selectedObjects);
@@ -1339,15 +1344,12 @@ const init = () => {
 		outlinePass.usePatternTexture = false; //是否使用父级的材质
 		outlinePass.downSampleRatio = 2; // 边框弯曲度
 		outlinePass.clear = true;
-		composer.addPass(renderPass);
+		
 		composer.addPass(outlinePass)
 	
 		effectFXAA = new THREE.ShaderPass(THREE.FXAAShader);
 		effectFXAA.uniforms['resolution'].value.set(1 / initWidth, 1 / initHeight);
-		composer.addPass(effectFXAA);
-	
-		
-		
+		composer.addPass(effectFXAA);                                                                                                                                                                                                                                                                                                                                                                                                                                                                     composer.readBuffer.texture.encoding = THREE.sRGBEncoding;
 	}
 
 	//鼠标双击触发的方法
@@ -1362,7 +1364,7 @@ const init = () => {
 		if (intersects.length !== 0) {
 			console.log(intersects[0].object.geometry.name);
 			selectedObject = intersects[0].object.parent.parent
-		    //outlineOperate([intersects[0].object.parent.parent])
+		    outlineOperate([intersects[0].object.parent.parent])
 			//group.remove(mesh5) 可以实现模型删除 remove(intersects[0].object)
 			for (var i = 0; i < intersects.length; i++) {
 				if (intersects[i].object.geometry.name === 'stl003') {
@@ -1404,7 +1406,6 @@ const init = () => {
 			})
 		}
 	}
-
 
 
 	function onDocumentMouseMove(event) {
@@ -1453,12 +1454,14 @@ const animate = () => {
 	scene.add(plusGroupY);
 	//debugger
 	renderer.gammaOutput = true;
-	renderer.render(scene, camera);
+	
 	//scene.updateMatrixWorld(true);
 	//camera.updateMatrixWorld(true);
 	requestAnimationFrame(animate);
 	if (composer) {
 		composer.render()
+	}else{
+		renderer.render(scene, camera);
 	}
 }
 

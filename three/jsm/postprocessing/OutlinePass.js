@@ -352,6 +352,9 @@
 			if ( this.renderToScreen ) {
 
 				this.fsQuad.material = this.materialCopy;
+				//修改开始 同步renderer的颜色空间 添加代码
+				readBuffer.texture.encoding = renderer.outputEncoding;
+				//修改完毕
 				this.copyUniforms[ 'tDiffuse' ].value = readBuffer.texture;
 				renderer.setRenderTarget( null );
 				this.fsQuad.render( renderer );
